@@ -133,6 +133,7 @@ export function AdGenerator() {
           <CardContent className="p-6 space-y-6">
             {step === 1 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
+                {/* Campo de URL em Destaque */}
                 <div className="bg-accent/10 p-5 rounded-xl border-2 border-accent/30 space-y-4 ring-4 ring-accent/5">
                   <div className="flex items-center gap-2 mb-1">
                     <div className="bg-accent p-1.5 rounded-md">
