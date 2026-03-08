@@ -195,7 +195,7 @@ export function AdGenerator() {
                     <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors">
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
                         <Upload className="w-8 h-8 mb-2 text-muted-foreground" />
-                        <p className="text-xs text-muted-foreground text-center px-4">Arraste ou clique para enviar (Max 150MB)</p>
+                        <p className="text-xs text-muted-foreground text-center px-4">Arraste ou clique para enviar (Máx 150MB)</p>
                       </div>
                       <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
                     </label>

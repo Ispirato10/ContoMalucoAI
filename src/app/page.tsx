@@ -14,7 +14,7 @@ export default function Home() {
             <span className="font-headline text-2xl tracking-tight font-bold text-white">AdVision AI</span>
           </div>
           <nav className="hidden md:flex items-center gap-6">
-            <a href="#" className="text-sm font-medium text-muted-foreground hover:text-accent transition-colors">Como funciona</a>
+            <a href="#" className="text-sm font-medium text-muted-foreground hover:text-accent transition-colors">Como Funciona</a>
             <a href="#" className="text-sm font-medium text-muted-foreground hover:text-accent transition-colors">Portfólio</a>
             <a href="#" className="text-sm font-medium text-muted-foreground hover:text-accent transition-colors">Planos</a>
           </nav>
