@@ -343,7 +343,6 @@ export function AdGenerator() {
                   width={1080}
                   height={platform === 'story' ? 1920 : platform === 'banner' ? 628 : 1080}
                   className="w-full h-full object-contain"
-                  data-ai-hint="professional advertisement"
                 />
               </div>
             )}
