@@ -177,10 +177,10 @@ export function AdGenerator() {
 
                 <div className="space-y-2">
                   <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Diferenciais/Benefícios (Opcional)
+                    Diferenciais (Opcional)
                   </Label>
                   <Textarea
-                    placeholder="Descreva o que torna seu produto único..."
+                    placeholder="O que torna seu produto único?"
                     value={benefits}
                     onChange={(e) => setBenefits(e.target.value)}
                     className="bg-background/50 border-border min-h-[80px] focus:ring-accent"
@@ -287,7 +287,7 @@ export function AdGenerator() {
                   </div>
                   <h3 className="text-xl font-headline font-bold text-white">Anúncio Criado!</h3>
                   <p className="text-muted-foreground text-sm">
-                    Sua peça publicitária de alta fidelidade está pronta para ser usada.
+                    Sua peça publicitária está pronta para uso.
                   </p>
                 </div>
                 <div className="flex flex-col gap-3">

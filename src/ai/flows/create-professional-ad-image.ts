@@ -50,7 +50,7 @@ const createProfessionalAdImageFlow = ai.defineFlow(
     let modelName: string;
     let aspectRatio: '1:1' | '9:16' | '16:9' | '4:3' | '3:4' | undefined;
 
-    // Determinar a proporção baseada na plataforma (ajustado para valores suportados pelo Imagen 4)
+    // Determinar a proporção baseada na plataforma (ajustado para valores suportados)
     if (platform === 'story') {
       aspectRatio = '9:16';
     } else if (platform === 'feed') {
@@ -60,8 +60,8 @@ const createProfessionalAdImageFlow = ai.defineFlow(
     }
 
     if (productImage) {
-      // Usar modelo imagem-para-imagem se uma imagem do produto for fornecida
-      modelName = 'googleai/gemini-2.5-flash-image';
+      // Usar modelo multimodal se uma imagem do produto for fornecida
+      modelName = 'googleai/gemini-2.5-flash'; // Usando flash para melhor compatibilidade com vision
       imageGenerationPrompt = [
         {
           media: {
@@ -69,29 +69,45 @@ const createProfessionalAdImageFlow = ai.defineFlow(
             url: productImage,
           },
         },
-        { text: textPrompt },
+        { text: `Based on this product image and the following request, create a professional advertising image: ${textPrompt}` },
       ];
+      
+      const { media } = await ai.generate({
+        model: modelName,
+        prompt: imageGenerationPrompt,
+        config: {
+          responseModalities: ['TEXT', 'IMAGE'],
+        },
+      });
+
+      if (!media || !media.url) {
+        throw new Error('Falha ao gerar a imagem através do Gemini Vision.');
+      }
+
+      return {
+        imageUrl: media.url,
+      };
+
     } else {
-      // Usar modelo texto-para-imagem se nenhuma imagem do produto for fornecida
-      modelName = 'googleai/imagen-4.0-fast-generate-001';
+      // Usar modelo de geração de imagem rápido (mais provável de estar no tier gratuito)
+      modelName = 'googleai/imagen-3.0-fast-generate-001';
       imageGenerationPrompt = textPrompt;
+
+      const { media } = await ai.generate({
+        model: modelName,
+        prompt: imageGenerationPrompt,
+        config: {
+          aspectRatio,
+        },
+      });
+
+      if (!media || !media.url) {
+        throw new Error('Falha ao gerar a imagem com o Imagen 3 Fast.');
+      }
+
+      return {
+        imageUrl: media.url,
+      };
     }
-
-    const { media } = await ai.generate({
-      model: modelName,
-      prompt: imageGenerationPrompt,
-      config: {
-        ...(modelName === 'googleai/imagen-4.0-fast-generate-001' && { aspectRatio }),
-        responseModalities: ['TEXT', 'IMAGE'],
-      },
-    });
-
-    if (!media || !media.url) {
-      throw new Error('Falha ao gerar a imagem ou a URL da imagem está ausente.');
-    }
-
-    return {
-      imageUrl: media.url,
-    };
   }
 );
