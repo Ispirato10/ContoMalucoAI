@@ -9,6 +9,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import {googleAI} from '@genkit-ai/google-genai';
 
 // Esquema de Entrada para o fluxo
 const CreateProfessionalAdImageInputSchema = z.object({
@@ -47,10 +48,10 @@ const createProfessionalAdImageFlow = ai.defineFlow(
     const { textPrompt, productImage, platform } = input;
 
     let imageGenerationPrompt: string | Array<any>;
-    let modelName: string;
-    let aspectRatio: '1:1' | '9:16' | '16:9' | '4:3' | '3:4' | undefined;
+    let modelName: any;
+    let aspectRatio: '1:1' | '9:16' | '16:9' | undefined;
 
-    // Determinar a proporção baseada na plataforma (ajustado para valores suportados)
+    // Determinar a proporção baseada na plataforma
     if (platform === 'story') {
       aspectRatio = '9:16';
     } else if (platform === 'feed') {
@@ -60,54 +61,44 @@ const createProfessionalAdImageFlow = ai.defineFlow(
     }
 
     if (productImage) {
-      // Usar modelo multimodal se uma imagem do produto for fornecida
-      modelName = 'googleai/gemini-2.5-flash'; // Usando flash para melhor compatibilidade com vision
-      imageGenerationPrompt = [
-        {
-          media: {
-            contentType: productImage.split(';')[0].split(':')[1], 
-            url: productImage,
-          },
-        },
-        { text: `Based on this product image and the following request, create a professional advertising image: ${textPrompt}` },
-      ];
-      
+      // Usar Gemini para visão se houver imagem do produto
       const { media } = await ai.generate({
-        model: modelName,
-        prompt: imageGenerationPrompt,
+        model: 'googleai/gemini-2.0-flash-exp', 
+        prompt: [
+          {
+            media: {
+              contentType: productImage.split(';')[0].split(':')[1], 
+              url: productImage,
+            },
+          },
+          { text: `Com base nesta imagem de produto e no seguinte pedido, crie uma imagem publicitária profissional de alta conversão: ${textPrompt}. Foque na estética luxuosa e iluminação de estúdio.` },
+        ],
         config: {
           responseModalities: ['TEXT', 'IMAGE'],
         },
       });
 
       if (!media || !media.url) {
-        throw new Error('Falha ao gerar a imagem através do Gemini Vision.');
+        throw new Error('Falha ao gerar a imagem com Gemini Vision.');
       }
 
-      return {
-        imageUrl: media.url,
-      };
+      return { imageUrl: media.url };
 
     } else {
-      // Usar modelo de geração de imagem rápido (mais provável de estar no tier gratuito)
-      modelName = 'googleai/imagen-3.0-fast-generate-001';
-      imageGenerationPrompt = textPrompt;
-
+      // Usar Imagen 3 para geração de texto para imagem (mais estável)
       const { media } = await ai.generate({
-        model: modelName,
-        prompt: imageGenerationPrompt,
+        model: 'googleai/imagen-3',
+        prompt: textPrompt,
         config: {
           aspectRatio,
         },
       });
 
       if (!media || !media.url) {
-        throw new Error('Falha ao gerar a imagem com o Imagen 3 Fast.');
+        throw new Error('Falha ao gerar a imagem com Imagen 3.');
       }
 
-      return {
-        imageUrl: media.url,
-      };
+      return { imageUrl: media.url };
     }
   }
 );

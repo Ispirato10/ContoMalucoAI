@@ -51,7 +51,7 @@ export function AdGenerator() {
       if (file.size > 150 * 1024 * 1024) {
         toast({
           title: "Arquivo muito grande",
-          description: "O limite é de 150MB.",
+          description: "O limite máximo é de 150MB.",
           variant: "destructive",
         });
         return;
@@ -145,7 +145,7 @@ export function AdGenerator() {
                     <div className="bg-accent p-1.5 rounded-md">
                       <Globe className="w-4 h-4 text-white" />
                     </div>
-                    <span className="font-bold text-xs text-accent uppercase tracking-widest">Base de Conhecimento IA</span>
+                    <span className="font-bold text-xs text-accent uppercase tracking-widest">IA Inteligente: Análise de Site</span>
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-bold text-white flex items-center gap-2">
@@ -158,7 +158,7 @@ export function AdGenerator() {
                       className="bg-background border-accent/50 focus:ring-accent h-12 text-base"
                     />
                     <p className="text-[11px] text-accent/80 leading-tight font-medium">
-                      O Gemini analisará o site para extrair benefícios e o tom da marca automaticamente.
+                      O Gemini visitará o site para entender os diferenciais do produto automaticamente.
                     </p>
                   </div>
                 </div>
@@ -177,10 +177,10 @@ export function AdGenerator() {
 
                 <div className="space-y-2">
                   <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Diferenciais (Opcional)
+                    Diferenciais e Benefícios
                   </Label>
                   <Textarea
-                    placeholder="O que torna seu produto único?"
+                    placeholder="O que torna seu produto único? (A IA usará isso se não houver link)"
                     value={benefits}
                     onChange={(e) => setBenefits(e.target.value)}
                     className="bg-background/50 border-border min-h-[80px] focus:ring-accent"
@@ -221,7 +221,7 @@ export function AdGenerator() {
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
                 <div className="space-y-2">
                   <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Tema Criativo
+                    Escolha um Tema Visual
                   </Label>
                   <div className="grid grid-cols-1 gap-3">
                     {THEMES.map((t) => (
@@ -243,7 +243,7 @@ export function AdGenerator() {
 
                 <div className="space-y-2">
                   <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Formato / Rede Social
+                    Formato da Rede Social
                   </Label>
                   <Select value={platform} onValueChange={(v: any) => setPlatform(v)}>
                     <SelectTrigger className="bg-background/50 border-border h-12">
@@ -287,7 +287,7 @@ export function AdGenerator() {
                   </div>
                   <h3 className="text-xl font-headline font-bold text-white">Anúncio Criado!</h3>
                   <p className="text-muted-foreground text-sm">
-                    Sua peça publicitária está pronta para uso.
+                    Sua peça publicitária está pronta para ser baixada e usada.
                   </p>
                 </div>
                 <div className="flex flex-col gap-3">
@@ -318,7 +318,7 @@ export function AdGenerator() {
                   <ImageIcon className="w-8 h-8 text-muted-foreground" />
                 </div>
                 <p className="text-muted-foreground font-body leading-relaxed">
-                  A mágica acontece aqui. Preencha os detalhes e veja o poder do Gemini em ação.
+                  A mágica acontece aqui. Preencha os detalhes e veja o poder do Gemini em ação criando seu anúncio.
                 </p>
               </div>
             )}
@@ -334,7 +334,7 @@ export function AdGenerator() {
                 <div>
                   <h4 className="font-headline text-2xl font-bold text-white mb-2">IA Gemini Criando seu Anúncio</h4>
                   <p className="text-muted-foreground animate-pulse">
-                    {productUrl ? 'Analisando site do produto para extrair diferenciais...' : 'Renderizando iluminação cinematográfica...'}
+                    {productUrl ? 'Analisando o site do produto para extrair diferenciais...' : 'Renderizando iluminação cinematográfica e texturas...'}
                   </p>
                 </div>
               </div>
