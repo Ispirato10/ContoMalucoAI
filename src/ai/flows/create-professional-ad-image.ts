@@ -1,33 +1,33 @@
 'use server';
 /**
- * @fileOverview This file implements a Genkit flow for generating professional advertising images.
+ * @fileOverview Este arquivo implementa um fluxo Genkit para gerar imagens publicitárias profissionais.
  *
- * - createProfessionalAdImage - A function that generates an advertising image based on a detailed prompt and optional product image.
- * - CreateProfessionalAdImageInput - The input type for the createProfessionalAdImage function.
- * - CreateProfessionalAdImageOutput - The return type for the createProfessionalAdImage function.
+ * - createProfessionalAdImage - Uma função que gera uma imagem publicitária baseada em um prompt detalhado e imagem opcional do produto.
+ * - CreateProfessionalAdImageInput - O tipo de entrada para a função createProfessionalAdImage.
+ * - CreateProfessionalAdImageOutput - O tipo de retorno para a função createProfessionalAdImage.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-// Input Schema for the flow
+// Esquema de Entrada para o fluxo
 const CreateProfessionalAdImageInputSchema = z.object({
-  textPrompt: z.string().describe('A detailed textual prompt describing the desired advertising image.'),
+  textPrompt: z.string().describe('Um prompt textual detalhado descrevendo a imagem publicitária desejada.'),
   productImage: z
     .string()
     .optional()
     .describe(
-      "An optional photo of the product, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+      "Uma foto opcional do produto, como um data URI que deve incluir um tipo MIME e usar codificação Base64. Formato esperado: 'data:<mimetype>;base64,<encoded_data>'."
     ),
   platform: z
     .enum(['story', 'feed', 'banner'])
-    .describe('The target social media platform or format for the ad image.'),
+    .describe('A plataforma social de destino ou formato para a imagem do anúncio.'),
 });
 export type CreateProfessionalAdImageInput = z.infer<typeof CreateProfessionalAdImageInputSchema>;
 
-// Output Schema for the flow
+// Esquema de Saída para o fluxo
 const CreateProfessionalAdImageOutputSchema = z.object({
-  imageUrl: z.string().describe('The data URI of the generated professional advertising image.'),
+  imageUrl: z.string().describe('O data URI da imagem publicitária profissional gerada.'),
 });
 export type CreateProfessionalAdImageOutput = z.infer<typeof CreateProfessionalAdImageOutputSchema>;
 
@@ -48,33 +48,31 @@ const createProfessionalAdImageFlow = ai.defineFlow(
 
     let imageGenerationPrompt: string | Array<any>;
     let modelName: string;
-    let aspectRatio: 'LANDSCAPE_4_3' | 'PORTRAIT_3_4' | 'SQUARE_1_1' | undefined;
+    let aspectRatio: '1:1' | '9:16' | '16:9' | '4:3' | '3:4' | undefined;
 
-    // Determine aspect ratio based on platform
+    // Determinar a proporção baseada na plataforma (ajustado para valores suportados pelo Imagen 4)
     if (platform === 'story') {
-      aspectRatio = 'PORTRAIT_3_4'; // Corresponds to 9:16 or 1080x1920
+      aspectRatio = '9:16';
     } else if (platform === 'feed') {
-      aspectRatio = 'SQUARE_1_1'; // Corresponds to 1:1 or 1080x1080
-    } else { // 'banner' or other, default to landscape
-      aspectRatio = 'LANDSCAPE_4_3'; // A common banner aspect ratio
+      aspectRatio = '1:1';
+    } else { 
+      aspectRatio = '16:9'; 
     }
 
     if (productImage) {
-      // Use image-to-image model if a product image is provided
+      // Usar modelo imagem-para-imagem se uma imagem do produto for fornecida
       modelName = 'googleai/gemini-2.5-flash-image';
       imageGenerationPrompt = [
         {
           media: {
-            contentType: productImage.split(';')[0].split(':')[1], // Extract mime type from data URI
+            contentType: productImage.split(';')[0].split(':')[1], 
             url: productImage,
           },
         },
         { text: textPrompt },
       ];
-      // Note: gemini-2.5-flash-image does not directly support 'aspectRatio' in config as imagen does for text-to-image.
-      // Its output aspect ratio is often influenced by the input image or default behavior.
     } else {
-      // Use text-to-image model if no product image is provided
+      // Usar modelo texto-para-imagem se nenhuma imagem do produto for fornecida
       modelName = 'googleai/imagen-4.0-fast-generate-001';
       imageGenerationPrompt = textPrompt;
     }
@@ -83,14 +81,13 @@ const createProfessionalAdImageFlow = ai.defineFlow(
       model: modelName,
       prompt: imageGenerationPrompt,
       config: {
-        // Only apply aspectRatio for text-to-image models that support it.
         ...(modelName === 'googleai/imagen-4.0-fast-generate-001' && { aspectRatio }),
-        responseModalities: ['TEXT', 'IMAGE'], // Ensure both text and image modalities are requested
+        responseModalities: ['TEXT', 'IMAGE'],
       },
     });
 
     if (!media || !media.url) {
-      throw new Error('Failed to generate image or image URL is missing.');
+      throw new Error('Falha ao gerar a imagem ou a URL da imagem está ausente.');
     }
 
     return {
