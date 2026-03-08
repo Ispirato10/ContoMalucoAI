@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Upload, Wand2, Image as ImageIcon, CheckCircle2, Download, RefreshCw, X, Link as LinkIcon } from 'lucide-react';
+import { Upload, Wand2, Image as ImageIcon, CheckCircle2, Download, RefreshCw, X, Link as LinkIcon, Globe } from 'lucide-react';
 import { generateAdImagePrompt } from '@/ai/flows/generate-ad-image-prompt';
 import { createProfessionalAdImage } from '@/ai/flows/create-professional-ad-image';
 import { useToast } from '@/hooks/use-toast';
@@ -136,6 +136,27 @@ export function AdGenerator() {
           <CardContent className="p-6 space-y-6">
             {step === 1 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
+                <div className="bg-accent/5 p-4 rounded-xl border border-accent/20 space-y-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Globe className="w-5 h-5 text-accent" />
+                    <span className="font-bold text-sm text-accent uppercase tracking-wider">Smart Knowledge Base</span>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
+                      <LinkIcon className="w-3 h-3 text-accent" /> Product URL (Highly Recommended)
+                    </Label>
+                    <Input
+                      placeholder="https://myshopify.com/luxury-perfume"
+                      value={productUrl}
+                      onChange={(e) => setProductUrl(e.target.value)}
+                      className="bg-background border-accent/30 focus:ring-accent"
+                    />
+                    <p className="text-[11px] text-muted-foreground/80 leading-tight">
+                      Our AI will visit this link to extract features, benefits, and the brand's aesthetic tone automatically.
+                    </p>
+                  </div>
+                </div>
+
                 <div className="space-y-2">
                   <Label className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
                     Product Name
@@ -146,21 +167,6 @@ export function AdGenerator() {
                     onChange={(e) => setProductName(e.target.value)}
                     className="bg-background/50 border-border focus:ring-accent"
                   />
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-sm font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                    <LinkIcon className="w-3 h-3" /> Product Link (Recommended)
-                  </Label>
-                  <Input
-                    placeholder="https://example.com/product"
-                    value={productUrl}
-                    onChange={(e) => setProductUrl(e.target.value)}
-                    className="bg-background/50 border-border focus:ring-accent"
-                  />
-                  <p className="text-[10px] text-muted-foreground italic">
-                    AI will visit this link to extract benefits and details.
-                  </p>
                 </div>
 
                 <div className="space-y-2">
@@ -200,7 +206,7 @@ export function AdGenerator() {
                   )}
                 </div>
                 <Button onClick={() => setStep(2)} className="w-full bg-accent hover:bg-accent/90 text-white font-bold h-12 shadow-lg shadow-accent/20">
-                  Next Step
+                  Next: Choose Aesthetics
                 </Button>
               </div>
             )}

@@ -10,7 +10,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import * as cheerio from 'cheerio';
+import { load } from 'cheerio';
 
 const GenerateAdImagePromptInputSchema = z.object({
   productName: z.string().describe('The name of the product.'),
@@ -51,7 +51,7 @@ const fetchProductDetails = ai.defineTool(
     try {
       const response = await fetch(input.url);
       const html = await response.text();
-      const $ = cheerio.load(html);
+      const $ = load(html);
       
       // Remove scripts, styles, and other noise
       $('script, style, nav, footer, header').remove();
