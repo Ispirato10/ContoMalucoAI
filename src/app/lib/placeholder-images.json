@@ -1,0 +1,17 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "luxury-example",
+      "description": "Premium luxury ad example",
+      "imageUrl": "https://picsum.photos/seed/luxury1/1080/1080",
+      "imageHint": "luxury watch professional lighting"
+    },
+    {
+      "id": "seasonal-example",
+      "description": "Seasonal holiday ad example",
+      "imageUrl": "https://picsum.photos/seed/seasonal1/1080/1080",
+      "imageHint": "holiday sale aesthetic"
+    }
+  ]
+}
