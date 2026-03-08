@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState } from 'react';
@@ -14,24 +13,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Upload, Wand2, Image as ImageIcon, CheckCircle2, Download, RefreshCw, X, Link as LinkIcon, Globe, Sparkles } from 'lucide-react';
+import { Upload, Wand2, Image as ImageIcon, CheckCircle2, Download, RefreshCw, X, Globe, Sparkles } from 'lucide-react';
 import { generateAdImagePrompt } from '@/ai/flows/generate-ad-image-prompt';
 import { createProfessionalAdImage } from '@/ai/flows/create-professional-ad-image';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 
 const THEMES = [
-  { id: 'Luxury', name: 'Luxury & Premium', description: 'Gold accents, elegant lighting' },
-  { id: 'Minimalist', name: 'Modern Minimalist', description: 'Clean lines, soft shadows' },
-  { id: 'Seasonal', name: 'Seasonal / Holiday', description: 'Festive and vibrant' },
-  { id: 'Beauty', name: 'Cosmetics & Beauty', description: 'Soft focus, premium textures' },
-  { id: 'Tech', name: 'Tech & Innovation', description: 'Sleek, futuristic, high-contrast' },
+  { id: 'Luxury', name: 'Luxo & Premium', description: 'Acentos dourados, iluminação elegante' },
+  { id: 'Minimalist', name: 'Minimalismo Moderno', description: 'Linhas limpas, sombras suaves' },
+  { id: 'Seasonal', name: 'Sazonal / Festivo', description: 'Vibrante e temático' },
+  { id: 'Beauty', name: 'Beleza & Cosméticos', description: 'Foco suave, texturas premium' },
+  { id: 'Tech', name: 'Tecnologia & Inovação', description: 'Sleek, futurista, alto contraste' },
 ];
 
 const PLATFORMS = [
   { id: 'feed', name: 'Instagram Feed (1:1)', icon: '📱' },
   { id: 'story', name: 'Instagram Story (9:16)', icon: '🤳' },
-  { id: 'banner', name: 'Website Banner (16:9)', icon: '🖥️' },
+  { id: 'banner', name: 'Banner de Site (16:9)', icon: '🖥️' },
 ];
 
 export function AdGenerator() {
@@ -104,7 +103,7 @@ export function AdGenerator() {
     if (!generatedImage) return;
     const link = document.createElement('a');
     link.href = generatedImage;
-    link.download = `ad-vision-${platform}-${productName.toLowerCase().replace(/\s+/g, '-')}.png`;
+    link.download = `anuncio-ai-${platform}-${productName.toLowerCase().replace(/\s+/g, '-')}.png`;
     link.click();
   };
 
@@ -115,11 +114,11 @@ export function AdGenerator() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-      {/* Left Column: Form */}
+      {/* Coluna Esquerda: Formulário */}
       <div className="lg:col-span-5 space-y-6">
         <Card className="bg-card border-border shadow-2xl overflow-hidden">
           <div className="bg-primary/20 border-b border-border p-4 flex items-center justify-between">
-            <h3 className="font-headline font-bold text-lg text-white">Criar Campanha</h3>
+            <h3 className="font-headline font-bold text-lg text-white">Configurar Campanha</h3>
             <div className="flex gap-1">
               {[1, 2, 3].map((s) => (
                 <div
@@ -134,7 +133,6 @@ export function AdGenerator() {
           <CardContent className="p-6 space-y-6">
             {step === 1 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
-                {/* DESTAQUE PARA O LINK DO PRODUTO */}
                 <div className="bg-accent/10 p-5 rounded-xl border-2 border-accent/30 space-y-4 ring-4 ring-accent/5">
                   <div className="flex items-center gap-2 mb-1">
                     <div className="bg-accent p-1.5 rounded-md">
@@ -147,13 +145,13 @@ export function AdGenerator() {
                       Link do Produto (Recomendado)
                     </Label>
                     <Input
-                      placeholder="Cole aqui o link da sua loja ou site do produto"
+                      placeholder="Cole aqui o link da loja ou site do produto"
                       value={productUrl}
                       onChange={(e) => setProductUrl(e.target.value)}
                       className="bg-background border-accent/50 focus:ring-accent h-12 text-base"
                     />
                     <p className="text-[11px] text-accent/80 leading-tight font-medium">
-                      Nossa IA visitará este site para extrair automaticamente benefícios, recursos e o tom de voz da sua marca.
+                      Nossa IA analisará este site para extrair automaticamente benefícios e o tom da marca.
                     </p>
                   </div>
                 </div>
@@ -175,7 +173,7 @@ export function AdGenerator() {
                     Benefícios Manuais (Opcional)
                   </Label>
                   <Textarea
-                    placeholder="Ou descreva aqui o que torna seu produto especial..."
+                    placeholder="Ou descreva aqui o que torna seu produto único..."
                     value={benefits}
                     onChange={(e) => setBenefits(e.target.value)}
                     className="bg-background/50 border-border min-h-[80px] focus:ring-accent"
@@ -184,13 +182,13 @@ export function AdGenerator() {
 
                 <div className="space-y-2">
                   <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Foto Real do Produto (Opcional)
+                    Foto do Produto (Opcional)
                   </Label>
                   {!productImage ? (
                     <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors">
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
                         <Upload className="w-8 h-8 mb-2 text-muted-foreground" />
-                        <p className="text-xs text-muted-foreground">PNG, JPG, ou JPEG</p>
+                        <p className="text-xs text-muted-foreground">Arraste ou clique para enviar (PNG, JPG)</p>
                       </div>
                       <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
                     </label>
@@ -238,11 +236,11 @@ export function AdGenerator() {
 
                 <div className="space-y-2">
                   <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Formato e Plataforma
+                    Formato da Plataforma
                   </Label>
                   <Select value={platform} onValueChange={(v: any) => setPlatform(v)}>
                     <SelectTrigger className="bg-background/50 border-border h-12">
-                      <SelectValue placeholder="Selecione a plataforma" />
+                      <SelectValue placeholder="Selecione o formato" />
                     </SelectTrigger>
                     <SelectContent>
                       {PLATFORMS.map((p) => (
@@ -268,7 +266,7 @@ export function AdGenerator() {
                     ) : (
                       <Wand2 className="w-5 h-5 mr-2" />
                     )}
-                    {loading ? 'Analisando e Criando...' : 'Gerar Anúncio'}
+                    {loading ? 'Processando...' : 'Gerar Anúncio Profissional'}
                   </Button>
                 </div>
               </div>
@@ -282,16 +280,16 @@ export function AdGenerator() {
                   </div>
                   <h3 className="text-xl font-headline font-bold text-white">Pronto!</h3>
                   <p className="text-muted-foreground text-sm">
-                    Sua campanha foi gerada com base nos dados do seu produto.
+                    Sua campanha foi gerada com sucesso e está pronta para uso.
                   </p>
                 </div>
                 <div className="flex flex-col gap-3">
                   <Button onClick={downloadImage} className="w-full bg-accent hover:bg-accent/90 text-white h-12">
                     <Download className="w-5 h-5 mr-2" />
-                    Baixar Visual
+                    Baixar Imagem
                   </Button>
                   <Button variant="outline" onClick={reset} className="w-full border-border">
-                    Criar Outro
+                    Criar Novo Anúncio
                   </Button>
                 </div>
               </div>
@@ -300,7 +298,7 @@ export function AdGenerator() {
         </Card>
       </div>
 
-      {/* Right Column: Preview */}
+      {/* Coluna Direita: Visualização */}
       <div className="lg:col-span-7 h-full">
         <div className="sticky top-24">
           <div className="flex items-center gap-2 mb-4">
@@ -314,7 +312,7 @@ export function AdGenerator() {
                   <ImageIcon className="w-8 h-8 text-muted-foreground" />
                 </div>
                 <p className="text-muted-foreground font-body leading-relaxed">
-                  Seu anúncio profissional aparecerá aqui. Preencha os detalhes ao lado para começar.
+                  Seu anúncio profissional aparecerá aqui. Preencha os detalhes ao lado para começar o processo criativo.
                 </p>
               </div>
             )}
@@ -328,9 +326,9 @@ export function AdGenerator() {
                   </div>
                 </div>
                 <div>
-                  <h4 className="font-headline text-2xl font-bold text-white mb-2">Criando sua Obra-Prima</h4>
+                  <h4 className="font-headline text-2xl font-bold text-white mb-2">Criando seu Anúncio</h4>
                   <p className="text-muted-foreground animate-pulse">
-                    {productUrl ? 'Acessando site e extraindo benefícios reais...' : 'Analisando estética e renderizando iluminação profissional...'}
+                    {productUrl ? 'Extraindo dados reais do site...' : 'Renderizando iluminação de estúdio profissional...'}
                   </p>
                 </div>
               </div>
@@ -340,7 +338,7 @@ export function AdGenerator() {
               <div className="w-full h-full animate-in zoom-in-95 duration-700">
                 <Image
                   src={generatedImage}
-                  alt="Generated Ad"
+                  alt="Anúncio Gerado"
                   width={1080}
                   height={platform === 'story' ? 1920 : platform === 'banner' ? 628 : 1080}
                   className="w-full h-full object-contain"

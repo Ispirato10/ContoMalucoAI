@@ -1,10 +1,9 @@
-
 import type {Metadata} from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'AdVision AI - Professional Ad Generator',
-  description: 'Generate high-fidelity advertising visuals for your products using AI.',
+  title: 'AdVision AI - Gerador de Anúncios Profissionais',
+  description: 'Gere visuais publicitários de alta fidelidade para seus produtos usando IA.',
 };
 
 export default function RootLayout({
@@ -13,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
