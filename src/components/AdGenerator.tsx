@@ -24,7 +24,7 @@ const THEMES = [
   { id: 'Minimalist', name: 'Minimalismo Moderno', description: 'Linhas limpas, sombras suaves' },
   { id: 'Seasonal', name: 'Sazonal / Festivo', description: 'Vibrante e temático' },
   { id: 'Beauty', name: 'Beleza & Cosméticos', description: 'Foco suave, texturas premium' },
-  { id: 'Tech', name: 'Tecnologia & Inovação', description: 'Sleek, futurista, alto contraste' },
+  { id: 'Tech', name: 'Tecnologia & Inovação', description: 'Moderno, futurista, alto contraste' },
 ];
 
 const PLATFORMS = [
