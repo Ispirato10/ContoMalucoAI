@@ -48,6 +48,14 @@ export function AdGenerator() {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 150 * 1024 * 1024) {
+        toast({
+          title: "Arquivo muito grande",
+          description: "O limite é de 150MB.",
+          variant: "destructive",
+        });
+        return;
+      }
       const reader = new FileReader();
       reader.onloadend = () => {
         setProductImage(reader.result as string);
@@ -59,10 +67,10 @@ export function AdGenerator() {
   const clearImage = () => setProductImage(null);
 
   const generateAd = async () => {
-    if (!productName || (!benefits && !productUrl)) {
+    if (!productName) {
       toast({
-        title: "Informação Faltando",
-        description: "Por favor, preencha o nome do produto e insira um link ou descreva os benefícios.",
+        title: "Nome do Produto Faltando",
+        description: "Por favor, insira o nome do seu produto.",
         variant: "destructive",
       });
       return;
@@ -87,11 +95,11 @@ export function AdGenerator() {
 
       setGeneratedImage(adResult.imageUrl);
       setStep(3);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       toast({
         title: "Falha na Geração",
-        description: "Ocorreu um erro ao gerar sua imagem. Tente novamente.",
+        description: error.message || "Ocorreu um erro ao processar sua imagem com o Gemini.",
         variant: "destructive",
       });
     } finally {
@@ -103,7 +111,7 @@ export function AdGenerator() {
     if (!generatedImage) return;
     const link = document.createElement('a');
     link.href = generatedImage;
-    link.download = `anuncio-ai-${platform}-${productName.toLowerCase().replace(/\s+/g, '-')}.png`;
+    link.download = `anuncio-ai-${productName.toLowerCase().replace(/\s+/g, '-')}.png`;
     link.click();
   };
 
@@ -114,7 +122,6 @@ export function AdGenerator() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-      {/* Coluna Esquerda: Formulário */}
       <div className="lg:col-span-5 space-y-6">
         <Card className="bg-card border-border shadow-2xl overflow-hidden">
           <div className="bg-primary/20 border-b border-border p-4 flex items-center justify-between">
@@ -133,26 +140,25 @@ export function AdGenerator() {
           <CardContent className="p-6 space-y-6">
             {step === 1 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
-                {/* Campo de URL em Destaque */}
                 <div className="bg-accent/10 p-5 rounded-xl border-2 border-accent/30 space-y-4 ring-4 ring-accent/5">
                   <div className="flex items-center gap-2 mb-1">
                     <div className="bg-accent p-1.5 rounded-md">
                       <Globe className="w-4 h-4 text-white" />
                     </div>
-                    <span className="font-bold text-xs text-accent uppercase tracking-widest">Base de Conhecimento Inteligente</span>
+                    <span className="font-bold text-xs text-accent uppercase tracking-widest">Base de Conhecimento IA</span>
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-bold text-white flex items-center gap-2">
-                      Link do Produto (Recomendado)
+                      Link do Produto (Análise Gemini)
                     </Label>
                     <Input
-                      placeholder="Cole aqui o link da loja ou site do produto"
+                      placeholder="Cole o link da loja aqui"
                       value={productUrl}
                       onChange={(e) => setProductUrl(e.target.value)}
                       className="bg-background border-accent/50 focus:ring-accent h-12 text-base"
                     />
                     <p className="text-[11px] text-accent/80 leading-tight font-medium">
-                      Nossa IA analisará este site para extrair automaticamente benefícios e o tom da marca.
+                      O Gemini analisará o site para extrair benefícios e o tom da marca automaticamente.
                     </p>
                   </div>
                 </div>
@@ -162,7 +168,7 @@ export function AdGenerator() {
                     Nome do Produto
                   </Label>
                   <Input
-                    placeholder="Ex: Perfume Midnight Sapphire"
+                    placeholder="Ex: Perfume Safira da Noite"
                     value={productName}
                     onChange={(e) => setProductName(e.target.value)}
                     className="bg-background/50 border-border focus:ring-accent"
@@ -174,7 +180,7 @@ export function AdGenerator() {
                     Benefícios Manuais (Opcional)
                   </Label>
                   <Textarea
-                    placeholder="Ou descreva aqui o que torna seu produto único..."
+                    placeholder="Descreva aqui o que torna seu produto único..."
                     value={benefits}
                     onChange={(e) => setBenefits(e.target.value)}
                     className="bg-background/50 border-border min-h-[80px] focus:ring-accent"
@@ -183,13 +189,13 @@ export function AdGenerator() {
 
                 <div className="space-y-2">
                   <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Foto do Produto (Opcional)
+                    Foto do Produto (Até 150MB)
                   </Label>
                   {!productImage ? (
                     <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors">
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
                         <Upload className="w-8 h-8 mb-2 text-muted-foreground" />
-                        <p className="text-xs text-muted-foreground">Arraste ou clique para enviar (PNG, JPG)</p>
+                        <p className="text-xs text-muted-foreground text-center px-4">Arraste ou clique para enviar (PNG, JPG)</p>
                       </div>
                       <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
                     </label>
@@ -267,7 +273,7 @@ export function AdGenerator() {
                     ) : (
                       <Wand2 className="w-5 h-5 mr-2" />
                     )}
-                    {loading ? 'Processando...' : 'Gerar Anúncio Profissional'}
+                    {loading ? 'Analisando e Criando...' : 'Gerar Anúncio Gemini'}
                   </Button>
                 </div>
               </div>
@@ -279,7 +285,7 @@ export function AdGenerator() {
                   <div className="bg-green-500/10 p-3 rounded-full">
                     <CheckCircle2 className="w-12 h-12 text-green-500" />
                   </div>
-                  <h3 className="text-xl font-headline font-bold text-white">Pronto!</h3>
+                  <h3 className="text-xl font-headline font-bold text-white">Anúncio Pronto!</h3>
                   <p className="text-muted-foreground text-sm">
                     Sua campanha foi gerada com sucesso e está pronta para uso.
                   </p>
@@ -299,7 +305,6 @@ export function AdGenerator() {
         </Card>
       </div>
 
-      {/* Coluna Direita: Visualização */}
       <div className="lg:col-span-7 h-full">
         <div className="sticky top-24">
           <div className="flex items-center gap-2 mb-4">
@@ -313,7 +318,7 @@ export function AdGenerator() {
                   <ImageIcon className="w-8 h-8 text-muted-foreground" />
                 </div>
                 <p className="text-muted-foreground font-body leading-relaxed">
-                  Seu anúncio profissional aparecerá aqui. Preencha os detalhes ao lado para começar o processo criativo.
+                  Seu anúncio profissional aparecerá aqui. Preencha os detalhes para começar.
                 </p>
               </div>
             )}
@@ -329,7 +334,7 @@ export function AdGenerator() {
                 <div>
                   <h4 className="font-headline text-2xl font-bold text-white mb-2">Criando seu Anúncio</h4>
                   <p className="text-muted-foreground animate-pulse">
-                    {productUrl ? 'Extraindo dados reais do site...' : 'Renderizando iluminação de estúdio profissional...'}
+                    {productUrl ? 'Gemini analisando o site do produto...' : 'Renderizando iluminação profissional...'}
                   </p>
                 </div>
               </div>

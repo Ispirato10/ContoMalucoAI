@@ -3,7 +3,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'AdVision AI - Gerador de Anúncios Profissionais',
-  description: 'Gere visuais publicitários de alta fidelidade para seus produtos usando IA.',
+  description: 'Gere visuais publicitários de alta fidelidade para seus produtos usando IA Gemini.',
 };
 
 export default function RootLayout({

@@ -1,10 +1,8 @@
 'use server';
 /**
- * @fileOverview This file implements a Genkit flow for generating an optimized prompt for image generation AI.
+ * @fileOverview Este arquivo implementa um fluxo Genkit para gerar um prompt otimizado para IA de geração de imagem.
  *
- * - generateAdImagePrompt - A function that crafts a detailed prompt for image generation based on product details, theme, and platform.
- * - GenerateAdImagePromptInput - The input type for the generateAdImagePrompt function.
- * - GenerateAdImagePromptOutput - The return type for the generateAdImagePrompt function.
+ * - generateAdImagePrompt - Uma função que cria um prompt detalhado baseado nos detalhes do produto, tema e plataforma.
  */
 
 import {ai} from '@/ai/genkit';
@@ -12,53 +10,56 @@ import {z} from 'genkit';
 import * as cheerio from 'cheerio';
 
 const GenerateAdImagePromptInputSchema = z.object({
-  productName: z.string().describe('The name of the product.'),
-  productBenefits: z.string().optional().describe('Key benefits or features of the product.'),
-  productUrl: z.string().url().optional().describe('A URL to the product page to extract more information.'),
-  theme: z.string().describe('The chosen advertising theme (e.g., \'Luxury\', \'Seasonal\', \'Podology\').'),
+  productName: z.string().describe('O nome do produto.'),
+  productBenefits: z.string().optional().describe('Principais benefícios ou características do produto.'),
+  productUrl: z.string().url().optional().describe('Uma URL para a página do produto para extrair mais informações.'),
+  theme: z.string().describe('O tema publicitário escolhido (ex: \'Luxo\', \'Sazonal\', \'Minimalista\').'),
   platform: z
     .enum(['story', 'feed', 'banner', 'facebook-ads', 'whatsapp-campaign'])
-    .describe('The target social media platform or ad format (e.g., \'Instagram Story\', \'Feed Post\').'),
+    .describe('A plataforma de destino ou formato do anúncio.'),
   productImage: z
     .string()
     .optional()
     .describe(
-      "A photo of the product, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+      "Uma foto do produto como data URI Base64."
     ),
 });
 export type GenerateAdImagePromptInput = z.infer<typeof GenerateAdImagePromptInputSchema>;
 
 const GenerateAdImagePromptOutputSchema = z.object({
-  prompt: z.string().describe('The generated detailed prompt for the image generation AI.'),
-  imageSize: z.string().describe('The recommended image size (e.g., 1080x1920, 1080x1080).'),
+  prompt: z.string().describe('O prompt detalhado gerado para a IA de geração de imagem.'),
+  imageSize: z.string().describe('O tamanho recomendado da imagem.'),
 });
 export type GenerateAdImagePromptOutput = z.infer<typeof GenerateAdImagePromptOutputSchema>;
 
-// Tool to fetch product details from a URL
+// Ferramenta para buscar detalhes do produto a partir de uma URL
 const fetchProductDetails = ai.defineTool(
   {
     name: 'fetchProductDetails',
-    description: 'Fetches the text content of a product page URL to extract benefits and details.',
+    description: 'Busca o conteúdo de texto de uma URL de produto para extrair benefícios e detalhes reais.',
     inputSchema: z.object({
-      url: z.string().url().describe('The URL of the product page.'),
+      url: z.string().url().describe('A URL da página do produto.'),
     }),
     outputSchema: z.object({
-      content: z.string().describe('The extracted text content from the page.'),
+      content: z.string().describe('O conteúdo de texto extraído da página.'),
     }),
   },
   async (input) => {
     try {
-      const response = await fetch(input.url);
+      const response = await fetch(input.url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+      });
       const html = await response.text();
       const $ = cheerio.load(html);
       
-      // Remove scripts, styles, and other noise
-      $('script, style, nav, footer, header').remove();
+      $('script, style, nav, footer, header, iframe, noscript').remove();
       
       const content = $('body').text().replace(/\s+/g, ' ').trim();
-      return { content: content.substring(0, 5000) }; // Limit content size
+      return { content: content.substring(0, 6000) }; 
     } catch (error) {
-      return { content: 'Failed to fetch content from URL.' };
+      return { content: 'Não foi possível acessar a URL para extrair detalhes.' };
     }
   }
 );
@@ -69,30 +70,29 @@ const generateAdImagePromptInternal = ai.definePrompt({
   output: {schema: GenerateAdImagePromptOutputSchema},
   tools: [fetchProductDetails],
   prompt: `Você é um especialista em marketing digital e design publicitário de luxo.
-Crie um prompt otimizado para geração de imagem baseado nas informações do produto.
+Sua tarefa é criar um prompt de geração de imagem ultra-detalhado usando IA Gemini.
 
-PRODUTO:
+DADOS DO PRODUTO:
 Nome: {{{productName}}}
-Benefícios fornecidos: {{{productBenefits}}}
-URL do Produto: {{{productUrl}}}
+Benefícios Manuais: {{{productBenefits}}}
+URL: {{{productUrl}}}
 
 {{#if productUrl}}
-IMPORTANTE: Utilize a ferramenta fetchProductDetails para acessar a URL e extrair informações ricas sobre os benefícios, ingredientes (se houver), proposta de valor e tom de voz da marca. Use esses dados reais para tornar o anúncio mais autêntico.
+IMPORTANTE: Use a ferramenta 'fetchProductDetails' para ler a página do produto. Extraia os benefícios reais, ingredientes, proposta de valor e a estética da marca. Incorpore esses elementos no prompt para torná-lo autêntico.
 {{/if}}
 
 TEMA: {{{theme}}}
 PLATAFORMA: {{{platform}}}
 
-REQUISITOS GERAIS PARA A IMAGEM:
-- Estilo luxuoso e cinematográfico.
-- Iluminação profissional e dramática (ex: chiaroscuro, iluminação de estúdio).
-- Design publicitário premium e sofisticado.
-- Produto centralizado e em destaque absoluto.
-- Composição harmônica seguindo regras de design (regra dos terços, simetria).
-- Qualidade ultra realista, 8k, detalhes nítidos.
-- Use elementos visuais que evoquem o tema {{{theme}}}.
+REQUISITOS DO PROMPT FINAL:
+- Deve ser em inglês (melhor para modelos de imagem).
+- Estilo luxuoso, cinematográfico e profissional.
+- Iluminação dramática de estúdio.
+- Foco absoluto no produto centralizado.
+- Detalhes realistas 8k, texturas nítidas.
+- Evocar o tema {{{theme}}}.
 
-Retorne apenas o prompt final otimizado para o modelo de geração de imagem.
+Retorne apenas o prompt otimizado e o tamanho da imagem.
 `,
 });
 
@@ -105,7 +105,7 @@ const generateAdImagePromptFlow = ai.defineFlow(
   async input => {
     const {output} = await generateAdImagePromptInternal(input);
 
-    let imageSize = '1080x1080'; // Default
+    let imageSize = '1080x1080';
     switch (input.platform) {
       case 'story':
         imageSize = '1080x1920';
