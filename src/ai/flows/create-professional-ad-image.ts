@@ -3,15 +3,11 @@
  * @fileOverview Este arquivo implementa um fluxo Genkit para gerar imagens publicitárias profissionais.
  *
  * - createProfessionalAdImage - Uma função que gera uma imagem publicitária baseada em um prompt detalhado e imagem opcional do produto.
- * - CreateProfessionalAdImageInput - O tipo de entrada para a função createProfessionalAdImage.
- * - CreateProfessionalAdImageOutput - O tipo de retorno para a função createProfessionalAdImage.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import {googleAI} from '@genkit-ai/google-genai';
 
-// Esquema de Entrada para o fluxo
 const CreateProfessionalAdImageInputSchema = z.object({
   textPrompt: z.string().describe('Um prompt textual detalhado descrevendo a imagem publicitária desejada.'),
   productImage: z
@@ -26,7 +22,6 @@ const CreateProfessionalAdImageInputSchema = z.object({
 });
 export type CreateProfessionalAdImageInput = z.infer<typeof CreateProfessionalAdImageInputSchema>;
 
-// Esquema de Saída para o fluxo
 const CreateProfessionalAdImageOutputSchema = z.object({
   imageUrl: z.string().describe('O data URI da imagem publicitária profissional gerada.'),
 });
@@ -47,11 +42,8 @@ const createProfessionalAdImageFlow = ai.defineFlow(
   async (input) => {
     const { textPrompt, productImage, platform } = input;
 
-    let imageGenerationPrompt: string | Array<any>;
-    let modelName: any;
     let aspectRatio: '1:1' | '9:16' | '16:9' | undefined;
 
-    // Determinar a proporção baseada na plataforma
     if (platform === 'story') {
       aspectRatio = '9:16';
     } else if (platform === 'feed') {
@@ -61,7 +53,6 @@ const createProfessionalAdImageFlow = ai.defineFlow(
     }
 
     if (productImage) {
-      // Usar Gemini para visão se houver imagem do produto
       const { media } = await ai.generate({
         model: 'googleai/gemini-2.0-flash-exp', 
         prompt: [
@@ -71,7 +62,7 @@ const createProfessionalAdImageFlow = ai.defineFlow(
               url: productImage,
             },
           },
-          { text: `Com base nesta imagem de produto e no seguinte pedido, crie uma imagem publicitária profissional de alta conversão: ${textPrompt}. Foque na estética luxuosa e iluminação de estúdio.` },
+          { text: `Com base nesta imagem de produto e no seguinte pedido, crie uma imagem publicitária profissional de alta conversão: ${textPrompt}. Foque na estética luxuosa, iluminação de estúdio e centralização do produto.` },
         ],
         config: {
           responseModalities: ['TEXT', 'IMAGE'],
@@ -85,7 +76,6 @@ const createProfessionalAdImageFlow = ai.defineFlow(
       return { imageUrl: media.url };
 
     } else {
-      // Usar Imagen 3 para geração de texto para imagem (mais estável)
       const { media } = await ai.generate({
         model: 'googleai/imagen-3',
         prompt: textPrompt,
@@ -95,7 +85,7 @@ const createProfessionalAdImageFlow = ai.defineFlow(
       });
 
       if (!media || !media.url) {
-        throw new Error('Falha ao gerar a imagem com Imagen 3.');
+        throw new Error('Falha ao gerar a imagem com Imagen 3. Verifique se o modelo está disponível em sua região.');
       }
 
       return { imageUrl: media.url };

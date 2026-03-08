@@ -19,7 +19,7 @@ import { createProfessionalAdImage } from '@/ai/flows/create-professional-ad-ima
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 
-const THEMES = [
+const TEMAS = [
   { id: 'Luxury', name: 'Luxo & Premium', description: 'Dourado, iluminação dramática e elegância' },
   { id: 'Minimalist', name: 'Minimalista Moderno', description: 'Cores sólidas, sombras suaves e foco total' },
   { id: 'Seasonal', name: 'Sazonal / Promoção', description: 'Vibrante, temático e chamativo' },
@@ -27,7 +27,7 @@ const THEMES = [
   { id: 'Tech', name: 'Tecnologia & Inovação', description: 'Futurista, néon e alto contraste' },
 ];
 
-const PLATFORMS = [
+const PLATAFORMAS = [
   { id: 'feed', name: 'Instagram Feed (1:1)', icon: '📱' },
   { id: 'story', name: 'Instagram Story (9:16)', icon: '🤳' },
   { id: 'banner', name: 'Banner de Site (16:9)', icon: '🖥️' },
@@ -69,7 +69,7 @@ export function AdGenerator() {
   const generateAd = async () => {
     if (!productName) {
       toast({
-        title: "Nome do Produto",
+        title: "Campo Obrigatório",
         description: "Por favor, informe o nome do produto.",
         variant: "destructive",
       });
@@ -145,7 +145,7 @@ export function AdGenerator() {
                     <div className="bg-accent p-1.5 rounded-md">
                       <Globe className="w-4 h-4 text-white" />
                     </div>
-                    <span className="font-bold text-xs text-accent uppercase tracking-widest">IA Inteligente: Análise de Site</span>
+                    <span className="font-bold text-xs text-accent uppercase tracking-widest">Base de Conhecimento IA</span>
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-bold text-white flex items-center gap-2">
@@ -177,7 +177,7 @@ export function AdGenerator() {
 
                 <div className="space-y-2">
                   <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Diferenciais e Benefícios
+                    Diferenciais e Benefícios (Opcional)
                   </Label>
                   <Textarea
                     placeholder="O que torna seu produto único? (A IA usará isso se não houver link)"
@@ -224,7 +224,7 @@ export function AdGenerator() {
                     Escolha um Tema Visual
                   </Label>
                   <div className="grid grid-cols-1 gap-3">
-                    {THEMES.map((t) => (
+                    {TEMAS.map((t) => (
                       <button
                         key={t.id}
                         onClick={() => setTheme(t.id)}
@@ -250,7 +250,7 @@ export function AdGenerator() {
                       <SelectValue placeholder="Selecione o formato" />
                     </SelectTrigger>
                     <SelectContent>
-                      {PLATFORMS.map((p) => (
+                      {PLATAFORMAS.map((p) => (
                         <SelectItem key={p.id} value={p.id}>
                           {p.icon} {p.name}
                         </SelectItem>
