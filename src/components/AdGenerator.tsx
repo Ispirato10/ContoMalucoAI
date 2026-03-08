@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Upload, Wand2, Image as ImageIcon, CheckCircle2, Download, RefreshCw, X } from 'lucide-react';
+import { Upload, Wand2, Image as ImageIcon, CheckCircle2, Download, RefreshCw, X, Link as LinkIcon } from 'lucide-react';
 import { generateAdImagePrompt } from '@/ai/flows/generate-ad-image-prompt';
 import { createProfessionalAdImage } from '@/ai/flows/create-professional-ad-image';
 import { useToast } from '@/hooks/use-toast';
@@ -39,6 +39,7 @@ export function AdGenerator() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [productName, setProductName] = useState('');
+  const [productUrl, setProductUrl] = useState('');
   const [benefits, setBenefits] = useState('');
   const [theme, setTheme] = useState('Luxury');
   const [platform, setPlatform] = useState<'feed' | 'story' | 'banner'>('feed');
@@ -59,10 +60,10 @@ export function AdGenerator() {
   const clearImage = () => setProductImage(null);
 
   const generateAd = async () => {
-    if (!productName || !benefits) {
+    if (!productName || (!benefits && !productUrl)) {
       toast({
         title: "Missing Information",
-        description: "Please fill in the product name and benefits.",
+        description: "Please fill in the product name and either benefits or a product URL.",
         variant: "destructive",
       });
       return;
@@ -70,10 +71,11 @@ export function AdGenerator() {
 
     setLoading(true);
     try {
-      // 1. Generate optimized prompt
+      // 1. Generate optimized prompt (will fetch URL content if provided)
       const promptResult = await generateAdImagePrompt({
         productName,
-        productBenefits: benefits,
+        productBenefits: benefits || undefined,
+        productUrl: productUrl || undefined,
         theme,
         platform: platform === 'banner' ? 'facebook-ads' : platform,
         productImage: productImage || undefined,
@@ -145,17 +147,34 @@ export function AdGenerator() {
                     className="bg-background/50 border-border focus:ring-accent"
                   />
                 </div>
+
+                <div className="space-y-2">
+                  <Label className="text-sm font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                    <LinkIcon className="w-3 h-3" /> Product Link (Recommended)
+                  </Label>
+                  <Input
+                    placeholder="https://example.com/product"
+                    value={productUrl}
+                    onChange={(e) => setProductUrl(e.target.value)}
+                    className="bg-background/50 border-border focus:ring-accent"
+                  />
+                  <p className="text-[10px] text-muted-foreground italic">
+                    AI will visit this link to extract benefits and details.
+                  </p>
+                </div>
+
                 <div className="space-y-2">
                   <Label className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                    Product Benefits
+                    Manual Benefits (Optional)
                   </Label>
                   <Textarea
-                    placeholder="Describe what makes your product special..."
+                    placeholder="Or describe manually what makes your product special..."
                     value={benefits}
                     onChange={(e) => setBenefits(e.target.value)}
-                    className="bg-background/50 border-border min-h-[100px] focus:ring-accent"
+                    className="bg-background/50 border-border min-h-[80px] focus:ring-accent"
                   />
                 </div>
+
                 <div className="space-y-2">
                   <Label className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
                     Product Photo (Optional)
@@ -242,7 +261,7 @@ export function AdGenerator() {
                     ) : (
                       <Wand2 className="w-5 h-5 mr-2" />
                     )}
-                    {loading ? 'Crafting Magic...' : 'Generate Ad'}
+                    {loading ? 'Analyzing & Crafting...' : 'Generate Ad'}
                   </Button>
                 </div>
               </div>
@@ -303,7 +322,9 @@ export function AdGenerator() {
                 </div>
                 <div>
                   <h4 className="font-headline text-2xl font-bold text-white mb-2">Generating Masterpiece</h4>
-                  <p className="text-muted-foreground animate-pulse">Analyzing aesthetics & rendering professional lighting...</p>
+                  <p className="text-muted-foreground animate-pulse">
+                    {productUrl ? 'Scanning website & extracting benefits...' : 'Analyzing aesthetics & rendering professional lighting...'}
+                  </p>
                 </div>
               </div>
             )}

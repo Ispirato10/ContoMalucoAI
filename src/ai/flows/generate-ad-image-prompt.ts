@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview This file implements a Genkit flow for generating an optimized prompt for image generation AI.
@@ -9,10 +10,12 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import * as cheerio from 'cheerio';
 
 const GenerateAdImagePromptInputSchema = z.object({
   productName: z.string().describe('The name of the product.'),
-  productBenefits: z.string().describe('Key benefits or features of the product.'),
+  productBenefits: z.string().optional().describe('Key benefits or features of the product.'),
+  productUrl: z.string().url().optional().describe('A URL to the product page to extract more information.'),
   theme: z.string().describe('The chosen advertising theme (e.g., \'Luxury\', \'Seasonal\', \'Podology\').'),
   platform: z
     .enum(['story', 'feed', 'banner', 'facebook-ads', 'whatsapp-campaign'])
@@ -32,60 +35,79 @@ const GenerateAdImagePromptOutputSchema = z.object({
 });
 export type GenerateAdImagePromptOutput = z.infer<typeof GenerateAdImagePromptOutputSchema>;
 
+// Tool to fetch product details from a URL
+const fetchProductDetails = ai.defineTool(
+  {
+    name: 'fetchProductDetails',
+    description: 'Fetches the text content of a product page URL to extract benefits and details.',
+    inputSchema: z.object({
+      url: z.string().url().describe('The URL of the product page.'),
+    }),
+    outputSchema: z.object({
+      content: z.string().describe('The extracted text content from the page.'),
+    }),
+  },
+  async (input) => {
+    try {
+      const response = await fetch(input.url);
+      const html = await response.text();
+      const $ = cheerio.load(html);
+      
+      // Remove scripts, styles, and other noise
+      $('script, style, nav, footer, header').remove();
+      
+      const content = $('body').text().replace(/\s+/g, ' ').trim();
+      return { content: content.substring(0, 5000) }; // Limit content size
+    } catch (error) {
+      return { content: 'Failed to fetch content from URL.' };
+    }
+  }
+);
+
 const generateAdImagePromptInternal = ai.definePrompt({
   name: 'generateAdImagePrompt',
   input: {schema: GenerateAdImagePromptInputSchema},
   output: {schema: GenerateAdImagePromptOutputSchema},
-  prompt: `Crie uma imagem publicitária profissional para redes sociais, incorporando o produto e o tema selecionados. O prompt final deve ser otimizado para um modelo de geração de imagens, garantindo alta relevância e qualidade profissional.
+  tools: [fetchProductDetails],
+  prompt: `Você é um especialista em marketing digital e design publicitário de luxo.
+Crie um prompt otimizado para geração de imagem baseado nas informações do produto.
 
 PRODUTO:
 Nome: {{{productName}}}
-Benefícios: {{{productBenefits}}}
+Benefícios fornecidos: {{{productBenefits}}}
+URL do Produto: {{{productUrl}}}
+
+{{#if productUrl}}
+IMPORTANTE: Use a ferramenta fetchProductDetails para acessar a URL e extrair informações relevantes sobre o produto e seus benefícios reais.
+{{/if}}
 
 TEMA: {{{theme}}}
-
 PLATAFORMA: {{{platform}}}
 
 REQUISITOS GERAIS PARA A IMAGEM:
-- estilo luxuoso
-- iluminação profissional e dramática
-- design publicitário premium e sofisticado
-- produto centralizado e em destaque
-- tipografia elegante e legível (se aplicável, para slogans)
-- layout de marketing de alto nível
-- manter o produto idêntico à imagem original do produto (se fornecida)
-- qualidade ultra realista e fotográfica
-- foco na conversão e impacto visual
-- use elementos visuais que evoquem o tema {{{theme}}}
+- Estilo luxuoso e cinematográfico.
+- Iluminação profissional e dramática (ex: chiaroscuro, iluminação de estúdio).
+- Design publicitário premium e sofisticado.
+- Produto centralizado e em destaque absoluto.
+- Composição harmônica seguindo regras de design (regra dos terços, simetria).
+- Qualidade ultra realista, 8k, detalhes nítidos.
+- Use elementos visuais que evoquem o tema {{{theme}}}.
 
 FORMATO E TAMANHO:
 {{#ifEq platform "story"}}
-  Formato: vertical para Instagram Story
+  Formato: Vertical 9:16
   Tamanho: 1080x1920
 {{else ifEq platform "feed"}}
-  Formato: quadrado para Instagram Feed
+  Formato: Quadrado 1:1
   Tamanho: 1080x1080
 {{else ifEq platform "banner"}}
-  Formato: retangular para Banner (horizontal)
+  Formato: Retangular 16:9
   Tamanho: 1200x628
-{{else ifEq platform "facebook-ads"}}
-  Formato: retangular para Facebook Ads
-  Tamanho: 1200x628
-{{else ifEq platform "whatsapp-campaign"}}
-  Formato: retangular para WhatsApp Campanha
-  Tamanho: 800x418
 {{else}}
-  Formato: quadrado (padrão)
-  Tamanho: 1080x1080
+  Formato: Quadrado 1:1
 {{/ifEq}}
 
-OBJETIVO: criar uma imagem comercial de alta conversão para redes sociais, que seja visualmente deslumbrante e alinhada ao branding de luxo e ao tema escolhido.
-
-{{#if productImage}}
-  IMAGEM DE REFERÊNCIA DO PRODUTO: {{media url=productImage}}
-{{/if}}
-
-Por favor, retorne apenas o prompt de imagem final otimizado, sem introduções ou conclusões.
+Retorne apenas o prompt final otimizado para o modelo de geração de imagem.
 `,
 });
 
