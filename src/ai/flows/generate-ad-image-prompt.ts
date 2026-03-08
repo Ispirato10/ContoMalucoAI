@@ -10,7 +10,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import { load } from 'cheerio';
+import * as cheerio from 'cheerio';
 
 const GenerateAdImagePromptInputSchema = z.object({
   productName: z.string().describe('The name of the product.'),
@@ -51,7 +51,7 @@ const fetchProductDetails = ai.defineTool(
     try {
       const response = await fetch(input.url);
       const html = await response.text();
-      const $ = load(html);
+      const $ = cheerio.load(html);
       
       // Remove scripts, styles, and other noise
       $('script, style, nav, footer, header').remove();
@@ -78,7 +78,7 @@ Benefícios fornecidos: {{{productBenefits}}}
 URL do Produto: {{{productUrl}}}
 
 {{#if productUrl}}
-IMPORTANTE: Use a ferramenta fetchProductDetails para acessar a URL e extrair informações relevantes sobre o produto e seus benefícios reais.
+IMPORTANTE: Utilize a ferramenta fetchProductDetails para acessar a URL e extrair informações ricas sobre os benefícios, ingredientes (se houver), proposta de valor e tom de voz da marca. Use esses dados reais para tornar o anúncio mais autêntico.
 {{/if}}
 
 TEMA: {{{theme}}}
@@ -92,20 +92,6 @@ REQUISITOS GERAIS PARA A IMAGEM:
 - Composição harmônica seguindo regras de design (regra dos terços, simetria).
 - Qualidade ultra realista, 8k, detalhes nítidos.
 - Use elementos visuais que evoquem o tema {{{theme}}}.
-
-FORMATO E TAMANHO:
-{{#ifEq platform "story"}}
-  Formato: Vertical 9:16
-  Tamanho: 1080x1920
-{{else ifEq platform "feed"}}
-  Formato: Quadrado 1:1
-  Tamanho: 1080x1080
-{{else ifEq platform "banner"}}
-  Formato: Retangular 16:9
-  Tamanho: 1200x628
-{{else}}
-  Formato: Quadrado 1:1
-{{/ifEq}}
 
 Retorne apenas o prompt final otimizado para o modelo de geração de imagem.
 `,

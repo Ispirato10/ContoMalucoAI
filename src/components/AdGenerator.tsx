@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Upload, Wand2, Image as ImageIcon, CheckCircle2, Download, RefreshCw, X, Link as LinkIcon, Globe } from 'lucide-react';
+import { Upload, Wand2, Image as ImageIcon, CheckCircle2, Download, RefreshCw, X, Link as LinkIcon, Globe, Sparkles } from 'lucide-react';
 import { generateAdImagePrompt } from '@/ai/flows/generate-ad-image-prompt';
 import { createProfessionalAdImage } from '@/ai/flows/create-professional-ad-image';
 import { useToast } from '@/hooks/use-toast';
@@ -62,8 +62,8 @@ export function AdGenerator() {
   const generateAd = async () => {
     if (!productName || (!benefits && !productUrl)) {
       toast({
-        title: "Missing Information",
-        description: "Please fill in the product name and either benefits or a product URL.",
+        title: "Informação Faltando",
+        description: "Por favor, preencha o nome do produto e insira um link ou descreva os benefícios.",
         variant: "destructive",
       });
       return;
@@ -71,7 +71,6 @@ export function AdGenerator() {
 
     setLoading(true);
     try {
-      // 1. Generate optimized prompt (will fetch URL content if provided)
       const promptResult = await generateAdImagePrompt({
         productName,
         productBenefits: benefits || undefined,
@@ -81,7 +80,6 @@ export function AdGenerator() {
         productImage: productImage || undefined,
       });
 
-      // 2. Create the ad image
       const adResult = await createProfessionalAdImage({
         textPrompt: promptResult.prompt,
         productImage: productImage || undefined,
@@ -93,8 +91,8 @@ export function AdGenerator() {
     } catch (error) {
       console.error(error);
       toast({
-        title: "Generation Failed",
-        description: "An error occurred while generating your ad image. Please try again.",
+        title: "Falha na Geração",
+        description: "Ocorreu um erro ao gerar sua imagem. Tente novamente.",
         variant: "destructive",
       });
     } finally {
@@ -121,7 +119,7 @@ export function AdGenerator() {
       <div className="lg:col-span-5 space-y-6">
         <Card className="bg-card border-border shadow-2xl overflow-hidden">
           <div className="bg-primary/20 border-b border-border p-4 flex items-center justify-between">
-            <h3 className="font-headline font-bold text-lg text-white">Campaign Details</h3>
+            <h3 className="font-headline font-bold text-lg text-white">Criar Campanha</h3>
             <div className="flex gap-1">
               {[1, 2, 3].map((s) => (
                 <div
@@ -136,33 +134,36 @@ export function AdGenerator() {
           <CardContent className="p-6 space-y-6">
             {step === 1 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
-                <div className="bg-accent/5 p-4 rounded-xl border border-accent/20 space-y-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Globe className="w-5 h-5 text-accent" />
-                    <span className="font-bold text-sm text-accent uppercase tracking-wider">Smart Knowledge Base</span>
+                {/* DESTAQUE PARA O LINK DO PRODUTO */}
+                <div className="bg-accent/10 p-5 rounded-xl border-2 border-accent/30 space-y-4 ring-4 ring-accent/5">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="bg-accent p-1.5 rounded-md">
+                      <Globe className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="font-bold text-xs text-accent uppercase tracking-widest">Base de Conhecimento Inteligente</span>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
-                      <LinkIcon className="w-3 h-3 text-accent" /> Product URL (Highly Recommended)
+                    <Label className="text-sm font-bold text-white flex items-center gap-2">
+                      Link do Produto (Recomendado)
                     </Label>
                     <Input
-                      placeholder="https://myshopify.com/luxury-perfume"
+                      placeholder="Cole aqui o link da sua loja ou site do produto"
                       value={productUrl}
                       onChange={(e) => setProductUrl(e.target.value)}
-                      className="bg-background border-accent/30 focus:ring-accent"
+                      className="bg-background border-accent/50 focus:ring-accent h-12 text-base"
                     />
-                    <p className="text-[11px] text-muted-foreground/80 leading-tight">
-                      Our AI will visit this link to extract features, benefits, and the brand's aesthetic tone automatically.
+                    <p className="text-[11px] text-accent/80 leading-tight font-medium">
+                      Nossa IA visitará este site para extrair automaticamente benefícios, recursos e o tom de voz da sua marca.
                     </p>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                    Product Name
+                  <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Nome do Produto
                   </Label>
                   <Input
-                    placeholder="e.g. Midnight Sapphire Perfume"
+                    placeholder="Ex: Perfume Midnight Sapphire"
                     value={productName}
                     onChange={(e) => setProductName(e.target.value)}
                     className="bg-background/50 border-border focus:ring-accent"
@@ -170,11 +171,11 @@ export function AdGenerator() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                    Manual Benefits (Optional)
+                  <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Benefícios Manuais (Opcional)
                   </Label>
                   <Textarea
-                    placeholder="Or describe manually what makes your product special..."
+                    placeholder="Ou descreva aqui o que torna seu produto especial..."
                     value={benefits}
                     onChange={(e) => setBenefits(e.target.value)}
                     className="bg-background/50 border-border min-h-[80px] focus:ring-accent"
@@ -182,14 +183,14 @@ export function AdGenerator() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                    Product Photo (Optional)
+                  <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Foto Real do Produto (Opcional)
                   </Label>
                   {!productImage ? (
                     <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors">
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
                         <Upload className="w-8 h-8 mb-2 text-muted-foreground" />
-                        <p className="text-xs text-muted-foreground">PNG, JPG, or JPEG</p>
+                        <p className="text-xs text-muted-foreground">PNG, JPG, ou JPEG</p>
                       </div>
                       <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
                     </label>
@@ -206,7 +207,7 @@ export function AdGenerator() {
                   )}
                 </div>
                 <Button onClick={() => setStep(2)} className="w-full bg-accent hover:bg-accent/90 text-white font-bold h-12 shadow-lg shadow-accent/20">
-                  Next: Choose Aesthetics
+                  Próximo: Definir Estética
                 </Button>
               </div>
             )}
@@ -214,8 +215,8 @@ export function AdGenerator() {
             {step === 2 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
                 <div className="space-y-2">
-                  <Label className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                    Creative Theme
+                  <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Tema Criativo
                   </Label>
                   <div className="grid grid-cols-1 gap-3">
                     {THEMES.map((t) => (
@@ -236,12 +237,12 @@ export function AdGenerator() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                    Format & Platform
+                  <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Formato e Plataforma
                   </Label>
                   <Select value={platform} onValueChange={(v: any) => setPlatform(v)}>
                     <SelectTrigger className="bg-background/50 border-border h-12">
-                      <SelectValue placeholder="Select platform" />
+                      <SelectValue placeholder="Selecione a plataforma" />
                     </SelectTrigger>
                     <SelectContent>
                       {PLATFORMS.map((p) => (
@@ -255,7 +256,7 @@ export function AdGenerator() {
 
                 <div className="flex gap-3">
                   <Button variant="outline" onClick={() => setStep(1)} className="flex-1 border-border">
-                    Back
+                    Voltar
                   </Button>
                   <Button
                     onClick={generateAd}
@@ -267,7 +268,7 @@ export function AdGenerator() {
                     ) : (
                       <Wand2 className="w-5 h-5 mr-2" />
                     )}
-                    {loading ? 'Analyzing & Crafting...' : 'Generate Ad'}
+                    {loading ? 'Analisando e Criando...' : 'Gerar Anúncio'}
                   </Button>
                 </div>
               </div>
@@ -279,18 +280,18 @@ export function AdGenerator() {
                   <div className="bg-green-500/10 p-3 rounded-full">
                     <CheckCircle2 className="w-12 h-12 text-green-500" />
                   </div>
-                  <h3 className="text-xl font-headline font-bold text-white">Your Ad is Ready!</h3>
+                  <h3 className="text-xl font-headline font-bold text-white">Pronto!</h3>
                   <p className="text-muted-foreground text-sm">
-                    Our AI has synthesized your product details into a professional campaign.
+                    Sua campanha foi gerada com base nos dados do seu produto.
                   </p>
                 </div>
                 <div className="flex flex-col gap-3">
                   <Button onClick={downloadImage} className="w-full bg-accent hover:bg-accent/90 text-white h-12">
                     <Download className="w-5 h-5 mr-2" />
-                    Download Visual
+                    Baixar Visual
                   </Button>
                   <Button variant="outline" onClick={reset} className="w-full border-border">
-                    Create Another
+                    Criar Outro
                   </Button>
                 </div>
               </div>
@@ -304,7 +305,7 @@ export function AdGenerator() {
         <div className="sticky top-24">
           <div className="flex items-center gap-2 mb-4">
             <ImageIcon className="w-5 h-5 text-accent" />
-            <h3 className="font-headline text-xl text-white">Live Preview</h3>
+            <h3 className="font-headline text-xl text-white">Visualização em Tempo Real</h3>
           </div>
           <div className="relative rounded-xl border border-border bg-card/50 overflow-hidden shadow-2xl group min-h-[500px] flex items-center justify-center">
             {!loading && !generatedImage && (
@@ -313,7 +314,7 @@ export function AdGenerator() {
                   <ImageIcon className="w-8 h-8 text-muted-foreground" />
                 </div>
                 <p className="text-muted-foreground font-body leading-relaxed">
-                  Your professional ad campaign will appear here. Fill out the form to begin the magic.
+                  Seu anúncio profissional aparecerá aqui. Preencha os detalhes ao lado para começar.
                 </p>
               </div>
             )}
@@ -327,9 +328,9 @@ export function AdGenerator() {
                   </div>
                 </div>
                 <div>
-                  <h4 className="font-headline text-2xl font-bold text-white mb-2">Generating Masterpiece</h4>
+                  <h4 className="font-headline text-2xl font-bold text-white mb-2">Criando sua Obra-Prima</h4>
                   <p className="text-muted-foreground animate-pulse">
-                    {productUrl ? 'Scanning website & extracting benefits...' : 'Analyzing aesthetics & rendering professional lighting...'}
+                    {productUrl ? 'Acessando site e extraindo benefícios reais...' : 'Analisando estética e renderizando iluminação profissional...'}
                   </p>
                 </div>
               </div>
