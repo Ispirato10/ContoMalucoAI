@@ -2,8 +2,8 @@ import type {Metadata} from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'AdVision AI - Gerador de Anúncios Profissionais',
-  description: 'Gere visuais publicitários de alta fidelidade para seus produtos usando IA Gemini.',
+  title: 'AdVision AI - Gerador de Anúncios com Gemini',
+  description: 'Gere peças publicitárias profissionais para seus produtos usando inteligência artificial de ponta.',
 };
 
 export default function RootLayout({

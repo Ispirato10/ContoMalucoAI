@@ -20,11 +20,11 @@ import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 
 const THEMES = [
-  { id: 'Luxury', name: 'Luxo & Premium', description: 'Acentos dourados, iluminação elegante' },
-  { id: 'Minimalist', name: 'Minimalismo Moderno', description: 'Linhas limpas, sombras suaves' },
-  { id: 'Seasonal', name: 'Sazonal / Festivo', description: 'Vibrante e temático' },
-  { id: 'Beauty', name: 'Beleza & Cosméticos', description: 'Foco suave, texturas premium' },
-  { id: 'Tech', name: 'Tecnologia & Inovação', description: 'Moderno, futurista, alto contraste' },
+  { id: 'Luxury', name: 'Luxo & Premium', description: 'Dourado, iluminação dramática e elegância' },
+  { id: 'Minimalist', name: 'Minimalista Moderno', description: 'Cores sólidas, sombras suaves e foco total' },
+  { id: 'Seasonal', name: 'Sazonal / Promoção', description: 'Vibrante, temático e chamativo' },
+  { id: 'Beauty', name: 'Beleza & Estética', description: 'Foco suave, tons pastel e texturas finas' },
+  { id: 'Tech', name: 'Tecnologia & Inovação', description: 'Futurista, néon e alto contraste' },
 ];
 
 const PLATFORMS = [
@@ -69,8 +69,8 @@ export function AdGenerator() {
   const generateAd = async () => {
     if (!productName) {
       toast({
-        title: "Nome do Produto Faltando",
-        description: "Por favor, insira o nome do seu produto.",
+        title: "Nome do Produto",
+        description: "Por favor, informe o nome do produto.",
         variant: "destructive",
       });
       return;
@@ -98,8 +98,8 @@ export function AdGenerator() {
     } catch (error: any) {
       console.error(error);
       toast({
-        title: "Falha na Geração",
-        description: error.message || "Ocorreu um erro ao processar sua imagem com o Gemini.",
+        title: "Erro na Geração",
+        description: error.message || "Ocorreu um erro ao processar com a IA Gemini.",
         variant: "destructive",
       });
     } finally {
@@ -125,7 +125,7 @@ export function AdGenerator() {
       <div className="lg:col-span-5 space-y-6">
         <Card className="bg-card border-border shadow-2xl overflow-hidden">
           <div className="bg-primary/20 border-b border-border p-4 flex items-center justify-between">
-            <h3 className="font-headline font-bold text-lg text-white">Configurar Campanha</h3>
+            <h3 className="font-headline font-bold text-lg text-white">Criar Campanha</h3>
             <div className="flex gap-1">
               {[1, 2, 3].map((s) => (
                 <div
@@ -149,10 +149,10 @@ export function AdGenerator() {
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-bold text-white flex items-center gap-2">
-                      Link do Produto (Análise Gemini)
+                      Link do Produto (URL)
                     </Label>
                     <Input
-                      placeholder="Cole o link da loja aqui"
+                      placeholder="Cole o link do seu produto aqui"
                       value={productUrl}
                       onChange={(e) => setProductUrl(e.target.value)}
                       className="bg-background border-accent/50 focus:ring-accent h-12 text-base"
@@ -168,7 +168,7 @@ export function AdGenerator() {
                     Nome do Produto
                   </Label>
                   <Input
-                    placeholder="Ex: Perfume Safira da Noite"
+                    placeholder="Ex: Tênis Ultra Confort Pro"
                     value={productName}
                     onChange={(e) => setProductName(e.target.value)}
                     className="bg-background/50 border-border focus:ring-accent"
@@ -177,10 +177,10 @@ export function AdGenerator() {
 
                 <div className="space-y-2">
                   <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Benefícios Manuais (Opcional)
+                    Diferenciais/Benefícios (Opcional)
                   </Label>
                   <Textarea
-                    placeholder="Descreva aqui o que torna seu produto único..."
+                    placeholder="Descreva o que torna seu produto único..."
                     value={benefits}
                     onChange={(e) => setBenefits(e.target.value)}
                     className="bg-background/50 border-border min-h-[80px] focus:ring-accent"
@@ -189,13 +189,13 @@ export function AdGenerator() {
 
                 <div className="space-y-2">
                   <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Foto do Produto (Até 150MB)
+                    Foto do Produto (PNG ou JPG)
                   </Label>
                   {!productImage ? (
                     <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors">
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
                         <Upload className="w-8 h-8 mb-2 text-muted-foreground" />
-                        <p className="text-xs text-muted-foreground text-center px-4">Arraste ou clique para enviar (PNG, JPG)</p>
+                        <p className="text-xs text-muted-foreground text-center px-4">Arraste ou clique para enviar (Max 150MB)</p>
                       </div>
                       <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
                     </label>
@@ -212,7 +212,7 @@ export function AdGenerator() {
                   )}
                 </div>
                 <Button onClick={() => setStep(2)} className="w-full bg-accent hover:bg-accent/90 text-white font-bold h-12 shadow-lg shadow-accent/20">
-                  Próximo: Definir Estética
+                  Próximo: Estética do Anúncio
                 </Button>
               </div>
             )}
@@ -243,7 +243,7 @@ export function AdGenerator() {
 
                 <div className="space-y-2">
                   <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Formato da Plataforma
+                    Formato / Rede Social
                   </Label>
                   <Select value={platform} onValueChange={(v: any) => setPlatform(v)}>
                     <SelectTrigger className="bg-background/50 border-border h-12">
@@ -273,7 +273,7 @@ export function AdGenerator() {
                     ) : (
                       <Wand2 className="w-5 h-5 mr-2" />
                     )}
-                    {loading ? 'Analisando e Criando...' : 'Gerar Anúncio Gemini'}
+                    {loading ? 'Processando com Gemini...' : 'Gerar Anúncio Profissional'}
                   </Button>
                 </div>
               </div>
@@ -285,9 +285,9 @@ export function AdGenerator() {
                   <div className="bg-green-500/10 p-3 rounded-full">
                     <CheckCircle2 className="w-12 h-12 text-green-500" />
                   </div>
-                  <h3 className="text-xl font-headline font-bold text-white">Anúncio Pronto!</h3>
+                  <h3 className="text-xl font-headline font-bold text-white">Anúncio Criado!</h3>
                   <p className="text-muted-foreground text-sm">
-                    Sua campanha foi gerada com sucesso e está pronta para uso.
+                    Sua peça publicitária de alta fidelidade está pronta para ser usada.
                   </p>
                 </div>
                 <div className="flex flex-col gap-3">
@@ -309,7 +309,7 @@ export function AdGenerator() {
         <div className="sticky top-24">
           <div className="flex items-center gap-2 mb-4">
             <ImageIcon className="w-5 h-5 text-accent" />
-            <h3 className="font-headline text-xl text-white">Visualização em Tempo Real</h3>
+            <h3 className="font-headline text-xl text-white">Prévia em Tempo Real</h3>
           </div>
           <div className="relative rounded-xl border border-border bg-card/50 overflow-hidden shadow-2xl group min-h-[500px] flex items-center justify-center">
             {!loading && !generatedImage && (
@@ -318,7 +318,7 @@ export function AdGenerator() {
                   <ImageIcon className="w-8 h-8 text-muted-foreground" />
                 </div>
                 <p className="text-muted-foreground font-body leading-relaxed">
-                  Seu anúncio profissional aparecerá aqui. Preencha os detalhes para começar.
+                  A mágica acontece aqui. Preencha os detalhes e veja o poder do Gemini em ação.
                 </p>
               </div>
             )}
@@ -332,9 +332,9 @@ export function AdGenerator() {
                   </div>
                 </div>
                 <div>
-                  <h4 className="font-headline text-2xl font-bold text-white mb-2">Criando seu Anúncio</h4>
+                  <h4 className="font-headline text-2xl font-bold text-white mb-2">IA Gemini Criando seu Anúncio</h4>
                   <p className="text-muted-foreground animate-pulse">
-                    {productUrl ? 'Gemini analisando o site do produto...' : 'Renderizando iluminação profissional...'}
+                    {productUrl ? 'Analisando site do produto para extrair diferenciais...' : 'Renderizando iluminação cinematográfica...'}
                   </p>
                 </div>
               </div>
@@ -344,7 +344,7 @@ export function AdGenerator() {
               <div className="w-full h-full animate-in zoom-in-95 duration-700">
                 <Image
                   src={generatedImage}
-                  alt="Anúncio Gerado"
+                  alt="Anúncio Finalizado"
                   width={1080}
                   height={platform === 'story' ? 1920 : platform === 'banner' ? 628 : 1080}
                   className="w-full h-full object-contain"
