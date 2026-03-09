@@ -42,8 +42,8 @@ const createProfessionalAdImageFlow = ai.defineFlow(
   async (input) => {
     const { textPrompt, productImage, platform } = input;
 
+    // Mapear proporção de tela para o formato do Imagen
     let aspectRatio: '1:1' | '9:16' | '16:9' | undefined;
-
     if (platform === 'story') {
       aspectRatio = '9:16';
     } else if (platform === 'feed') {
@@ -53,8 +53,10 @@ const createProfessionalAdImageFlow = ai.defineFlow(
     }
 
     if (productImage) {
+      // Usar Gemini 2.5 Flash Image para edição de imagem (Image-to-Image)
+      // Este modelo é excelente para manter a consistência do produto original
       const { media } = await ai.generate({
-        model: 'googleai/gemini-2.0-flash-exp', 
+        model: 'googleai/gemini-2.5-flash-image', 
         prompt: [
           {
             media: {
@@ -62,7 +64,7 @@ const createProfessionalAdImageFlow = ai.defineFlow(
               url: productImage,
             },
           },
-          { text: `Com base nesta imagem de produto e no seguinte pedido, crie uma imagem publicitária profissional de alta conversão: ${textPrompt}. Foque na estética luxuosa, iluminação de estúdio e centralização do produto.` },
+          { text: `Crie uma imagem publicitária profissional de luxo baseada neste produto. O ambiente deve ser: ${textPrompt}. Mantenha o produto fiel ao original, com iluminação de estúdio e estética premium.` },
         ],
         config: {
           responseModalities: ['TEXT', 'IMAGE'],
@@ -70,12 +72,14 @@ const createProfessionalAdImageFlow = ai.defineFlow(
       });
 
       if (!media || !media.url) {
-        throw new Error('Falha ao gerar a imagem com Gemini Vision.');
+        throw new Error('Falha ao gerar a imagem com Gemini Vision. Tente um prompt mais simples ou uma imagem menor.');
       }
 
       return { imageUrl: media.url };
 
     } else {
+      // Usar Imagen 4 ou Imagen 3 para geração de texto para imagem pura
+      // Tentamos o identificador mais estável conforme diretrizes
       const { media } = await ai.generate({
         model: 'googleai/imagen-3',
         prompt: textPrompt,
@@ -85,7 +89,7 @@ const createProfessionalAdImageFlow = ai.defineFlow(
       });
 
       if (!media || !media.url) {
-        throw new Error('Falha ao gerar a imagem com Imagen 3. Verifique se o modelo está disponível em sua região.');
+        throw new Error('Falha ao gerar a imagem com Imagen. Verifique se o modelo está disponível em sua região ou se o prompt é seguro.');
       }
 
       return { imageUrl: media.url };
