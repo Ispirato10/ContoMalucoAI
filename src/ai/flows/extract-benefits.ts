@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview Fluxo Genkit para extrair diferenciais de produtos a partir de uma URL.
@@ -35,7 +34,11 @@ const fetchRawContent = ai.defineTool(
           'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
           'Cache-Control': 'no-cache',
           'Pragma': 'no-cache',
-          'Upgrade-Insecure-Requests': '1'
+          'Upgrade-Insecure-Requests': '1',
+          'Sec-Fetch-Dest': 'document',
+          'Sec-Fetch-Mode': 'navigate',
+          'Sec-Fetch-Site': 'none',
+          'Sec-Fetch-User': '?1'
         },
         next: { revalidate: 3600 }
       });
@@ -47,21 +50,32 @@ const fetchRawContent = ai.defineTool(
       const html = await response.text();
       const $ = cheerio.load(html);
       
+      // Capturar Metadados Críticos (frequentemente contêm os melhores benefícios)
+      const metaDescription = $('meta[name="description"]').attr('content') || '';
+      const ogDescription = $('meta[property="og:description"]').attr('content') || '';
+      const pageTitle = $('title').text() || '';
+      
       // Remover elementos que poluem o contexto da IA
       $('script, style, nav, footer, header, iframe, noscript, svg, form, head, .ads, .popup, #footer, #header, .menu').remove();
       
       // Capturar apenas o texto visível e relevante
-      // Focamos em áreas que geralmente contêm descrições de produtos
-      const content = $('body').text().replace(/\s+/g, ' ').trim().substring(0, 15000);
+      const bodyContent = $('body').text().replace(/\s+/g, ' ').trim().substring(0, 12000);
       
-      if (!content || content.length < 100) {
+      const fullContext = `
+        Título: ${pageTitle}
+        Descrição Meta: ${metaDescription}
+        Descrição OG: ${ogDescription}
+        Conteúdo da Página: ${bodyContent}
+      `.substring(0, 15000);
+      
+      if (fullContext.length < 50) {
         return { html: 'Conteúdo insuficiente encontrado na página para análise automática.' };
       }
 
-      return { html: content };
+      return { html: fullContext };
     } catch (error: any) {
       console.error('Scraper Error:', error.message);
-      return { html: `Erro técnico ao acessar o site. Por favor, preencha os benefícios manualmente.` };
+      return { html: `Erro técnico ao acessar o site: ${error.message}. Por favor, preencha os benefícios manualmente.` };
     }
   }
 );
@@ -71,18 +85,18 @@ const extractBenefitsPrompt = ai.definePrompt({
   input: { schema: ExtractBenefitsInputSchema },
   output: { schema: ExtractBenefitsOutputSchema },
   tools: [fetchRawContent],
-  prompt: `Você é um Estrategista de Marketing de Alta Performance.
-Sua missão é ler o conteúdo do site {{{url}}} e extrair os BENEFÍCIOS e DIFERENCIAIS reais do produto.
+  prompt: `Você é um Estrategista de Marketing de Alta Performance especializado em E-commerce.
+Sua missão é analisar o site {{{url}}} e extrair os BENEFÍCIOS e DIFERENCIAIS reais do produto.
 
-Utilize a ferramenta 'fetchRawContent' para obter os dados do site.
+Utilize OBRIGATORIAMENTE a ferramenta 'fetchRawContent' para obter os dados do site antes de responder.
 
 DIRETRIZES:
 1. Identifique o que torna este produto ÚNICO (tecnologia, material, praticidade, luxo, preço, etc).
-2. Ignore menus, termos de uso e links de rodapé.
-3. Transforme características técnicas em argumentos de venda poderosos.
-4. Se o conteúdo retornado pela ferramenta indicar erro ou insuficiência, responda apenas: "Não foi possível extrair automaticamente. Por favor, descreva os benefícios abaixo."
+2. Transforme características técnicas frias em argumentos de venda poderosos e emocionais.
+3. Se o conteúdo retornado pela ferramenta indicar erro ou for muito vago, responda: "Não foi possível extrair automaticamente todos os detalhes. Por favor, descreva os diferenciais abaixo para um anúncio mais forte."
+4. Foque em benefícios que podem ser VISUALIZADOS em um comercial (ex: "toque macio", "luz ultra-brilhante", "design aerodinâmico").
 
-Responda em PORTUGUÊS (Brasil) de forma direta e persuasiva.`,
+Responda em PORTUGUÊS (Brasil) de forma direta, persuasiva e elegante.`,
 });
 
 export async function extractBenefits(input: { url: string }) {

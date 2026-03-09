@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState } from 'react';
@@ -120,7 +119,7 @@ export function AdGenerator() {
     } catch (error: any) {
       toast({ 
         title: "Aviso de Extração", 
-        description: "Não conseguimos ler o site automaticamente. Por favor, descreva os benefícios manualmente.", 
+        description: "Não conseguimos ler o site automaticamente devido a bloqueios. Por favor, descreva os benefícios manualmente.", 
         variant: "destructive" 
       });
     } finally {
@@ -186,7 +185,7 @@ export function AdGenerator() {
               <h2 className="font-headline font-bold text-2xl text-white tracking-tight uppercase italic">DIRETOR DE ARTE IA</h2>
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="text-[10px] text-accent border-accent/30 font-bold uppercase tracking-widest bg-accent/5">Comerciais de Elite</Badge>
-                <Badge variant="outline" className="text-[10px] text-green-400 border-green-400/30 font-bold uppercase tracking-widest bg-green-400/5">Gemini 2.5 Analysis</Badge>
+                <Badge variant="outline" className="text-[10px] text-green-400 border-green-400/30 font-bold uppercase tracking-widest bg-green-400/5">Análise de Mercado</Badge>
               </div>
             </div>
           </div>
@@ -229,7 +228,7 @@ export function AdGenerator() {
                         {extracting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
                       </Button>
                     </div>
-                    <p className="text-[10px] text-muted-foreground leading-tight italic">Clique na lupa para que a IA extraia os benefícios automaticamente.</p>
+                    <p className="text-[10px] text-muted-foreground leading-tight italic">Clique na lupa para que a IA extraia os diferenciais do site automaticamente.</p>
                   </div>
                 </div>
 
@@ -252,7 +251,7 @@ export function AdGenerator() {
                         <Lightbulb className="w-4 h-4 text-yellow-500" /> 
                         Diferenciais & Benefícios (Auto-preenchido)
                       </span>
-                      {extracting && <Badge variant="outline" className="animate-pulse text-[9px] border-accent text-accent">EXTRAINDO...</Badge>}
+                      {extracting && <Badge variant="outline" className="animate-pulse text-[9px] border-accent text-accent">ANALISANDO SITE...</Badge>}
                     </Label>
                     <Textarea
                       placeholder="Os diferenciais extraídos do site aparecerão aqui. Edite para tornar o anúncio mais agressivo e atraente."
