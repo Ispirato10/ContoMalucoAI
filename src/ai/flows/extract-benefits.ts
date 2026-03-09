@@ -1,8 +1,8 @@
 'use server';
 /**
- * @fileOverview Fluxo Genkit para extrair benefícios de um produto a partir de uma URL.
+ * @fileOverview Fluxo Genkit para extrair informações do produto a partir de uma URL.
  * 
- * - extractBenefits - Analisa o site e retorna uma lista de diferenciais persuasivos.
+ * - extractBenefits - Analisa o site e retorna o nome do produto e uma lista de diferenciais.
  */
 
 import {ai} from '@/ai/genkit';
@@ -14,6 +14,7 @@ const ExtractBenefitsInputSchema = z.object({
 });
 
 const ExtractBenefitsOutputSchema = z.object({
+  productName: z.string().describe('O nome comercial do produto encontrado no site.'),
   benefits: z.string().describe('Lista de benefícios e diferenciais extraídos do site.'),
 });
 
@@ -31,7 +32,7 @@ const fetchRawContent = ai.defineTool(
       });
       const html = await response.text();
       const $ = cheerio.load(html);
-      $('script, style, nav, footer, header, iframe').remove();
+      $('script, style, nav, footer, header, iframe, noscript').remove();
       const content = $('body').text().replace(/\s+/g, ' ').trim().substring(0, 8000);
       return { html: content };
     } catch (error) {
@@ -48,10 +49,12 @@ const extractBenefitsPrompt = ai.definePrompt({
   prompt: `Você é um Copywriter de Elite. Analise o conteúdo do site fornecido: {{{url}}}
 
 Utilize a ferramenta 'fetchRawContent' para ler o site.
-Sua missão é extrair os 5 benefícios mais impactantes, diferenciais técnicos e a proposta de valor exclusiva do produto.
+Sua missão é:
+1. Identificar o NOME COMERCIAL do produto principal na página.
+2. Extrair os 5 benefícios mais impactantes, diferenciais técnicos e a proposta de valor exclusiva do produto.
 
-Formate a resposta como uma lista de tópicos clara e persuasiva em PORTUGUÊS.
-Foque em transformar características técnicas em benefícios emocionais e práticos.`,
+Formate a resposta em PORTUGUÊS.
+Foque em transformar características técnicas em benefícios emocionais e práticos que vendem.`,
 });
 
 export async function extractBenefits(input: { url: string }) {

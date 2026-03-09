@@ -111,9 +111,12 @@ export function AdGenerator() {
     try {
       const result = await extractBenefits({ url: productUrl });
       setBenefits(result.benefits);
-      toast({ title: "Análise Concluída", description: "Benefícios extraídos com sucesso do site." });
+      if (result.productName) {
+        setProductName(result.productName);
+      }
+      toast({ title: "Análise Concluída", description: "Nome e diferenciais extraídos com sucesso do site." });
     } catch (error: any) {
-      toast({ title: "Erro na análise", description: "Não foi possível extrair benefícios automaticamente.", variant: "destructive" });
+      toast({ title: "Erro na análise", description: "Não foi possível extrair informações automaticamente.", variant: "destructive" });
     } finally {
       setExtracting(false);
     }
@@ -200,10 +203,10 @@ export function AdGenerator() {
                       <Globe className="w-4 h-4 text-accent" />
                       <span className="text-xs font-bold text-accent uppercase tracking-tighter">BASE DE CONHECIMENTO IA</span>
                     </div>
-                    <Badge className="bg-accent/20 text-accent border-none text-[9px] font-bold">PASSO 01</Badge>
+                    <Badge className="bg-accent/20 text-accent border-none text-[9px] font-bold">ANÁLISE DE URL</Badge>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-bold text-white/90">URL do Produto (Análise de DNA)</Label>
+                    <Label className="text-sm font-bold text-white/90">URL do Produto (Opcional)</Label>
                     <div className="flex gap-2">
                       <Input
                         placeholder="https://loja.com/seu-produto-aqui"
@@ -220,13 +223,16 @@ export function AdGenerator() {
                         {extracting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
                       </Button>
                     </div>
-                    <p className="text-[10px] text-muted-foreground leading-tight italic">O Gemini lerá o site e preencherá os diferenciais automaticamente abaixo.</p>
+                    <p className="text-[10px] text-muted-foreground leading-tight italic">O Gemini lerá o site e preencherá o Nome e os Diferenciais automaticamente.</p>
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label className="font-bold">Nome do Produto</Label>
+                    <Label className="font-bold flex items-center justify-between">
+                      Nome do Produto
+                      {extracting && <Badge variant="outline" className="animate-pulse text-[9px] border-accent text-accent">IDENTIFICANDO...</Badge>}
+                    </Label>
                     <Input
                       placeholder="Ex: Tênis Elite Runner X1"
                       value={productName}
@@ -249,7 +255,7 @@ export function AdGenerator() {
                       onChange={(e) => setBenefits(e.target.value)}
                       className="min-h-[180px] bg-background/50 resize-none font-body border-border leading-relaxed"
                     />
-                    <p className="text-[10px] text-muted-foreground italic leading-tight">Estes pontos serão transformados em elementos visuais de alto impacto na imagem comercial.</p>
+                    <p className="text-[10px] text-muted-foreground italic leading-tight">Estes pontos serão transformados em elementos visuais de alto impacto no anúncio.</p>
                   </div>
                 </div>
               </div>
@@ -262,7 +268,7 @@ export function AdGenerator() {
                       <Upload className="w-10 h-10 text-muted-foreground group-hover:text-accent transition-colors" />
                     </div>
                     <p className="text-sm font-bold text-white">Carregue a foto do seu produto</p>
-                    <p className="text-xs text-muted-foreground mt-2 px-10 text-center italic">Imprescindível para que o ChatGPT/DALL-E integre o produto real ao cenário.</p>
+                    <p className="text-xs text-muted-foreground mt-2 px-10 text-center italic">Necessário para que a IA integre seu produto real ao cenário criado.</p>
                     <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
                   </label>
                 ) : (
@@ -275,7 +281,7 @@ export function AdGenerator() {
                       <X className="w-5 h-5" />
                     </button>
                     <div className="absolute bottom-6 left-6 right-6">
-                       <Badge className="bg-black/60 backdrop-blur-md border-white/20 text-[10px] w-full justify-center py-2 uppercase tracking-widest">Referência Ativa para DALL-E 3</Badge>
+                       <Badge className="bg-black/60 backdrop-blur-md border-white/20 text-[10px] w-full justify-center py-2 uppercase tracking-widest">Foto de Referência Ativa</Badge>
                     </div>
                   </div>
                 )}
@@ -283,7 +289,7 @@ export function AdGenerator() {
                   onClick={() => setStep(2)} 
                   className="w-full bg-accent hover:bg-accent/90 h-14 text-lg font-bold shadow-xl shadow-accent/20 transition-all uppercase italic"
                 >
-                  Próximo: Configurar Campanha
+                  Próximo: Personalizar Campanha
                 </Button>
               </div>
             </div>
