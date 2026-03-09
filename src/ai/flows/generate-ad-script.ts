@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview Gera um BRIEFING MAESTRO de elite para criação de anúncios comerciais de alto impacto.

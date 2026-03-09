@@ -112,7 +112,6 @@ export function AdGenerator() {
     try {
       const result = await extractBenefits({ url: productUrl });
       if (result && result.benefits) {
-        // Preencher apenas diferenciais, mantendo o nome intacto
         setBenefits(result.benefits);
         toast({ title: "Análise Concluída", description: "Diferenciais e benefícios extraídos com sucesso." });
       } else {
