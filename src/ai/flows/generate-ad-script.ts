@@ -42,7 +42,7 @@ const GenerateAdScriptOutputSchema = z.object({
     metadata: z.object({
       theme: z.string(),
       platform: z.string(),
-      coupon: z.string().optional(),
+      event: z.string().optional(),
     })
   }),
 });
@@ -77,40 +77,39 @@ const generateAdScriptInternal = ai.definePrompt({
   input: {schema: GenerateAdScriptInputSchema},
   output: {schema: GenerateAdScriptOutputSchema},
   tools: [fetchProductDetails],
-  prompt: `Você é um Diretor de Arte e Copywriter de elite especializado em Marketing Digital de Alta Conversão. 
-
-Sua tarefa é criar um BRIEFING TÉCNICO em formato JSON que o usuário enviará ao ChatGPT para gerar um anúncio perfeito.
+  prompt: `Você é um Diretor de Arte e Estrategista Criativo de elite. Sua missão é criar o BRIEFING MAESTRO definitivo para o DALL-E 3.
 
 DADOS DA CAMPANHA:
 - Produto: {{{productName}}}
 - URL: {{{productUrl}}}
-- Tema Visual: {{{theme}}}
+- Estilo Visual: {{{theme}}}
 - Plataforma: {{{platform}}}
 - Cupom: {{{couponCode}}}
 - Promoção: {{{promoText}}}
-- Site no Anúncio: {{{targetWebsite}}}
-- Evento/Data: {{{eventDate}}}
-- Benefícios: {{{productBenefits}}}
+- Site: {{{targetWebsite}}}
+- Evento/Data Comemorativa: {{{eventDate}}}
+- Benefícios Fornecidos: {{{productBenefits}}}
 
 {{#if productUrl}}
-IMPORTANTE: Utilize a ferramenta 'fetchProductDetails' para analisar o site do produto. Identifique os diferenciais reais, a paleta de cores da marca e o público-alvo para tornar o prompt mais assertivo.
+IMPORTANTE: Utilize 'fetchProductDetails' para capturar a alma do produto. Identifique os benefícios "matadores" e a estética da marca.
 {{/if}}
 
-REQUISITOS PARA O DALLE PROMPT (EM INGLÊS):
-1. Deve ser um prompt "master" para o DALL-E 3.
-2. Descreva o produto como a peça central, cercado por elementos do tema "{{{theme}}}".
-3. Use terminologia de fotografia profissional (ex: "85mm lens", "studio lighting", "soft bokeh", "high-end product photography").
-4. Especifique a integração da foto do produto enviada pelo usuário: "Integrate the physical product from the attached reference photo into this high-end composition".
-5. Se houver cupom ou site, descreva um local elegante na imagem para esses textos (ex: "floating minimal glass plaque" ou "subtle gold embossed text").
+SUA TAREFA CRIATIVA:
+1. MISTURA DE TEMAS: Você deve fundir o Estilo Visual (ex: Minimalista) com o Evento (ex: Natal) de forma criativa. Não apenas coloque o produto num fundo natalino, mas crie uma "Composição Artística Híbrida" (ex: Árvore de natal minimalista feita de luzes neon se o estilo for Cyberpunk).
+2. VISUALIZAÇÃO DE BENEFÍCIOS: Transforme os benefícios do produto em elementos visuais. Se o produto for "confortável", mostre-o em nuvens estilizadas ou texturas suaves.
+3. FOCO NO PRODUTO: O produto da foto de referência DEVE ser a estrela central, integrado perfeitamente ao cenário.
 
-REQUISITOS PARA COPYWRITING (EM PORTUGUÊS):
-- Crie um título magnético e um CTA impossível de ignorar.
+REQUISITOS DO DALLE PROMPT (EM INGLÊS):
+- Comece com: "A high-end, professional commercial product photography of [Product Name]..."
+- Descreva a fusão criativa entre {{{theme}}} e {{{eventDate}}}.
+- Inclua detalhes de iluminação (volumetric lighting, soft shadows, rim lighting).
+- Especifique a integração: "Integrate the specific product from the reference image seamlessly into this environment."
+- Adicione elementos gráficos sutis que remetam à promoção {{{promoText}}}.
 
-REQUISITOS TÉCNICOS:
-- Defina a proporção (aspect ratio) correta para a plataforma escolhida.
+REQUISITOS DE COPYWRITING (EM PORTUGUÊS):
+- Crie uma Headline que conecte o benefício do produto com o momento da data comemorativa.
 
-Retorne o resultado estruturado exatamente conforme o schema de saída.
-`,
+Retorne o JSON completo.`,
 });
 
 export async function generateAdScript(input: GenerateAdScriptInput): Promise<GenerateAdScriptOutput> {
