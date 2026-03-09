@@ -3,7 +3,7 @@
 /**
  * @fileOverview Fluxo Genkit para extrair diferenciais de produtos a partir de uma URL.
  * 
- * - extractBenefits - Analisa o site e retorna apenas os diferenciais e benefícios.
+ * - extractBenefits - Analisa o site e retorna apenas os diferenciais e benefícios de marketing.
  */
 
 import {ai} from '@/ai/genkit';
@@ -21,7 +21,7 @@ const ExtractBenefitsOutputSchema = z.object({
 const fetchRawContent = ai.defineTool(
   {
     name: 'fetchRawContent',
-    description: 'Busca o conteúdo HTML de uma página de produto para análise estratégica.',
+    description: 'Busca o conteúdo HTML de uma página de produto para análise estratégica de marketing.',
     inputSchema: z.object({ url: z.string().url() }),
     outputSchema: z.object({ html: z.string() }),
   },
@@ -43,20 +43,20 @@ const fetchRawContent = ai.defineTool(
       const html = await response.text();
       const $ = cheerio.load(html);
       
-      // Remover elementos irrelevantes para manter o contexto limpo
-      $('script, style, nav, footer, header, iframe, noscript, svg, form, head').remove();
+      // Remover elementos irrelevantes para manter o contexto limpo e focado em conteúdo
+      $('script, style, nav, footer, header, iframe, noscript, svg, form, head, .ads, .popup').remove();
       
-      // Capturar apenas o texto visível e relevante
-      const content = $('body').text().replace(/\s+/g, ' ').trim().substring(0, 15000);
+      // Capturar apenas o texto visível e relevante para marketing
+      const content = $('body').text().replace(/\s+/g, ' ').trim().substring(0, 18000);
       
       if (!content || content.length < 50) {
-        return { html: 'Conteúdo insuficiente encontrado na página. Por favor, preencha manualmente.' };
+        return { html: 'Conteúdo insuficiente encontrado na página. Por favor, preencha manualmente os diferenciais.' };
       }
 
       return { html: content };
     } catch (error: any) {
       console.error('Scraper Error:', error.message);
-      return { html: 'Não foi possível ler o conteúdo do site devido a restrições de acesso. Por favor, preencha manualmente.' };
+      return { html: 'Não foi possível ler o conteúdo do site devido a restrições de acesso (bloqueio de bot). Por favor, preencha os benefícios manualmente.' };
     }
   }
 );
@@ -66,19 +66,20 @@ const extractBenefitsPrompt = ai.definePrompt({
   input: { schema: ExtractBenefitsInputSchema },
   output: { schema: ExtractBenefitsOutputSchema },
   tools: [fetchRawContent],
-  prompt: `Você é um Estrategista de Marketing de Elite e Copywriter Senior. 
-Sua missão é analisar o conteúdo do site: {{{url}}}
+  prompt: `Você é um Diretor de Estratégia de Marketing de Elite. 
+Sua missão é ler o conteúdo extraído do site: {{{url}}} e criar uma lista de argumentos de venda IRRESISTÍVEIS.
 
-Utilize a ferramenta 'fetchRawContent' para obter os dados. 
+Utilize a ferramenta 'fetchRawContent' para obter os dados do site.
 
 FOCO DA ANÁLISE:
-Extraia os benefícios mais impactantes, diferenciais técnicos, proposta de valor e a estética emocional que tornam este produto único e desejável para uma campanha comercial de luxo.
+1. Extraia os benefícios mais impactantes, diferenciais técnicos, proposta de valor exclusiva e a estética emocional do produto.
+2. Ignore menus, avisos legais e rodapés. Foque no que faz o cliente desejar o produto.
+3. Transforme características técnicas em benefícios visuais poderosos para um anúncio comercial de luxo.
 
 REQUISITOS:
-1. Ignore nomes de produtos (foque apenas nos argumentos de venda).
-2. Transforme características técnicas em benefícios visuais e emocionais poderosos.
-3. Responda em PORTUGUÊS do Brasil.
-4. O texto deve ser persuasivo, direto e ideal para um Diretor de Arte usar em um comercial viral.`,
+- Responda em PORTUGUÊS do Brasil.
+- O texto deve ser persuasivo, direto e ideal para um Diretor de Arte usar como base para um comercial viral.
+- Se o conteúdo do site estiver inacessível ou vazio, responda pedindo ao usuário para preencher manualmente.`,
 });
 
 export async function extractBenefits(input: { url: string }) {
