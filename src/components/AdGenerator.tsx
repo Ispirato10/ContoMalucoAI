@@ -110,13 +110,13 @@ export function AdGenerator() {
     setExtracting(true);
     try {
       const result = await extractBenefits({ url: productUrl });
-      setBenefits(result.benefits);
-      if (result.productName) {
-        setProductName(result.productName);
+      if (result) {
+        setBenefits(result.benefits || '');
+        setProductName(result.productName || '');
+        toast({ title: "Análise Concluída", description: "Nome e diferenciais extraídos com sucesso do site." });
       }
-      toast({ title: "Análise Concluída", description: "Nome e diferenciais extraídos com sucesso do site." });
     } catch (error: any) {
-      toast({ title: "Erro na análise", description: "Não foi possível extrair informações automaticamente.", variant: "destructive" });
+      toast({ title: "Erro na análise", description: "Não foi possível extrair informações automaticamente. Tente preencher manualmente.", variant: "destructive" });
     } finally {
       setExtracting(false);
     }
@@ -142,7 +142,7 @@ export function AdGenerator() {
         productBenefits: benefits || undefined,
       });
       setScriptResult(result);
-      setStep(step + 1);
+      setStep(3);
       toast({ title: "Estratégia Gerada!", description: "Análise de benefícios e briefing concluídos." });
     } catch (error: any) {
       toast({ title: "Erro na geração", description: error.message, variant: "destructive" });
@@ -203,13 +203,13 @@ export function AdGenerator() {
                       <Globe className="w-4 h-4 text-accent" />
                       <span className="text-xs font-bold text-accent uppercase tracking-tighter">BASE DE CONHECIMENTO IA</span>
                     </div>
-                    <Badge className="bg-accent/20 text-accent border-none text-[9px] font-bold">ANÁLISE DE URL</Badge>
+                    <Badge className="bg-accent/20 text-accent border-none text-[9px] font-bold uppercase">Análise de Site</Badge>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-bold text-white/90">URL do Produto (Opcional)</Label>
+                    <Label className="text-sm font-bold text-white/90">URL do Produto (Para Extração Automática)</Label>
                     <div className="flex gap-2">
                       <Input
-                        placeholder="https://loja.com/seu-produto-aqui"
+                        placeholder="Cole o link da página do produto aqui..."
                         value={productUrl}
                         onChange={(e) => setProductUrl(e.target.value)}
                         className="bg-background border-accent/40 h-12 focus:ring-accent"
@@ -223,7 +223,7 @@ export function AdGenerator() {
                         {extracting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
                       </Button>
                     </div>
-                    <p className="text-[10px] text-muted-foreground leading-tight italic">O Gemini lerá o site e preencherá o Nome e os Diferenciais automaticamente.</p>
+                    <p className="text-[10px] text-muted-foreground leading-tight italic">A IA lerá o site e preencherá os campos abaixo. Você poderá editá-los livremente.</p>
                   </div>
                 </div>
 
@@ -234,7 +234,7 @@ export function AdGenerator() {
                       {extracting && <Badge variant="outline" className="animate-pulse text-[9px] border-accent text-accent">IDENTIFICANDO...</Badge>}
                     </Label>
                     <Input
-                      placeholder="Ex: Tênis Elite Runner X1"
+                      placeholder="Ex: iPhone 15 Pro Max"
                       value={productName}
                       onChange={(e) => setProductName(e.target.value)}
                       className="h-12 bg-background/50 border-border"
@@ -245,30 +245,29 @@ export function AdGenerator() {
                     <Label className="font-bold flex items-center justify-between">
                       <span className="flex items-center gap-2">
                         <Lightbulb className="w-4 h-4 text-yellow-500" /> 
-                        Diferenciais & Benefícios
+                        Diferenciais & Benefícios (Auto-preenchido)
                       </span>
                       {extracting && <Badge variant="outline" className="animate-pulse text-[9px] border-accent text-accent">EXTRAINDO...</Badge>}
                     </Label>
                     <Textarea
-                      placeholder="Os benefícios extraídos aparecerão aqui. Você pode editar ou adicionar mais."
+                      placeholder="Os diferenciais extraídos do site aparecerão aqui. Sinta-se à vontade para editar ou complementar para tornar o anúncio mais agressivo."
                       value={benefits}
                       onChange={(e) => setBenefits(e.target.value)}
                       className="min-h-[180px] bg-background/50 resize-none font-body border-border leading-relaxed"
                     />
-                    <p className="text-[10px] text-muted-foreground italic leading-tight">Estes pontos serão transformados em elementos visuais de alto impacto no anúncio.</p>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-6">
-                <Label className="font-bold text-white/90">Imagem Real do Produto (Referência)</Label>
+                <Label className="font-bold text-white/90">Imagem Real do Produto (Referência para IA)</Label>
                 {!productImage ? (
                   <label className="flex flex-col items-center justify-center w-full min-h-[360px] border-2 border-dashed border-border/60 rounded-3xl cursor-pointer hover:bg-accent/5 transition-all group bg-background/20">
                     <div className="bg-muted p-5 rounded-full mb-4 group-hover:scale-110 transition-transform">
                       <Upload className="w-10 h-10 text-muted-foreground group-hover:text-accent transition-colors" />
                     </div>
                     <p className="text-sm font-bold text-white">Carregue a foto do seu produto</p>
-                    <p className="text-xs text-muted-foreground mt-2 px-10 text-center italic">Necessário para que a IA integre seu produto real ao cenário criado.</p>
+                    <p className="text-xs text-muted-foreground mt-2 px-10 text-center italic">A IA do ChatGPT utilizará esta foto para criar a imagem comercial mantendo a fidelidade do seu produto.</p>
                     <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
                   </label>
                 ) : (
@@ -289,7 +288,7 @@ export function AdGenerator() {
                   onClick={() => setStep(2)} 
                   className="w-full bg-accent hover:bg-accent/90 h-14 text-lg font-bold shadow-xl shadow-accent/20 transition-all uppercase italic"
                 >
-                  Próximo: Personalizar Campanha
+                  Próximo: Estilo & Campanha
                 </Button>
               </div>
             </div>
@@ -299,8 +298,8 @@ export function AdGenerator() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="space-y-8">
                 <div className="space-y-4">
-                  <Label className="flex items-center gap-2 font-bold text-white">
-                    <Sparkles className="w-4 h-4 text-accent" /> DIREÇÃO DE ARTE (ESTILO VISUAL)
+                  <Label className="flex items-center gap-2 font-bold text-white uppercase tracking-tight italic">
+                    <Sparkles className="w-4 h-4 text-accent" /> Estilo Visual Publicitário
                   </Label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {TEMAS.map((t) => (
@@ -321,8 +320,8 @@ export function AdGenerator() {
                 </div>
 
                 <div className="space-y-4">
-                  <Label className="flex items-center gap-2 font-bold text-white">
-                    <Calendar className="w-4 h-4 text-accent" /> EVENTO OU DATA COMEMORATIVA
+                  <Label className="flex items-center gap-2 font-bold text-white uppercase tracking-tight italic">
+                    <Calendar className="w-4 h-4 text-accent" /> Data ou Evento Especial
                   </Label>
                   <Select value={eventDate} onValueChange={setEventDate}>
                     <SelectTrigger className="h-12 bg-background/50 border-border rounded-xl">
@@ -340,7 +339,7 @@ export function AdGenerator() {
 
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-2 font-bold"><Layout className="w-4 h-4 text-accent" /> Formato do Anúncio</Label>
+                  <Label className="flex items-center gap-2 font-bold uppercase tracking-tight italic"><Layout className="w-4 h-4 text-accent" /> Formato do Anúncio</Label>
                   <Select value={platform} onValueChange={setPlatform}>
                     <SelectTrigger className="h-12 bg-background/50 border-border rounded-xl">
                       <SelectValue />
@@ -355,19 +354,19 @@ export function AdGenerator() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="flex items-center gap-2 font-bold"><Ticket className="w-4 h-4 text-accent" /> Cupom</Label>
+                    <Label className="flex items-center gap-2 font-bold uppercase tracking-tight italic"><Ticket className="w-4 h-4 text-accent" /> Cupom</Label>
                     <Input placeholder="Ex: PROMO50" value={couponCode} onChange={(e) => setCouponCode(e.target.value)} className="bg-background/50 rounded-xl" />
                   </div>
                   <div className="space-y-2">
-                    <Label className="flex items-center gap-2 font-bold"><Globe className="w-4 h-4 text-accent" /> Website</Label>
+                    <Label className="flex items-center gap-2 font-bold uppercase tracking-tight italic"><Globe className="w-4 h-4 text-accent" /> Website</Label>
                     <Input placeholder="www.loja.com" value={targetWebsite} onChange={(e) => setTargetWebsite(e.target.value)} className="bg-background/50 rounded-xl" />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-2 font-bold"><Megaphone className="w-4 h-4 text-accent" /> Oferta / Texto Viral</Label>
+                  <Label className="flex items-center gap-2 font-bold uppercase tracking-tight italic"><Megaphone className="w-4 h-4 text-accent" /> Texto da Promoção</Label>
                   <Input 
-                    placeholder="Ex: O segredo para uma pele perfeita agora em oferta..." 
+                    placeholder="Ex: Oferta de Lançamento por tempo limitado!" 
                     value={promoText} 
                     onChange={(e) => setPromoText(e.target.value)} 
                     className="bg-background/50 h-14 rounded-xl" 
@@ -375,14 +374,14 @@ export function AdGenerator() {
                 </div>
 
                 <div className="flex gap-4 pt-6">
-                  <Button variant="outline" onClick={() => setStep(1)} className="flex-1 h-14 border-border font-bold rounded-2xl">Voltar</Button>
+                  <Button variant="outline" onClick={() => setStep(1)} className="flex-1 h-14 border-border font-bold rounded-2xl uppercase tracking-widest text-xs">Voltar</Button>
                   <Button 
                     onClick={handleGenerateScript} 
                     disabled={loading} 
                     className="flex-[2] bg-accent hover:bg-accent/90 h-14 font-bold shadow-xl shadow-accent/20 rounded-2xl uppercase italic"
                   >
                     {loading ? <RefreshCw className="w-6 h-6 animate-spin mr-2" /> : <Wand2 className="w-6 h-6 mr-2" />}
-                    {loading ? 'FUNDINDO DNA & ARTE...' : 'GERAR BRIEFING MAESTRO'}
+                    {loading ? 'FALANDO COM O ESTRATEGISTA...' : 'GERAR BRIEFING DE COMERCIAL'}
                   </Button>
                 </div>
               </div>
@@ -395,9 +394,9 @@ export function AdGenerator() {
                 <div className="bg-green-500/10 p-5 rounded-full ring-8 ring-green-500/5">
                   <CheckCircle2 className="w-16 h-16 text-green-500" />
                 </div>
-                <h2 className="text-4xl font-headline font-bold text-white italic underline decoration-accent/30 underline-offset-8 uppercase">ESTRATÉGIA DE ELITE CONCLUÍDA</h2>
+                <h2 className="text-4xl font-headline font-bold text-white italic underline decoration-accent/30 underline-offset-8 uppercase">ESTRATÉGIA DE ELITE PRONTA</h2>
                 <p className="text-muted-foreground max-w-2xl font-body text-lg">
-                  Fundimos o estilo <span className="text-accent font-bold">"{theme}"</span> com <span className="text-accent font-bold">"{eventDate}"</span>. A IA extraiu benefícios informativos para o anúncio viral.
+                  Criamos um briefing para uma <span className="text-accent font-bold">Imagem de Comercial</span> unindo seu produto ao tema <span className="text-accent font-bold">"{eventDate}"</span>.
                 </p>
               </div>
 
@@ -407,7 +406,7 @@ export function AdGenerator() {
                     <div className="bg-muted p-5 flex items-center justify-between border-b border-border">
                       <div className="flex items-center gap-2">
                         <Zap className="w-4 h-4 text-accent" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">PROMPT MAESTRO (INGLÊS / DALL-E 3)</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">PROMPT MAESTRO (PARA CHATGPT/DALL-E)</span>
                       </div>
                       <Button variant="secondary" size="sm" onClick={copyPrompt} className="h-9 gap-2 font-bold text-xs uppercase italic rounded-xl px-4">
                         <Copy className="w-3.5 h-3.5" /> COPIAR PROMPT
@@ -422,30 +421,30 @@ export function AdGenerator() {
 
                   <Alert className="bg-accent/5 border-accent/20 rounded-2xl">
                     <Info className="h-5 w-5 text-accent" />
-                    <AlertTitle className="text-accent font-bold uppercase text-xs tracking-widest">GUIA DE CRIAÇÃO DO ANÚNCIO</AlertTitle>
+                    <AlertTitle className="text-accent font-bold uppercase text-xs tracking-widest">COMO CRIAR A IMAGEM AGORA</AlertTitle>
                     <AlertDescription className="text-sm text-muted-foreground leading-relaxed mt-2">
-                      1. Abra o **ChatGPT Plus** (DALL-E 3).<br/>
-                      2. **ANEXE A FOTO** do seu produto que você carregou aqui.<br/>
+                      1. Abra o seu **ChatGPT** (versão com DALL-E).<br/>
+                      2. **ANEXE A FOTO** real do seu produto que você carregou aqui.<br/>
                       3. **COLE O PROMPT MAESTRO** acima.<br/>
-                      4. A IA criará o anúncio comercial unindo seu produto ao cenário temático com alta fidelidade.
+                      4. A IA fundirá seu produto com o cenário luxuoso e informativo descrito no briefing.
                     </AlertDescription>
                   </Alert>
                 </div>
 
                 <div className="lg:col-span-5 space-y-6">
                   <div className="bg-muted/30 rounded-3xl border border-border p-8 space-y-6">
-                    <h4 className="font-bold text-white text-xl flex items-center gap-2 italic uppercase tracking-tight">COPYWRITING DA CAMPANHA</h4>
+                    <h4 className="font-bold text-white text-xl flex items-center gap-2 italic uppercase tracking-tight">COPYWRITING DO ANÚNCIO</h4>
                     <div className="space-y-5">
                       <div className="p-5 bg-background/50 rounded-2xl border border-border/50">
-                        <div className="text-[10px] text-accent uppercase font-bold tracking-widest mb-1.5 flex items-center gap-1.5"><Sparkles className="w-3 h-3"/> HEADLINE VIRAL</div>
+                        <div className="text-[10px] text-accent uppercase font-bold tracking-widest mb-1.5 flex items-center gap-1.5"><Sparkles className="w-3 h-3"/> TÍTULO IMPACTANTE</div>
                         <div className="text-lg text-white font-bold leading-tight">{scriptResult.campaignBriefing.copywriting.headline}</div>
                       </div>
                       <div className="p-5 bg-background/50 rounded-2xl border border-border/50">
-                        <div className="text-[10px] text-accent uppercase font-bold tracking-widest mb-1.5">LEGENDA INFORMATIVA</div>
+                        <div className="text-[10px] text-accent uppercase font-bold tracking-widest mb-1.5">LEGENDA DO ANÚNCIO</div>
                         <div className="text-sm text-muted-foreground italic leading-relaxed">{scriptResult.campaignBriefing.copywriting.description}</div>
                       </div>
                       <div className="p-5 bg-accent/10 rounded-2xl border border-accent/20">
-                        <div className="text-[10px] text-accent uppercase font-bold tracking-widest mb-1.5">BOTÃO / CTA</div>
+                        <div className="text-[10px] text-accent uppercase font-bold tracking-widest mb-1.5">BOTÃO DE CHAMADA</div>
                         <div className="text-sm text-white font-bold uppercase tracking-widest">{scriptResult.campaignBriefing.copywriting.callToAction}</div>
                       </div>
                     </div>
@@ -453,10 +452,10 @@ export function AdGenerator() {
 
                   <div className="flex flex-col gap-3">
                     <Button onClick={downloadJson} className="w-full bg-accent hover:bg-accent/90 h-16 text-lg font-bold shadow-2xl italic uppercase rounded-2xl">
-                      <Download className="w-6 h-6 mr-2" /> BAIXAR BRIEFING COMPLETO (.JSON)
+                      <Download className="w-6 h-6 mr-2" /> BAIXAR BRIEFING (.JSON)
                     </Button>
                     <Button variant="outline" onClick={() => { setStep(1); setScriptResult(null); }} className="w-full h-12 font-bold uppercase text-xs rounded-xl tracking-widest">
-                      INICIAR NOVA ESTRATÉGIA
+                      NOVA ESTRATÉGIA
                     </Button>
                   </div>
                 </div>

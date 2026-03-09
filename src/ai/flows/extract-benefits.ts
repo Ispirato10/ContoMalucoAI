@@ -21,22 +21,33 @@ const ExtractBenefitsOutputSchema = z.object({
 const fetchRawContent = ai.defineTool(
   {
     name: 'fetchRawContent',
-    description: 'Busca o conteúdo HTML de uma página.',
+    description: 'Busca o conteúdo HTML de uma página de produto para análise.',
     inputSchema: z.object({ url: z.string().url() }),
     outputSchema: z.object({ html: z.string() }),
   },
   async (input) => {
     try {
       const response = await fetch(input.url, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36' }
+        headers: { 
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8'
+        },
+        next: { revalidate: 3600 }
       });
+      
+      if (!response.ok) throw new Error('Falha ao acessar o site');
+      
       const html = await response.text();
       const $ = cheerio.load(html);
-      $('script, style, nav, footer, header, iframe, noscript').remove();
-      const content = $('body').text().replace(/\s+/g, ' ').trim().substring(0, 8000);
+      
+      // Remover elementos que poluem o texto
+      $('script, style, nav, footer, header, iframe, noscript, svg, form').remove();
+      
+      const content = $('body').text().replace(/\s+/g, ' ').trim().substring(0, 10000);
       return { html: content };
     } catch (error) {
-      return { html: 'Erro ao acessar o site.' };
+      console.error('Scraper Error:', error);
+      return { html: 'Não foi possível ler o conteúdo do site. Por favor, preencha manualmente.' };
     }
   }
 );
@@ -46,15 +57,18 @@ const extractBenefitsPrompt = ai.definePrompt({
   input: { schema: ExtractBenefitsInputSchema },
   output: { schema: ExtractBenefitsOutputSchema },
   tools: [fetchRawContent],
-  prompt: `Você é um Copywriter de Elite. Analise o conteúdo do site fornecido: {{{url}}}
+  prompt: `Você é um Estrategista de Marketing de Elite e Copywriter Senior. 
+Analise o conteúdo do seguinte site: {{{url}}}
 
-Utilize a ferramenta 'fetchRawContent' para ler o site.
 Sua missão é:
-1. Identificar o NOME COMERCIAL do produto principal na página.
-2. Extrair os 5 benefícios mais impactantes, diferenciais técnicos e a proposta de valor exclusiva do produto.
+1. Identificar o NOME COMERCIAL exato do produto (ignore nomes genéricos da loja).
+2. Extrair os 5 benefícios mais impactantes e diferenciais técnicos que tornam este produto único.
 
-Formate a resposta em PORTUGUÊS.
-Foque em transformar características técnicas em benefícios emocionais e práticos que vendem.`,
+IMPORTANTE:
+- Seja persuasivo e profissional.
+- Transforme características técnicas em benefícios emocionais.
+- Responda em PORTUGUÊS do Brasil.
+- Se o site não puder ser lido, use seu conhecimento geral se for uma marca famosa, ou retorne campos vazios para preenchimento manual.`,
 });
 
 export async function extractBenefits(input: { url: string }) {
