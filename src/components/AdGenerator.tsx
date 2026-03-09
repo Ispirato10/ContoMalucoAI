@@ -14,7 +14,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { 
-  FileJson, 
   Wand2, 
   Globe, 
   Sparkles, 
@@ -30,9 +29,12 @@ import {
   Copy,
   Info,
   Lightbulb,
-  Zap
+  Zap,
+  Search,
+  Loader2
 } from 'lucide-react';
 import { generateAdScript, type GenerateAdScriptOutput } from '@/ai/flows/generate-ad-script';
+import { extractBenefits } from '@/ai/flows/extract-benefits';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -71,6 +73,7 @@ export function AdGenerator() {
   const { toast } = useToast();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [extracting, setExtracting] = useState(false);
   
   // Form State
   const [productName, setProductName] = useState('');
@@ -96,6 +99,23 @@ export function AdGenerator() {
       const reader = new FileReader();
       reader.onloadend = () => setProductImage(reader.result as string);
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handleExtractBenefits = async () => {
+    if (!productUrl) {
+      toast({ title: "URL Necessária", description: "Insira o link do produto para analisar.", variant: "destructive" });
+      return;
+    }
+    setExtracting(true);
+    try {
+      const result = await extractBenefits({ url: productUrl });
+      setBenefits(result.benefits);
+      toast({ title: "Análise Concluída", description: "Benefícios extraídos com sucesso do site." });
+    } catch (error: any) {
+      toast({ title: "Erro na análise", description: "Não foi possível extrair benefícios automaticamente.", variant: "destructive" });
+    } finally {
+      setExtracting(false);
     }
   };
 
@@ -178,19 +198,29 @@ export function AdGenerator() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Globe className="w-4 h-4 text-accent" />
-                      <span className="text-xs font-bold text-accent uppercase tracking-tighter">ANÁLISE DE DNA DO PRODUTO</span>
+                      <span className="text-xs font-bold text-accent uppercase tracking-tighter">BASE DE CONHECIMENTO IA</span>
                     </div>
-                    <Badge className="bg-accent/20 text-accent border-none text-[9px] font-bold">RECOMENDADO</Badge>
+                    <Badge className="bg-accent/20 text-accent border-none text-[9px] font-bold">PASSO 01</Badge>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-bold text-white/90">URL do Produto (Site Oficial)</Label>
-                    <Input
-                      placeholder="https://loja.com/seu-produto-aqui"
-                      value={productUrl}
-                      onChange={(e) => setProductUrl(e.target.value)}
-                      className="bg-background border-accent/40 h-12 focus:ring-accent"
-                    />
-                    <p className="text-[10px] text-muted-foreground leading-tight italic">O Gemini extrairá benefícios reais do site para criar imagens comerciais persuasivas.</p>
+                    <Label className="text-sm font-bold text-white/90">URL do Produto (Análise de DNA)</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="https://loja.com/seu-produto-aqui"
+                        value={productUrl}
+                        onChange={(e) => setProductUrl(e.target.value)}
+                        className="bg-background border-accent/40 h-12 focus:ring-accent"
+                      />
+                      <Button 
+                        variant="secondary" 
+                        onClick={handleExtractBenefits} 
+                        disabled={extracting || !productUrl}
+                        className="h-12 px-4 bg-accent/20 text-accent hover:bg-accent/30 border border-accent/20"
+                      >
+                        {extracting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
+                      </Button>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground leading-tight italic">O Gemini lerá o site e preencherá os diferenciais automaticamente abaixo.</p>
                   </div>
                 </div>
 
@@ -206,29 +236,33 @@ export function AdGenerator() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="font-bold flex items-center gap-2">
-                      <Lightbulb className="w-4 h-4 text-yellow-500" /> 
-                      Diferenciais (Opcional)
+                    <Label className="font-bold flex items-center justify-between">
+                      <span className="flex items-center gap-2">
+                        <Lightbulb className="w-4 h-4 text-yellow-500" /> 
+                        Diferenciais & Benefícios
+                      </span>
+                      {extracting && <Badge variant="outline" className="animate-pulse text-[9px] border-accent text-accent">EXTRAINDO...</Badge>}
                     </Label>
                     <Textarea
-                      placeholder="Quais benefícios VOCÊ quer ver destacados na imagem?"
+                      placeholder="Os benefícios extraídos aparecerão aqui. Você pode editar ou adicionar mais."
                       value={benefits}
                       onChange={(e) => setBenefits(e.target.value)}
-                      className="min-h-[140px] bg-background/50 resize-none font-body border-border"
+                      className="min-h-[180px] bg-background/50 resize-none font-body border-border leading-relaxed"
                     />
+                    <p className="text-[10px] text-muted-foreground italic leading-tight">Estes pontos serão transformados em elementos visuais de alto impacto na imagem comercial.</p>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-6">
-                <Label className="font-bold text-white/90">Imagem de Referência do Produto</Label>
+                <Label className="font-bold text-white/90">Imagem Real do Produto (Referência)</Label>
                 {!productImage ? (
                   <label className="flex flex-col items-center justify-center w-full min-h-[360px] border-2 border-dashed border-border/60 rounded-3xl cursor-pointer hover:bg-accent/5 transition-all group bg-background/20">
                     <div className="bg-muted p-5 rounded-full mb-4 group-hover:scale-110 transition-transform">
                       <Upload className="w-10 h-10 text-muted-foreground group-hover:text-accent transition-colors" />
                     </div>
                     <p className="text-sm font-bold text-white">Carregue a foto do seu produto</p>
-                    <p className="text-xs text-muted-foreground mt-2 px-10 text-center italic">Ela será usada como base para a IA criar o anúncio comercial perfeito.</p>
+                    <p className="text-xs text-muted-foreground mt-2 px-10 text-center italic">Imprescindível para que o ChatGPT/DALL-E integre o produto real ao cenário.</p>
                     <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
                   </label>
                 ) : (
@@ -241,7 +275,7 @@ export function AdGenerator() {
                       <X className="w-5 h-5" />
                     </button>
                     <div className="absolute bottom-6 left-6 right-6">
-                       <Badge className="bg-black/60 backdrop-blur-md border-white/20 text-[10px] w-full justify-center py-2 uppercase tracking-widest">Referência Ativa para DALL-E</Badge>
+                       <Badge className="bg-black/60 backdrop-blur-md border-white/20 text-[10px] w-full justify-center py-2 uppercase tracking-widest">Referência Ativa para DALL-E 3</Badge>
                     </div>
                   </div>
                 )}
@@ -260,7 +294,7 @@ export function AdGenerator() {
               <div className="space-y-8">
                 <div className="space-y-4">
                   <Label className="flex items-center gap-2 font-bold text-white">
-                    <Sparkles className="w-4 h-4 text-accent" /> ESTÉTICA COMERCIAL (Direção de Arte)
+                    <Sparkles className="w-4 h-4 text-accent" /> DIREÇÃO DE ARTE (ESTILO VISUAL)
                   </Label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {TEMAS.map((t) => (
@@ -300,7 +334,7 @@ export function AdGenerator() {
 
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-2 font-bold"><Layout className="w-4 h-4 text-accent" /> Formato de Saída</Label>
+                  <Label className="flex items-center gap-2 font-bold"><Layout className="w-4 h-4 text-accent" /> Formato do Anúncio</Label>
                   <Select value={platform} onValueChange={setPlatform}>
                     <SelectTrigger className="h-12 bg-background/50 border-border rounded-xl">
                       <SelectValue />
@@ -342,7 +376,7 @@ export function AdGenerator() {
                     className="flex-[2] bg-accent hover:bg-accent/90 h-14 font-bold shadow-xl shadow-accent/20 rounded-2xl uppercase italic"
                   >
                     {loading ? <RefreshCw className="w-6 h-6 animate-spin mr-2" /> : <Wand2 className="w-6 h-6 mr-2" />}
-                    {loading ? 'ANALISANDO DNA...' : 'GERAR BRIEFING MAESTRO'}
+                    {loading ? 'FUNDINDO DNA & ARTE...' : 'GERAR BRIEFING MAESTRO'}
                   </Button>
                 </div>
               </div>
