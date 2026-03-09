@@ -1,10 +1,10 @@
-
 'use server';
 /**
- * @fileOverview Gera um script detalhado (briefing) para criação de anúncios no ChatGPT/DALL-E.
+ * @fileOverview Gera um BRIEFING MAESTRO de elite para criação de anúncios comerciais.
  * 
- * Este fluxo analisa os dados do produto e as configurações da campanha para criar um
- * prompt "Mestre" em inglês e diretrizes de copywriting em português.
+ * Este fluxo realiza uma análise profunda do produto (via URL ou manual), funde temas visuais
+ * com eventos sazonais e gera um script técnico detalhado para o ChatGPT/DALL-E criar
+ * anúncios virais, elegantes e altamente informativos.
  */
 
 import {ai} from '@/ai/genkit';
@@ -13,36 +13,37 @@ import * as cheerio from 'cheerio';
 
 const GenerateAdScriptInputSchema = z.object({
   productName: z.string().describe('Nome do produto.'),
-  productUrl: z.string().url().optional().describe('URL do produto para análise.'),
-  theme: z.string().describe('Tema visual escolhido.'),
-  platform: z.string().describe('Plataforma de destino (ex: Instagram, Facebook, TikTok).'),
-  couponCode: z.string().optional().describe('Código de cupom de desconto.'),
-  promoText: z.string().optional().describe('Texto da promoção ou oferta especial.'),
-  targetWebsite: z.string().optional().describe('Website a ser exibido no anúncio.'),
-  eventDate: z.string().optional().describe('Data comemorativa ou evento específico.'),
-  productBenefits: z.string().optional().describe('Benefícios manuais do produto.'),
+  productUrl: z.string().url().optional().describe('URL do produto para extração de benefícios e DNA da marca.'),
+  theme: z.string().describe('Estilo visual (ex: Luxo, Cyberpunk).'),
+  platform: z.string().describe('Plataforma (Instagram, TikTok, etc.).'),
+  couponCode: z.string().optional().describe('Cupom de desconto para figurar no anúncio.'),
+  promoText: z.string().optional().describe('Texto da oferta ou promoção principal.'),
+  targetWebsite: z.string().optional().describe('Website oficial para exibição na peça.'),
+  eventDate: z.string().optional().describe('Evento ou data comemorativa escolhida.'),
+  productBenefits: z.string().optional().describe('Benefícios inseridos manualmente pelo usuário.'),
 });
 
 export type GenerateAdScriptInput = z.infer<typeof GenerateAdScriptInputSchema>;
 
 const GenerateAdScriptOutputSchema = z.object({
   campaignBriefing: z.object({
-    dallePrompt: z.string().describe('O prompt mestre em inglês otimizado para o DALL-E 3.'),
-    chatGptInstructions: z.string().describe('Instruções para o ChatGPT sobre como processar a imagem do produto.'),
+    dallePrompt: z.string().describe('O prompt mestre em inglês para DALL-E 3, focado em "Commercial Product Advertisement".'),
+    chatGptInstructions: z.string().describe('Instruções estratégicas sobre como a IA deve integrar o produto real no cenário.'),
     copywriting: z.object({
-      headline: z.string().describe('Título de impacto em português.'),
-      description: z.string().describe('Descrição curta para o anúncio.'),
-      callToAction: z.string().describe('Chamada para ação (CTA).'),
+      headline: z.string().describe('Título viral de alto impacto.'),
+      description: z.string().describe('Legenda informativa e persuasiva.'),
+      callToAction: z.string().describe('CTA clara e direta.'),
     }),
     technicalDetails: z.object({
-      aspectRatio: z.string().describe('Proporção da imagem (ex: 1:1, 9:16).'),
-      suggestedColors: z.array(z.string()).describe('Paleta de cores recomendada.'),
-      lightingStyle: z.string().describe('Estilo de iluminação sugerido.'),
+      aspectRatio: z.string(),
+      lightingStyle: z.string(),
+      compositionStrategy: z.string().describe('Como os benefícios do produto são visualizados.'),
     }),
-    metadata: z.object({
-      theme: z.string(),
-      platform: z.string(),
-      event: z.string().optional(),
+    campaignData: z.object({
+      includedPromo: z.string(),
+      includedCoupon: z.string(),
+      includedWebsite: z.string(),
+      extractedBenefits: z.string(),
     })
   }),
 });
@@ -52,22 +53,25 @@ export type GenerateAdScriptOutput = z.infer<typeof GenerateAdScriptOutputSchema
 const fetchProductDetails = ai.defineTool(
   {
     name: 'fetchProductDetails',
-    description: 'Extrai texto de uma URL de produto para análise de marketing e diferenciais.',
+    description: 'Acessa o site do produto para extrair benefícios "matadores", diferenciais técnicos e a voz da marca.',
     inputSchema: z.object({ url: z.string().url() }),
     outputSchema: z.object({ content: z.string() }),
   },
   async (input) => {
     try {
       const response = await fetch(input.url, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/110.0.0.0 Safari/537.36' }
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36' }
       });
       const html = await response.text();
       const $ = cheerio.load(html);
-      $('script, style, nav, footer, header').remove();
-      const content = $('body').text().replace(/\s+/g, ' ').trim().substring(0, 5000);
+      
+      // Limpar tags irrelevantes
+      $('script, style, nav, footer, header, iframe').remove();
+      
+      const content = $('body').text().replace(/\s+/g, ' ').trim().substring(0, 8000);
       return { content };
     } catch (error) {
-      return { content: 'Não foi possível acessar o site para extrair detalhes.' };
+      return { content: 'Falha ao acessar o site. Use os benefícios manuais.' };
     }
   }
 );
@@ -77,39 +81,36 @@ const generateAdScriptInternal = ai.definePrompt({
   input: {schema: GenerateAdScriptInputSchema},
   output: {schema: GenerateAdScriptOutputSchema},
   tools: [fetchProductDetails],
-  prompt: `Você é um Diretor de Arte e Estrategista Criativo de elite. Sua missão é criar o BRIEFING MAESTRO definitivo para o DALL-E 3.
+  prompt: `Você é um Diretor de Arte e Estrategista Criativo de Agências de Luxo em Nova York.
+Sua missão é criar um "BRIEFING MAESTRO" para um Anúncio Comercial Viral e Elegante.
 
 DADOS DA CAMPANHA:
-- Produto: {{{productName}}}
-- URL: {{{productUrl}}}
+- Produto Principal: {{{productName}}}
+- URL de Referência: {{{productUrl}}}
 - Estilo Visual: {{{theme}}}
 - Plataforma: {{{platform}}}
-- Cupom: {{{couponCode}}}
-- Promoção: {{{promoText}}}
-- Site: {{{targetWebsite}}}
-- Evento/Data Comemorativa: {{{eventDate}}}
-- Benefícios Fornecidos: {{{productBenefits}}}
+- Cupom de Desconto: {{{couponCode}}}
+- Texto da Oferta: {{{promoText}}}
+- Website na Imagem: {{{targetWebsite}}}
+- Evento/Data: {{{eventDate}}}
+- Benefícios Manuais: {{{productBenefits}}}
 
 {{#if productUrl}}
-IMPORTANTE: Utilize 'fetchProductDetails' para capturar a alma do produto. Identifique os benefícios "matadores" e a estética da marca.
+PROCEDIMENTO OBRIGATÓRIO: Use 'fetchProductDetails' para minerar o site. Identifique os 3 benefícios mais fortes e a proposta de valor exclusiva. NÃO IGNORE O CONTEÚDO DO SITE.
 {{/if}}
 
-SUA TAREFA CRIATIVA:
-1. MISTURA DE TEMAS: Você deve fundir o Estilo Visual (ex: Minimalista) com o Evento (ex: Natal) de forma criativa. Não apenas coloque o produto num fundo natalino, mas crie uma "Composição Artística Híbrida" (ex: Árvore de natal minimalista feita de luzes neon se o estilo for Cyberpunk).
-2. VISUALIZAÇÃO DE BENEFÍCIOS: Transforme os benefícios do produto em elementos visuais. Se o produto for "confortável", mostre-o em nuvens estilizadas ou texturas suaves.
-3. FOCO NO PRODUTO: O produto da foto de referência DEVE ser a estrela central, integrado perfeitamente ao cenário.
+DIRETRIZES CRIATIVAS (NÃO SEJA MINIMALISTA):
+1. ESTÉTICA: Crie algo "Elegante, Atraente e Cinematográfico". Pense em anúncios da Apple, Rolex ou marcas de luxo automotivas.
+2. INTEGRAÇÃO DE EVENTO: Se houver um evento (ex: Natal), o cenário DEVE respirar esse evento de forma sofisticada e luxuosa.
+3. VISUALIZAÇÃO DE BENEFÍCIOS: Transforme os benefícios (extraídos do site ou manuais) em elementos visuais concretos. Se for "potente", use raios de luz; se for "natural", use elementos orgânicos reais.
+4. INFRAESTRUTURA DE ANÚNCIO: Use o termo "High-end Commercial Product Advertisement" e "Professional Studio Lighting".
+5. TODAS AS INFOS: O prompt DALL-E deve descrever onde o Cupom, o Texto da Promo e o Site devem aparecer (como elementos de design ou tipografia integrada).
 
-REQUISITOS DO DALLE PROMPT (EM INGLÊS):
-- Comece com: "A high-end, professional commercial product photography of [Product Name]..."
-- Descreva a fusão criativa entre {{{theme}}} e {{{eventDate}}}.
-- Inclua detalhes de iluminação (volumetric lighting, soft shadows, rim lighting).
-- Especifique a integração: "Integrate the specific product from the reference image seamlessly into this environment."
-- Adicione elementos gráficos sutis que remetam à promoção {{{promoText}}}.
+SAÍDA:
+- dallePrompt: Em INGLÊS, ultra-detalhado, descrevendo a fusão entre {{{theme}}} e {{{eventDate}}}.
+- copywriting: Em PORTUGUÊS, focado em viralizar e informar.
 
-REQUISITOS DE COPYWRITING (EM PORTUGUÊS):
-- Crie uma Headline que conecte o benefício do produto com o momento da data comemorativa.
-
-Retorne o JSON completo.`,
+Gere o briefing completo agora.`,
 });
 
 export async function generateAdScript(input: GenerateAdScriptInput): Promise<GenerateAdScriptOutput> {
