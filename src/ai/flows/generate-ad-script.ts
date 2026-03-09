@@ -1,11 +1,10 @@
 'use server';
 /**
- * @fileOverview Gera um BRIEFING MAESTRO de elite para criação de anúncios comerciais.
+ * @fileOverview Gera um BRIEFING MAESTRO de elite para criação de anúncios comerciais de alto impacto.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import * as cheerio from 'cheerio';
 
 const GenerateAdScriptInputSchema = z.object({
   productName: z.string().describe('Nome do produto.'),
@@ -44,25 +43,30 @@ const generateAdScriptInternal = ai.definePrompt({
   name: 'generateAdScriptPrompt',
   input: {schema: GenerateAdScriptInputSchema},
   output: {schema: GenerateAdScriptOutputSchema},
-  prompt: `Você é um Diretor de Arte de Agências de Luxo. Crie um BRIEFING MAESTRO para uma IMAGEM DE COMERCIAL DE PRODUTO de alto impacto.
+  prompt: `Você é um Diretor de Arte Criativo de Agências de Publicidade de Elite (como Ogilvy ou BBDO). 
+Sua missão é criar um BRIEFING MAESTRO para uma IMAGEM DE COMERCIAL DE PRODUTO ("High-end Commercial Product Advertisement") de impacto viral.
 
-DADOS:
+DADOS DA CAMPANHA:
 - Produto: {{{productName}}}
-- Estilo: {{{theme}}}
-- Evento/Data: {{{eventDate}}}
-- Promo: {{{promoText}}} | Cupom: {{{couponCode}}}
-- Benefícios: {{{productBenefits}}}
+- Estilo Visual: {{{theme}}}
+- Evento/Data Comemorativa: {{{eventDate}}}
+- Promoção: {{{promoText}}} | Cupom: {{{couponCode}}}
+- Site: {{{targetWebsite}}}
+- Diferenciais Técnicos: {{{productBenefits}}}
+- Plataforma: {{{platform}}}
 
-REQUISITOS CRÍTICOS:
-1. NÃO SEJA MINIMALISTA. O anúncio deve ser "Elegante, Atraente, Cinematográfico e Luxuoso".
-2. TEMA DE DATA COMEMORATIVA: O cenário DEVE respirar o evento {{{eventDate}}} de forma profunda e criativa, fundindo-o com o estilo {{{theme}}}.
-3. PROMPT DALL-E (EM INGLÊS): Descreva uma "High-end Commercial Product Advertisement". Use iluminação dramática de estúdio, texturas 8k, e integre o Nome do Produto, o Cupom e o Site como elementos de design premium.
-4. BENEFÍCIOS VISUAIS: Os benefícios "{{{productBenefits}}}" devem ser transformados em elementos visuais concretos (ex: se for tecnologia, use circuitos de luz; se for conforto, use texturas macias).
-5. O anúncio deve ser viral, atrativo e altamente informativo.
+REQUISITOS OBRIGATÓRIOS DO DIRETOR DE ARTE:
+1. NÃO SEJA MINIMALISTA. O anúncio deve ser "Elegante, Atraente, Luxuoso e Visualmente Rico". Fuja do básico.
+2. FUSÃO CRIATIVA: O cenário DEVE fundir profundamente o evento {{{eventDate}}} com o estilo {{{theme}}}. Não apenas coloque elementos natalinos, crie uma atmosfera completa.
+3. PROMPT MAESTRO DALL-E (EM INGLÊS): Descreva uma cena de comercial de luxo. Use iluminação dramática (Cinematic Lighting), texturas ultra-detalhadas (8k), e integre o Nome do Produto, o Cupom e o Site como elementos de design integrados e premium na imagem. 
+4. VISUALIZAÇÃO DE BENEFÍCIOS: Transforme os diferenciais "{{{productBenefits}}}" em elementos visuais concretos. Exemplo: se for tecnologia, use luzes neon e efeitos de velocidade; se for conforto, use tecidos luxuosos e iluminação suave.
+5. OBJETIVO: Criar um anúncio comercial que seja ao mesmo tempo viral, informativo e extremamente atraente para o público.
+
+O prompt mestre deve ser focado em como integrar a "attached product photo" (foto que o usuário enviará ao ChatGPT) neste cenário comercial de elite.
 
 SAÍDA:
-- dallePrompt: Prompt ultra-detalhado em INGLÊS.
-- copywriting: Textos em PORTUGUÊS focados em vendas.`,
+- dallePrompt: Prompt ultra-detalhado em INGLÊS focado em comercial de produto.
+- copywriting: Textos em PORTUGUÊS (Brasil) focados em vendas agressivas e elegantes.`,
 });
 
 export async function generateAdScript(input: GenerateAdScriptInput): Promise<GenerateAdScriptOutput> {

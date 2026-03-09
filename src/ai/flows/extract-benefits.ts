@@ -62,13 +62,13 @@ Analise o conteúdo do seguinte site: {{{url}}}
 
 Sua missão é:
 1. Identificar o NOME COMERCIAL exato do produto (ignore nomes genéricos da loja).
-2. Extrair os 5 benefícios mais impactantes e diferenciais técnicos que tornam este produto único.
+2. Extrair os 5 benefícios mais impactantes e diferenciais técnicos que tornam este produto único e desejável.
 
 IMPORTANTE:
 - Seja persuasivo e profissional.
-- Transforme características técnicas em benefícios emocionais.
+- Transforme características técnicas em benefícios emocionais e visuais poderosos.
 - Responda em PORTUGUÊS do Brasil.
-- Se o site não puder ser lido, use seu conhecimento geral se for uma marca famosa, ou retorne campos vazios para preenchimento manual.`,
+- Foque em detalhes que possam ser representados visualmente em uma campanha de luxo ou comercial viral.`,
 });
 
 export async function extractBenefits(input: { url: string }) {

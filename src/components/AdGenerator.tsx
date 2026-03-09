@@ -111,9 +111,9 @@ export function AdGenerator() {
     try {
       const result = await extractBenefits({ url: productUrl });
       if (result) {
+        // Preenche apenas diferenciais, mantendo o nome intacto conforme solicitado
         setBenefits(result.benefits || '');
-        setProductName(result.productName || '');
-        toast({ title: "Análise Concluída", description: "Nome e diferenciais extraídos com sucesso do site." });
+        toast({ title: "Análise Concluída", description: "Diferenciais extraídos com sucesso do site." });
       }
     } catch (error: any) {
       toast({ title: "Erro na análise", description: "Não foi possível extrair informações automaticamente. Tente preencher manualmente.", variant: "destructive" });
@@ -223,7 +223,7 @@ export function AdGenerator() {
                         {extracting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
                       </Button>
                     </div>
-                    <p className="text-[10px] text-muted-foreground leading-tight italic">A IA lerá o site e preencherá os campos abaixo. Você poderá editá-los livremente.</p>
+                    <p className="text-[10px] text-muted-foreground leading-tight italic">A IA lerá o site e preencherá os diferenciais abaixo automaticamente.</p>
                   </div>
                 </div>
 
@@ -231,7 +231,6 @@ export function AdGenerator() {
                   <div className="space-y-2">
                     <Label className="font-bold flex items-center justify-between">
                       Nome do Produto
-                      {extracting && <Badge variant="outline" className="animate-pulse text-[9px] border-accent text-accent">IDENTIFICANDO...</Badge>}
                     </Label>
                     <Input
                       placeholder="Ex: iPhone 15 Pro Max"
@@ -250,7 +249,7 @@ export function AdGenerator() {
                       {extracting && <Badge variant="outline" className="animate-pulse text-[9px] border-accent text-accent">EXTRAINDO...</Badge>}
                     </Label>
                     <Textarea
-                      placeholder="Os diferenciais extraídos do site aparecerão aqui. Sinta-se à vontade para editar ou complementar para tornar o anúncio mais agressivo."
+                      placeholder="Os diferenciais extraídos do site aparecerão aqui. Sinta-se à vontade para editar ou complementar para tornar o anúncio mais agressivo e atrativo."
                       value={benefits}
                       onChange={(e) => setBenefits(e.target.value)}
                       className="min-h-[180px] bg-background/50 resize-none font-body border-border leading-relaxed"
@@ -333,7 +332,7 @@ export function AdGenerator() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <p className="text-[11px] text-muted-foreground italic">A IA criará um cenário comercial fundindo o estilo visual com este evento.</p>
+                  <p className="text-[11px] text-muted-foreground italic">A IA criará um cenário comercial fundindo o estilo visual com este evento de forma criativa.</p>
                 </div>
               </div>
 
