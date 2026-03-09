@@ -18,13 +18,13 @@ const ExtractBenefitsOutputSchema = z.object({
 });
 
 /**
- * Função auxiliar para buscar e limpar conteúdo de uma URL
+ * Função auxiliar para buscar e limpar conteúdo de uma URL de forma robusta
  */
 async function scrapeProductPage(url: string): Promise<string> {
   try {
     const response = await fetch(url, {
       headers: { 
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
         'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
       },
@@ -32,31 +32,30 @@ async function scrapeProductPage(url: string): Promise<string> {
     });
     
     if (!response.ok) {
-      throw new Error(`Status ${response.status}`);
+      return '';
     }
     
     const html = await response.text();
     const $ = cheerio.load(html);
     
-    // Capturar Metadados
+    // Capturar metadados que geralmente contêm os benefícios principais
     const metaDescription = $('meta[name="description"]').attr('content') || '';
     const ogDescription = $('meta[property="og:description"]').attr('content') || '';
     const pageTitle = $('title').text() || '';
     
-    // Limpeza profunda
-    $('script, style, nav, footer, header, iframe, noscript, svg, form, head, .ads, .popup, #footer, #header, .menu, .nav').remove();
+    // Remover elementos irrelevantes para economizar tokens e tempo
+    $('script, style, nav, footer, header, iframe, noscript, svg, form, head, .ads, .popup, #footer, #header, .menu, .nav, button').remove();
     
-    // Capturar texto relevante (primeiros 15k caracteres para não estourar o contexto)
-    const bodyContent = $('body').text().replace(/\s+/g, ' ').trim().substring(0, 15000);
+    // Capturar o texto principal de forma mais agressiva
+    const bodyContent = $('body').text().replace(/\s+/g, ' ').trim().substring(0, 8000);
     
     return `
+      Site: ${url}
       Título: ${pageTitle}
-      Meta Descrição: ${metaDescription}
-      OG Descrição: ${ogDescription}
-      Conteúdo: ${bodyContent}
-    `.substring(0, 18000);
+      Resumo: ${metaDescription || ogDescription}
+      Conteúdo Relevante: ${bodyContent}
+    `.substring(0, 10000);
   } catch (error: any) {
-    console.error('Scraper error:', error.message);
     return '';
   }
 }
@@ -73,41 +72,38 @@ const extractBenefitsPrompt = ai.definePrompt({
     })
   },
   output: { schema: ExtractBenefitsOutputSchema },
-  prompt: `Você é um Estrategista de Marketing de Elite.
-Sua missão é ler o conteúdo extraído do site {{{url}}} e identificar os BENEFÍCIOS e DIFERENCIAIS reais do produto para um comercial de luxo.
+  prompt: `Você é um Estrategista de Marketing de Alta Performance.
+Sua missão é extrair os DIFERENCIAIS e BENEFÍCIOS REAIS do produto a partir do conteúdo do site {{{url}}}.
 
 CONTEÚDO DO SITE:
 {{{pageContent}}}
 
 DIRETRIZES:
-1. Se o conteúdo estiver vazio ou indicar erro, peça para o usuário descrever manualmente.
-2. Foque em benefícios que podem ser VISUALIZADOS em um comercial (texturas, tecnologia, status, conforto).
-3. Transforme características técnicas em argumentos de venda poderosos.
-4. Responda de forma direta e persuasiva em PORTUGUÊS (Brasil).`,
+1. Se o conteúdo for insuficiente, peça educadamente para o usuário descrever manualmente.
+2. Foque em benefícios emocionais e técnicos que vendem (conforto, tecnologia, exclusividade, economia).
+3. Transforme características técnicas em argumentos poderosos para um comercial de elite.
+4. Responda em PORTUGUÊS (Brasil) de forma direta e persuasiva.`,
 });
 
 export async function extractBenefits(input: { url: string }) {
   try {
-    // 1. Scrape manual (mais robusto que via tool em alguns casos de rede)
     const pageContent = await scrapeProductPage(input.url);
     
     if (!pageContent || pageContent.length < 50) {
-      return { benefits: "Não foi possível extrair automaticamente. Por favor, descreva os diferenciais aqui." };
+      return { benefits: "O site bloqueou o acesso automático ou está vazio. Por favor, descreva os diferenciais aqui." };
     }
 
-    // 2. Chamar a IA com o contexto já capturado
     const { output } = await extractBenefitsPrompt({
       url: input.url,
       pageContent
     });
 
-    if (!output) {
-      return { benefits: "IA não gerou resposta. Por favor, descreva manualmente." };
+    if (!output || !output.benefits) {
+      return { benefits: "A IA não conseguiu identificar benefícios claros. Por favor, descreva manualmente." };
     }
 
     return output;
   } catch (error: any) {
-    console.error('Extract Benefits Error:', error.message);
-    return { benefits: "Erro na conexão com a IA. Por favor, tente novamente ou descreva manualmente." };
+    return { benefits: "Erro técnico na análise. Por favor, tente novamente em instantes ou descreva manualmente." };
   }
 }
