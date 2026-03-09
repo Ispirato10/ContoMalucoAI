@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -13,346 +14,357 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Upload, Wand2, Image as ImageIcon, CheckCircle2, Download, RefreshCw, X, Globe, Sparkles } from 'lucide-react';
-import { generateAdImagePrompt } from '@/ai/flows/generate-ad-image-prompt';
-import { createProfessionalAdImage } from '@/ai/flows/create-professional-ad-image';
+import { 
+  FileJson, 
+  Wand2, 
+  Globe, 
+  Sparkles, 
+  Download, 
+  RefreshCw, 
+  X, 
+  Upload, 
+  Calendar, 
+  Ticket, 
+  Megaphone, 
+  Layout, 
+  CheckCircle2,
+  Copy
+} from 'lucide-react';
+import { generateAdScript, type GenerateAdScriptOutput } from '@/ai/flows/generate-ad-script';
 import { useToast } from '@/hooks/use-toast';
-import Image from 'next/image';
 
 const TEMAS = [
-  { id: 'Luxury', name: 'Luxo & Premium', description: 'Dourado, iluminação dramática e elegância' },
-  { id: 'Minimalist', name: 'Minimalista Moderno', description: 'Cores sólidas, sombras suaves e foco total' },
-  { id: 'Seasonal', name: 'Sazonal / Promoção', description: 'Vibrante, temático e chamativo' },
-  { id: 'Beauty', name: 'Beleza & Estética', description: 'Foco suave, tons pastel e texturas finas' },
-  { id: 'Tech', name: 'Tecnologia & Inovação', description: 'Futurista, néon e alto contraste' },
+  { id: 'Luxury', name: 'Luxo & Premium', desc: 'Dourado, elegância e exclusividade' },
+  { id: 'Minimalist', name: 'Minimalista Moderno', desc: 'Cores sólidas e foco absoluto' },
+  { id: 'BlackFriday', name: 'Black Friday', desc: 'Neon, alto contraste e urgência' },
+  { id: 'Christmas', name: 'Natal / Festividades', desc: 'Aconchegante, luzes e calor' },
+  { id: 'Summer', name: 'Verão / Outdoor', desc: 'Luminoso, vibrante e fresco' },
+  { id: 'Tech', name: 'Tech & Inovação', desc: 'Futurista, ciano e néon' },
 ];
 
 const PLATAFORMAS = [
-  { id: 'feed', name: 'Instagram Feed (1:1)', icon: '📱' },
-  { id: 'story', name: 'Instagram Story (9:16)', icon: '🤳' },
-  { id: 'banner', name: 'Banner de Site (16:9)', icon: '🖥️' },
+  { id: 'Instagram Feed', name: 'Instagram Feed (1:1)' },
+  { id: 'Instagram Stories', name: 'Instagram Stories (9:16)' },
+  { id: 'Facebook Ads', name: 'Facebook Ads (1.91:1)' },
+  { id: 'TikTok Ads', name: 'TikTok Ads (9:16)' },
+  { id: 'WhatsApp Campaign', name: 'WhatsApp (Status/Mensagem)' },
+  { id: 'Google Display', name: 'Google Display / Banner' },
 ];
 
 export function AdGenerator() {
   const { toast } = useToast();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  
+  // Form State
   const [productName, setProductName] = useState('');
   const [productUrl, setProductUrl] = useState('');
-  const [benefits, setBenefits] = useState('');
-  const [theme, setTheme] = useState('Luxury');
-  const [platform, setPlatform] = useState<'feed' | 'story' | 'banner'>('feed');
   const [productImage, setProductImage] = useState<string | null>(null);
-  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [theme, setTheme] = useState('Luxury');
+  const [platform, setPlatform] = useState('Instagram Feed');
+  const [couponCode, setCouponCode] = useState('');
+  const [promoText, setPromoText] = useState('');
+  const [targetWebsite, setTargetWebsite] = useState('');
+  const [eventDate, setEventDate] = useState('');
+  const [benefits, setBenefits] = useState('');
+  
+  const [scriptResult, setScriptResult] = useState<GenerateAdScriptOutput | null>(null);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 150 * 1024 * 1024) {
-        toast({
-          title: "Arquivo muito grande",
-          description: "O limite máximo é de 150MB.",
-          variant: "destructive",
-        });
+        toast({ title: "Arquivo muito grande", description: "O limite é 150MB.", variant: "destructive" });
         return;
       }
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setProductImage(reader.result as string);
-      };
+      reader.onloadend = () => setProductImage(reader.result as string);
       reader.readAsDataURL(file);
     }
   };
 
-  const clearImage = () => setProductImage(null);
-
-  const generateAd = async () => {
+  const handleGenerateScript = async () => {
     if (!productName) {
-      toast({
-        title: "Campo Obrigatório",
-        description: "Por favor, informe o nome do produto.",
-        variant: "destructive",
-      });
+      toast({ title: "Ops!", description: "O nome do produto é obrigatório.", variant: "destructive" });
       return;
     }
 
     setLoading(true);
     try {
-      const promptResult = await generateAdImagePrompt({
+      const result = await generateAdScript({
         productName,
-        productBenefits: benefits || undefined,
         productUrl: productUrl || undefined,
         theme,
-        platform: platform === 'banner' ? 'facebook-ads' : platform,
-        productImage: productImage || undefined,
+        platform,
+        couponCode: couponCode || undefined,
+        promoText: promoText || undefined,
+        targetWebsite: targetWebsite || undefined,
+        eventDate: eventDate || undefined,
+        productBenefits: benefits || undefined,
       });
-
-      const adResult = await createProfessionalAdImage({
-        textPrompt: promptResult.prompt,
-        productImage: productImage || undefined,
-        platform: platform,
-      });
-
-      setGeneratedImage(adResult.imageUrl);
+      setScriptResult(result);
       setStep(3);
+      toast({ title: "Script Gerado!", description: "O briefing técnico está pronto para download." });
     } catch (error: any) {
-      console.error(error);
-      toast({
-        title: "Erro na Geração",
-        description: error.message || "Ocorreu um erro ao processar com a IA Gemini.",
-        variant: "destructive",
-      });
+      toast({ title: "Erro", description: error.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
   };
 
-  const downloadImage = () => {
-    if (!generatedImage) return;
-    const link = document.createElement('a');
-    link.href = generatedImage;
-    link.download = `anuncio-ai-${productName.toLowerCase().replace(/\s+/g, '-')}.png`;
-    link.click();
+  const downloadJson = () => {
+    if (!scriptResult) return;
+    const blob = new Blob([JSON.stringify(scriptResult, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `script-anuncio-${productName.toLowerCase().replace(/\s+/g, '-')}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
-  const reset = () => {
-    setGeneratedImage(null);
-    setStep(1);
+  const copyPrompt = () => {
+    if (!scriptResult) return;
+    navigator.clipboard.writeText(scriptResult.campaignBriefing.dallePrompt);
+    toast({ title: "Copiado!", description: "Prompt de imagem copiado para a área de transferência." });
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-      <div className="lg:col-span-5 space-y-6">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="lg:col-span-12">
         <Card className="bg-card border-border shadow-2xl overflow-hidden">
-          <div className="bg-primary/20 border-b border-border p-4 flex items-center justify-between">
-            <h3 className="font-headline font-bold text-lg text-white">Criar Campanha</h3>
-            <div className="flex gap-1">
+          <div className="bg-primary/20 border-b border-border p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-accent p-2 rounded-xl">
+                <FileJson className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h2 className="font-headline font-bold text-2xl text-white">Gerador de Script Publicitário</h2>
+                <p className="text-sm text-muted-foreground">Crie briefings perfeitos para o ChatGPT e DALL-E</p>
+              </div>
+            </div>
+            <div className="flex gap-2">
               {[1, 2, 3].map((s) => (
-                <div
-                  key={s}
-                  className={`w-8 h-1 rounded-full transition-all duration-300 ${
-                    step >= s ? 'bg-accent' : 'bg-muted'
-                  }`}
-                />
+                <div key={s} className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold transition-all ${
+                  step === s ? 'bg-accent text-white' : 'bg-muted text-muted-foreground'
+                }`}>
+                  Passo {s}
+                </div>
               ))}
             </div>
           </div>
-          <CardContent className="p-6 space-y-6">
+
+          <CardContent className="p-8">
             {step === 1 && (
-              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
-                <div className="bg-accent/10 p-5 rounded-xl border-2 border-accent/30 space-y-4 ring-4 ring-accent/5">
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className="bg-accent p-1.5 rounded-md">
-                      <Globe className="w-4 h-4 text-white" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-4">
+                <div className="space-y-6">
+                  <div className="bg-accent/10 p-5 rounded-xl border-2 border-accent/30 space-y-4 ring-4 ring-accent/5">
+                    <div className="flex items-center gap-2">
+                      <Globe className="w-4 h-4 text-accent" />
+                      <span className="font-bold text-xs text-accent uppercase tracking-widest">Análise de Site</span>
                     </div>
-                    <span className="font-bold text-xs text-accent uppercase tracking-widest">Base de Conhecimento IA</span>
+                    <div className="space-y-2">
+                      <Label className="text-white">Link do Produto (URL)</Label>
+                      <Input
+                        placeholder="https://sualoja.com/produto"
+                        value={productUrl}
+                        onChange={(e) => setProductUrl(e.target.value)}
+                        className="bg-background border-accent/50 h-12"
+                      />
+                      <p className="text-[11px] text-accent/80">O Gemini analisará este link para entender seu produto.</p>
+                    </div>
                   </div>
+
                   <div className="space-y-2">
-                    <Label className="text-sm font-bold text-white flex items-center gap-2">
-                      Link do Produto (URL)
-                    </Label>
+                    <Label>Nome do Produto</Label>
                     <Input
-                      placeholder="Cole o link do seu produto aqui"
-                      value={productUrl}
-                      onChange={(e) => setProductUrl(e.target.value)}
-                      className="bg-background border-accent/50 focus:ring-accent h-12 text-base"
+                      placeholder="Ex: Tênis Ultra Confort 2.0"
+                      value={productName}
+                      onChange={(e) => setProductName(e.target.value)}
+                      className="bg-background/50 h-12"
                     />
-                    <p className="text-[11px] text-accent/80 leading-tight font-medium">
-                      O Gemini visitará o site para entender os diferenciais do produto automaticamente.
-                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Diferenciais/Benefícios Manuais</Label>
+                    <Textarea
+                      placeholder="Caso não tenha link, descreva o que torna o produto único..."
+                      value={benefits}
+                      onChange={(e) => setBenefits(e.target.value)}
+                      className="bg-background/50 min-h-[100px]"
+                    />
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Nome do Produto
-                  </Label>
-                  <Input
-                    placeholder="Ex: Tênis Ultra Confort Pro"
-                    value={productName}
-                    onChange={(e) => setProductName(e.target.value)}
-                    className="bg-background/50 border-border focus:ring-accent"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Diferenciais e Benefícios (Opcional)
-                  </Label>
-                  <Textarea
-                    placeholder="O que torna seu produto único? (A IA usará isso se não houver link)"
-                    value={benefits}
-                    onChange={(e) => setBenefits(e.target.value)}
-                    className="bg-background/50 border-border min-h-[80px] focus:ring-accent"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Foto do Produto (PNG ou JPG)
-                  </Label>
+                <div className="space-y-6">
+                  <Label>Foto do Produto (Referência)</Label>
                   {!productImage ? (
-                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors">
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                        <Upload className="w-8 h-8 mb-2 text-muted-foreground" />
-                        <p className="text-xs text-muted-foreground text-center px-4">Arraste ou clique para enviar (Máx 150MB)</p>
+                    <label className="flex flex-col items-center justify-center w-full h-full min-h-[250px] border-2 border-dashed border-border rounded-xl cursor-pointer hover:bg-muted/30 transition-all group">
+                      <div className="flex flex-col items-center justify-center p-6 text-center">
+                        <Upload className="w-12 h-12 mb-4 text-muted-foreground group-hover:text-accent transition-colors" />
+                        <p className="text-sm font-medium">Arraste a foto do produto aqui</p>
+                        <p className="text-xs text-muted-foreground mt-2">Usaremos para exibir na prévia do script</p>
                       </div>
                       <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
                     </label>
                   ) : (
-                    <div className="relative rounded-lg overflow-hidden border border-border aspect-video bg-background/50">
-                      <img src={productImage} alt="Preview" className="w-full h-full object-contain p-2" />
+                    <div className="relative rounded-xl overflow-hidden border border-border aspect-video bg-background/50 group">
+                      <img src={productImage} alt="Preview" className="w-full h-full object-contain p-4" />
                       <button
-                        onClick={clearImage}
-                        className="absolute top-2 right-2 p-1 bg-destructive/80 hover:bg-destructive rounded-full transition-colors"
+                        onClick={() => setProductImage(null)}
+                        className="absolute top-4 right-4 p-2 bg-destructive/90 hover:bg-destructive rounded-full text-white shadow-xl transition-all"
                       >
-                        <X className="w-4 h-4 text-white" />
+                        <X className="w-4 h-4" />
                       </button>
                     </div>
                   )}
+                  <Button onClick={() => setStep(2)} className="w-full bg-accent hover:bg-accent/90 h-14 text-lg font-bold">
+                    Próximo: Detalhes da Campanha
+                  </Button>
                 </div>
-                <Button onClick={() => setStep(2)} className="w-full bg-accent hover:bg-accent/90 text-white font-bold h-12 shadow-lg shadow-accent/20">
-                  Próximo: Estética do Anúncio
-                </Button>
               </div>
             )}
 
             {step === 2 && (
-              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
-                <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Escolha um Tema Visual
-                  </Label>
-                  <div className="grid grid-cols-1 gap-3">
-                    {TEMAS.map((t) => (
-                      <button
-                        key={t.id}
-                        onClick={() => setTheme(t.id)}
-                        className={`text-left p-3 rounded-lg border transition-all ${
-                          theme === t.id
-                            ? 'bg-accent/10 border-accent shadow-sm'
-                            : 'bg-background/50 border-border hover:border-accent/50'
-                        }`}
-                      >
-                        <div className="font-bold text-sm text-white">{t.name}</div>
-                        <div className="text-xs text-muted-foreground">{t.description}</div>
-                      </button>
-                    ))}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-4">
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2"><Sparkles className="w-4 h-4" /> Tema Visual</Label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {TEMAS.map((t) => (
+                        <button
+                          key={t.id}
+                          onClick={() => setTheme(t.id)}
+                          className={`text-left p-3 rounded-xl border transition-all ${
+                            theme === t.id ? 'bg-accent/10 border-accent' : 'bg-background/50 border-border'
+                          }`}
+                        >
+                          <div className="font-bold text-sm text-white">{t.name}</div>
+                          <div className="text-[10px] text-muted-foreground">{t.desc}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2"><Layout className="w-4 h-4" /> Canal de Veiculação</Label>
+                    <Select value={platform} onValueChange={setPlatform}>
+                      <SelectTrigger className="h-12 bg-background/50">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {PLATAFORMAS.map((p) => (
+                          <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Formato da Rede Social
-                  </Label>
-                  <Select value={platform} onValueChange={(v: any) => setPlatform(v)}>
-                    <SelectTrigger className="bg-background/50 border-border h-12">
-                      <SelectValue placeholder="Selecione o formato" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {PLATAFORMAS.map((p) => (
-                        <SelectItem key={p.id} value={p.id}>
-                          {p.icon} {p.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2"><Ticket className="w-4 h-4" /> Cupom de Desconto</Label>
+                      <Input placeholder="Ex: PROMO10" value={couponCode} onChange={(e) => setCouponCode(e.target.value)} className="bg-background/50" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2"><Calendar className="w-4 h-4" /> Data/Evento</Label>
+                      <Input placeholder="Ex: Dia das Mães" value={eventDate} onChange={(e) => setEventDate(e.target.value)} className="bg-background/50" />
+                    </div>
+                  </div>
 
-                <div className="flex gap-3">
-                  <Button variant="outline" onClick={() => setStep(1)} className="flex-1 border-border">
-                    Voltar
-                  </Button>
-                  <Button
-                    onClick={generateAd}
-                    disabled={loading}
-                    className="flex-[2] bg-accent hover:bg-accent/90 text-white font-bold h-12 shadow-lg shadow-accent/20"
-                  >
-                    {loading ? (
-                      <RefreshCw className="w-5 h-5 animate-spin mr-2" />
-                    ) : (
-                      <Wand2 className="w-5 h-5 mr-2" />
-                    )}
-                    {loading ? 'Processando com Gemini...' : 'Gerar Anúncio Profissional'}
-                  </Button>
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2"><Megaphone className="w-4 h-4" /> Oferta Principal</Label>
+                    <Input placeholder="Ex: Compre 1 Leve 2" value={promoText} onChange={(e) => setPromoText(e.target.value)} className="bg-background/50" />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2"><Globe className="w-4 h-4" /> Website no Anúncio</Label>
+                    <Input placeholder="www.seusite.com.br" value={targetWebsite} onChange={(e) => setTargetWebsite(e.target.value)} className="bg-background/50" />
+                  </div>
+
+                  <div className="flex gap-4 pt-4">
+                    <Button variant="outline" onClick={() => setStep(1)} className="flex-1 h-14">Voltar</Button>
+                    <Button onClick={handleGenerateScript} disabled={loading} className="flex-[2] bg-accent hover:bg-accent/90 h-14 font-bold">
+                      {loading ? <RefreshCw className="w-6 h-6 animate-spin mr-2" /> : <Wand2 className="w-6 h-6 mr-2" />}
+                      {loading ? 'Analisando...' : 'Gerar Script Publicitário'}
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}
 
-            {step === 3 && (
-              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 text-center">
-                <div className="flex flex-col items-center gap-4 py-4">
-                  <div className="bg-green-500/10 p-3 rounded-full">
+            {step === 3 && scriptResult && (
+              <div className="space-y-8 animate-in zoom-in-95 duration-500">
+                <div className="flex flex-col items-center text-center space-y-2">
+                  <div className="bg-green-500/10 p-4 rounded-full">
                     <CheckCircle2 className="w-12 h-12 text-green-500" />
                   </div>
-                  <h3 className="text-xl font-headline font-bold text-white">Anúncio Criado!</h3>
-                  <p className="text-muted-foreground text-sm">
-                    Sua peça publicitária está pronta para ser baixada e usada.
-                  </p>
+                  <h2 className="text-3xl font-headline font-bold text-white">Seu Script de Anúncio Está Pronto!</h2>
+                  <p className="text-muted-foreground">Baixe o JSON e envie para o ChatGPT junto com a foto do produto.</p>
                 </div>
-                <div className="flex flex-col gap-3">
-                  <Button onClick={downloadImage} className="w-full bg-accent hover:bg-accent/90 text-white h-12">
-                    <Download className="w-5 h-5 mr-2" />
-                    Baixar Imagem
-                  </Button>
-                  <Button variant="outline" onClick={reset} className="w-full border-border">
-                    Criar Novo Anúncio
-                  </Button>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <div className="space-y-6">
+                    <div className="bg-background/80 rounded-xl border border-border overflow-hidden">
+                      <div className="bg-muted p-3 flex items-center justify-between border-b border-border">
+                        <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Prompt de Imagem (DALL-E 3)</span>
+                        <Button variant="ghost" size="sm" onClick={copyPrompt} className="h-8 gap-2">
+                          <Copy className="w-3 h-3" /> Copiar
+                        </Button>
+                      </div>
+                      <div className="p-4">
+                        <p className="text-sm text-white leading-relaxed italic">
+                          "{scriptResult.campaignBriefing.dallePrompt}"
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <h4 className="font-bold text-white flex items-center gap-2 italic">Dicas de Copywriting:</h4>
+                      <div className="grid grid-cols-1 gap-3">
+                        <div className="bg-primary/10 p-3 rounded-lg border border-primary/20">
+                          <div className="text-[10px] text-accent uppercase font-bold">Headline</div>
+                          <div className="text-sm text-white">{scriptResult.campaignBriefing.copywriting.headline}</div>
+                        </div>
+                        <div className="bg-primary/10 p-3 rounded-lg border border-primary/20">
+                          <div className="text-[10px] text-accent uppercase font-bold">CTA</div>
+                          <div className="text-sm text-white font-bold">{scriptResult.campaignBriefing.copywriting.callToAction}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div className="bg-muted/30 rounded-xl border border-border p-6 space-y-4">
+                      <h4 className="font-bold text-white flex items-center gap-2">Detalhes Técnicos Sugeridos:</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {scriptResult.campaignBriefing.technicalDetails.suggestedColors.map((c, i) => (
+                          <div key={i} className="px-3 py-1 bg-background rounded-full border border-border text-[10px] font-bold text-muted-foreground">
+                            {c}
+                          </div>
+                        ))}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        <strong className="text-white">Iluminação:</strong> {scriptResult.campaignBriefing.technicalDetails.lightingStyle}<br/>
+                        <strong className="text-white">Formato:</strong> {scriptResult.campaignBriefing.technicalDetails.aspectRatio}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-3">
+                      <Button onClick={downloadJson} className="w-full bg-accent hover:bg-accent/90 h-14 text-lg font-bold">
+                        <Download className="w-6 h-6 mr-2" /> Baixar Script (JSON)
+                      </Button>
+                      <Button variant="outline" onClick={() => { setStep(1); setScriptResult(null); }} className="w-full h-12">
+                        Criar Novo Script
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
           </CardContent>
         </Card>
-      </div>
-
-      <div className="lg:col-span-7 h-full">
-        <div className="sticky top-24">
-          <div className="flex items-center gap-2 mb-4">
-            <ImageIcon className="w-5 h-5 text-accent" />
-            <h3 className="font-headline text-xl text-white">Prévia em Tempo Real</h3>
-          </div>
-          <div className="relative rounded-xl border border-border bg-card/50 overflow-hidden shadow-2xl group min-h-[500px] flex items-center justify-center">
-            {!loading && !generatedImage && (
-              <div className="text-center p-12 space-y-4 max-w-sm">
-                <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto opacity-50">
-                  <ImageIcon className="w-8 h-8 text-muted-foreground" />
-                </div>
-                <p className="text-muted-foreground font-body leading-relaxed">
-                  A mágica acontece aqui. Preencha os detalhes e veja o poder do Gemini em ação criando seu anúncio.
-                </p>
-              </div>
-            )}
-
-            {loading && (
-              <div className="absolute inset-0 z-10 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center gap-6 p-12 text-center">
-                <div className="relative">
-                  <div className="w-20 h-20 border-4 border-accent/20 border-t-accent rounded-full animate-spin"></div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Sparkles className="w-8 h-8 text-accent animate-pulse" />
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-headline text-2xl font-bold text-white mb-2">IA Gemini Criando seu Anúncio</h4>
-                  <p className="text-muted-foreground animate-pulse">
-                    {productUrl ? 'Analisando o site do produto para extrair diferenciais...' : 'Renderizando iluminação cinematográfica e texturas...'}
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {generatedImage && (
-              <div className="w-full h-full animate-in zoom-in-95 duration-700">
-                <Image
-                  src={generatedImage}
-                  alt="Anúncio Finalizado"
-                  width={1080}
-                  height={platform === 'story' ? 1920 : platform === 'banner' ? 628 : 1080}
-                  className="w-full h-full object-contain"
-                />
-              </div>
-            )}
-          </div>
-        </div>
       </div>
     </div>
   );
