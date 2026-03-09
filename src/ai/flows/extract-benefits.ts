@@ -59,14 +59,14 @@ const fetchRawContent = ai.defineTool(
       $('script, style, nav, footer, header, iframe, noscript, svg, form, head, .ads, .popup, #footer, #header, .menu').remove();
       
       // Capturar apenas o texto visível e relevante
-      const bodyContent = $('body').text().replace(/\s+/g, ' ').trim().substring(0, 12000);
+      const bodyContent = $('body').text().replace(/\s+/g, ' ').trim().substring(0, 15000);
       
       const fullContext = `
-        Título: ${pageTitle}
+        Título da Página: ${pageTitle}
         Descrição Meta: ${metaDescription}
-        Descrição OG: ${ogDescription}
-        Conteúdo da Página: ${bodyContent}
-      `.substring(0, 15000);
+        Descrição Social: ${ogDescription}
+        Conteúdo Principal: ${bodyContent}
+      `.substring(0, 18000);
       
       if (fullContext.length < 50) {
         return { html: 'Conteúdo insuficiente encontrado na página para análise automática.' };
@@ -75,7 +75,7 @@ const fetchRawContent = ai.defineTool(
       return { html: fullContext };
     } catch (error: any) {
       console.error('Scraper Error:', error.message);
-      return { html: `Erro técnico ao acessar o site: ${error.message}. Por favor, preencha os benefícios manualmente.` };
+      return { html: `Erro técnico ao acessar o site: ${error.message}. O site pode estar bloqueando acessos automatizados.` };
     }
   }
 );
@@ -85,21 +85,28 @@ const extractBenefitsPrompt = ai.definePrompt({
   input: { schema: ExtractBenefitsInputSchema },
   output: { schema: ExtractBenefitsOutputSchema },
   tools: [fetchRawContent],
-  prompt: `Você é um Estrategista de Marketing de Alta Performance especializado em E-commerce.
-Sua missão é analisar o site {{{url}}} e extrair os BENEFÍCIOS e DIFERENCIAIS reais do produto.
+  prompt: `Você é um Estrategista de Marketing de Alta Performance especializado em E-commerce e Copywriting.
+Sua missão é analisar o site {{{url}}} e extrair os BENEFÍCIOS e DIFERENCIAIS competitivos do produto para um anúncio comercial.
 
 Utilize OBRIGATORIAMENTE a ferramenta 'fetchRawContent' para obter os dados do site antes de responder.
 
-DIRETRIZES:
-1. Identifique o que torna este produto ÚNICO (tecnologia, material, praticidade, luxo, preço, etc).
+DIRETRIZES DE ANÁLISE:
+1. Identifique o que torna este produto único e desejável (tecnologia, material, status, praticidade, luxo, etc).
 2. Transforme características técnicas frias em argumentos de venda poderosos e emocionais.
-3. Se o conteúdo retornado pela ferramenta indicar erro ou for muito vago, responda: "Não foi possível extrair automaticamente todos os detalhes. Por favor, descreva os diferenciais abaixo para um anúncio mais forte."
-4. Foque em benefícios que podem ser VISUALIZADOS em um comercial (ex: "toque macio", "luz ultra-brilhante", "design aerodinâmico").
+3. Se o conteúdo retornado pela ferramenta indicar erro ou for insuficiente, informe: "Não foi possível extrair automaticamente. Descreva os benefícios para um anúncio mais forte."
+4. Foque em benefícios que podem ser VISUALIZADOS em um comercial de elite.
 
-Responda em PORTUGUÊS (Brasil) de forma direta, persuasiva e elegante.`,
+Responda em PORTUGUÊS (Brasil) de forma direta e persuasiva.`,
 });
 
 export async function extractBenefits(input: { url: string }) {
-  const { output } = await extractBenefitsPrompt(input);
-  return output!;
+  try {
+    const { output } = await extractBenefitsPrompt(input);
+    if (!output) {
+      return { benefits: "Não foi possível extrair benefícios automaticamente. Por favor, descreva-os manualmente." };
+    }
+    return output;
+  } catch (error) {
+    return { benefits: "Erro na conexão com a IA. Descreva os benefícios manualmente." };
+  }
 }
