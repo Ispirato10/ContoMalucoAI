@@ -43,7 +43,10 @@ const generateAdScriptInternal = ai.definePrompt({
   name: 'generateAdScriptPrompt',
   input: {schema: GenerateAdScriptInputSchema},
   output: {schema: GenerateAdScriptOutputSchema},
-  prompt: `Você é um Diretor de Arte Criativo de Agências de Publicidade Globais de Elite (como Ogilvy ou BBDO). 
+  config: {
+    model: 'googleai/gemini-1.5-flash',
+  },
+  prompt: `Você é um Diretor de Arte Criativo de Agências de Publicidade Globais de Elite. 
 Sua missão é criar um BRIEFING MAESTRO para uma IMAGEM DE COMERCIAL DE PRODUTO de impacto viral e luxo extremo.
 
 DADOS DA CAMPANHA:
@@ -56,15 +59,14 @@ DADOS DA CAMPANHA:
 - Plataforma: {{{platform}}}
 
 DIRETRIZES DE CRIAÇÃO (PROIBIDO SER MINIMALISTA):
-1. ESTÉTICA COMERCIAL: O anúncio deve ser "Elegante, Atraente, Luxuoso e Visualmente Rico". Fuja do básico e do vazio.
-2. FUSÃO CINEMATOGRÁFICA: O cenário DEVE fundir profundamente o evento {{{eventDate}}} com o estilo visual {{{theme}}}. Crie uma atmosfera comercial completa, como um set de filmagem de alto orçamento.
-3. PROMPT MAESTRO (INGLÊS): Descreva uma cena de "High-end Professional Product Commercial". Use iluminação dramática (Cinematic Lighting), texturas ultra-detalhadas (8k), e integre o Nome do Produto, o Cupom e o Site como elementos de design integrados e premium na imagem.
-4. VISUALIZAÇÃO DE BENEFÍCIOS: Transforme "{{{productBenefits}}}" em elementos visuais concretos e luxuosos no cenário.
-5. OBJETIVO: Gerar desejo imediato e autoridade de marca.
+1. ESTÉTICA COMERCIAL: O anúncio deve ser "Elegante, Atraente, Luxuoso e Visualmente Rico". Fuja do básico.
+2. FUSÃO CINEMATOGRÁFICA: O cenário DEVE fundir profundamente o evento {{{eventDate}}} com o estilo visual {{{theme}}}.
+3. PROMPT MAESTRO (INGLÊS): Descreva uma cena de "High-end Professional Product Commercial". Use iluminação dramática, texturas 8k, e integre o Nome do Produto, o Cupom e o Site como elementos de design integrados e premium.
+4. VISUALIZAÇÃO DE BENEFÍCIOS: Transforme "{{{productBenefits}}}" em elementos visuais concretos no cenário.
 
 SAÍDA:
 - dallePrompt: Prompt mestre ultra-detalhado em INGLÊS focado em "Professional Product Commercial Advertisement".
-- copywriting: Textos em PORTUGUÊS (Brasil) focados em vendas persuasivas e elegantes.`,
+- copywriting: Textos em PORTUGUÊS (Brasil) focados em vendas persuasivas.`,
 });
 
 export async function generateAdScript(input: GenerateAdScriptInput): Promise<GenerateAdScriptOutput> {
