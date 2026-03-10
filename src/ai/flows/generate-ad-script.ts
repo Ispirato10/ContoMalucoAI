@@ -43,30 +43,28 @@ const generateAdScriptInternal = ai.definePrompt({
   name: 'generateAdScriptPrompt',
   input: {schema: GenerateAdScriptInputSchema},
   output: {schema: GenerateAdScriptOutputSchema},
-  prompt: `Você é um Diretor de Arte Criativo de Agências de Publicidade Globais de Elite (Ogilvy/BBDO). 
-Sua missão é criar um BRIEFING MAESTRO para uma IMAGEM DE COMERCIAL DE PRODUTO ("High-end Commercial Product Advertisement") de impacto viral.
+  prompt: `Você é um Diretor de Arte Criativo de Agências de Publicidade Globais de Elite (como Ogilvy ou BBDO). 
+Sua missão é criar um BRIEFING MAESTRO para uma IMAGEM DE COMERCIAL DE PRODUTO de impacto viral e luxo extremo.
 
 DADOS DA CAMPANHA:
 - Produto: {{{productName}}}
-- Estilo Visual Escolhido: {{{theme}}}
-- Evento/Data Comemorativa: {{{eventDate}}}
-- Promoção Ativa: {{{promoText}}} | Cupom: {{{couponCode}}}
-- Site Oficial: {{{targetWebsite}}}
-- Diferenciais e Benefícios Técnicos: {{{productBenefits}}}
-- Plataforma de Destino: {{{platform}}}
+- Estilo Visual: {{{theme}}}
+- Evento/Data: {{{eventDate}}}
+- Oferta: {{{promoText}}} | Cupom: {{{couponCode}}}
+- Site: {{{targetWebsite}}}
+- Benefícios Técnicos: {{{productBenefits}}}
+- Plataforma: {{{platform}}}
 
-REQUISITOS OBRIGATÓRIOS DE DIREÇÃO DE ARTE:
-1. NÃO SEJA MINIMALISTA. O anúncio deve ser "Elegante, Atraente, Luxuoso e Visualmente Rico". Fuja do básico e do vazio.
-2. FUSÃO CRIATIVA OBRIGATÓRIA: O cenário DEVE fundir profundamente o evento {{{eventDate}}} com o estilo visual {{{theme}}}. Não apenas coloque elementos natalinos, crie uma atmosfera comercial cinematográfica completa.
-3. PROMPT MAESTRO DALL-E (EM INGLÊS): Descreva uma cena de comercial de luxo. Use iluminação dramática (Cinematic Lighting), texturas ultra-detalhadas (8k), e integre o Nome do Produto, o Cupom e o Site como elementos de design integrados e premium na imagem. 
-4. VISUALIZAÇÃO DE BENEFÍCIOS: Transforme os diferenciais "{{{productBenefits}}}" em elementos visuais concretos. Exemplo: se for tecnologia, use luzes neon e efeitos de velocidade; se for conforto, use tecidos luxuosos e iluminação suave.
-5. OBJETIVO: Criar um anúncio comercial que seja ao mesmo tempo viral, informativo e extremamente atraente para o público.
-
-O prompt mestre deve focar em como integrar o "attached product" (a foto que o usuário enviará ao ChatGPT) neste cenário comercial de elite de forma orgânica e profissional.
+DIRETRIZES DE CRIAÇÃO (PROIBIDO SER MINIMALISTA):
+1. ESTÉTICA COMERCIAL: O anúncio deve ser "Elegante, Atraente, Luxuoso e Visualmente Rico". Fuja do básico e do vazio.
+2. FUSÃO CINEMATOGRÁFICA: O cenário DEVE fundir profundamente o evento {{{eventDate}}} com o estilo visual {{{theme}}}. Crie uma atmosfera comercial completa, como um set de filmagem de alto orçamento.
+3. PROMPT MAESTRO (INGLÊS): Descreva uma cena de "High-end Professional Product Commercial". Use iluminação dramática (Cinematic Lighting), texturas ultra-detalhadas (8k), e integre o Nome do Produto, o Cupom e o Site como elementos de design integrados e premium na imagem.
+4. VISUALIZAÇÃO DE BENEFÍCIOS: Transforme "{{{productBenefits}}}" em elementos visuais concretos e luxuosos no cenário.
+5. OBJETIVO: Gerar desejo imediato e autoridade de marca.
 
 SAÍDA:
-- dallePrompt: Prompt mestre ultra-detalhado em INGLÊS focado em "Professional Product Commercial".
-- copywriting: Textos em PORTUGUÊS (Brasil) focados em vendas agressivas, elegantes e persuasivas.`,
+- dallePrompt: Prompt mestre ultra-detalhado em INGLÊS focado em "Professional Product Commercial Advertisement".
+- copywriting: Textos em PORTUGUÊS (Brasil) focados em vendas persuasivas e elegantes.`,
 });
 
 export async function generateAdScript(input: GenerateAdScriptInput): Promise<GenerateAdScriptOutput> {
