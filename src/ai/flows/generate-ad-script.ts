@@ -22,7 +22,7 @@ export type GenerateAdScriptInput = z.infer<typeof GenerateAdScriptInputSchema>;
 
 const GenerateAdScriptOutputSchema = z.object({
   campaignBriefing: z.object({
-    dallePrompt: z.string().describe('O prompt mestre em inglês para DALL-E 3.'),
+    dallePrompt: z.string().describe('O prompt mestre em inglês para geradores de imagem.'),
     chatGptInstructions: z.string().describe('Instruções estratégicas.'),
     copywriting: z.object({
       headline: z.string().describe('Título viral.'),

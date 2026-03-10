@@ -9,14 +9,6 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 import * as cheerio from 'cheerio';
 
-const ExtractBenefitsInputSchema = z.object({
-  url: z.string().url().describe('A URL da página do produto.'),
-});
-
-const ExtractBenefitsOutputSchema = z.object({
-  benefits: z.string().describe('Os benefícios extraídos.'),
-});
-
 export async function extractBenefits(input: { url: string }): Promise<{ benefits: string }> {
   try {
     const { url } = input;
@@ -46,18 +38,17 @@ export async function extractBenefits(input: { url: string }): Promise<{ benefit
     const h1Text = $('h1').map((i, el) => $(el).text()).get().join(' ');
     const bodyText = $('body').text().replace(/\s+/g, ' ').trim();
     
-    // Concatenar apenas o essencial para evitar estouro de tokens
     const context = `Título: ${pageTitle}\nDesc: ${metaDesc}\nHeadlines: ${h1Text}\nConteúdo: ${bodyText}`.substring(0, 6000);
     
     if (context.length < 50) {
       return { benefits: "Conteúdo insuficiente detectado no link. Descreva os diferenciais manualmente." };
     }
 
-    // 2. Análise com Gemini 1.5 Flash (mais estável)
+    // 2. Análise com Gemini 1.5 Flash usando o identificador mais compatível
     const { output } = await ai.generate({
       model: 'googleai/gemini-1.5-flash',
       prompt: `Você é um Estrategista de Marketing de Elite. 
-Analise o conteúdo abaixo extraído de um site de vendas e extraia os 3 a 5 principais diferenciais competitivos e benefícios reais do produto.
+Analise o conteúdo abaixo extraído de um site de vendas e extraia os 3 a 5 principais diferenciais competitivos e benefícios reais do produto para um anúncio publicitário de luxo.
 
 REQUISITOS:
 - Use bullet points.
@@ -80,6 +71,7 @@ ${context}`,
     return { benefits: output.benefits };
     
   } catch (error: any) {
-    return { benefits: `Erro na análise de IA: ${error.message || 'Instabilidade temporária'}. Descreva-os manualmente.` };
+    console.error('Erro na extração:', error);
+    return { benefits: `Instabilidade na análise automática. Por favor, descreva os benefícios do produto manualmente.` };
   }
 }
