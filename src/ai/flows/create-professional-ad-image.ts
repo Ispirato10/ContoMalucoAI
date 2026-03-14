@@ -29,7 +29,7 @@ export async function createProfessionalAdImage(input: CreateAdImageInput): Prom
         model: 'googleai/gemini-1.5-flash',
         prompt: [
           { media: { url: productImage, contentType: 'image/jpeg' } },
-          { text: `ACT AS A LUXURY COMMERCIAL PHOTOGRAPHER. Use the product in this image as the main subject. RECREATE THE ENTIRE SCENE AROUND IT into a professional ${prompt}. Keep the product lighting and perspective consistent. High-end studio look, 8k resolution, cinematic lighting.` }
+          { text: `ACT AS A LUXURY COMMERCIAL PHOTOGRAPHER. Use the product in this image as the main subject. RECREATE THE ENTIRE SCENE AROUND IT into a professional ${prompt}. Keep the product lighting and perspective consistent. High-end studio look, 8k resolution, cinematic lighting. THE OUTPUT MODALITY MUST BE IMAGE.` }
         ],
         config: {
           responseModalities: ['TEXT', 'IMAGE'],
@@ -49,6 +49,7 @@ export async function createProfessionalAdImage(input: CreateAdImageInput): Prom
     }
   } catch (error: any) {
     console.error('Image Gen Error:', error);
-    throw new Error('Falha técnica na geração visual. Verifique as cotas da API.');
+    // Fallback amigável em caso de erro de cota ou segurança
+    throw new Error('Falha técnica na geração visual. Verifique as cotas da API ou tente um prompt diferente.');
   }
 }

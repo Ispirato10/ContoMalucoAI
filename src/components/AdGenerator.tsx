@@ -364,7 +364,7 @@ export function AdGenerator() {
                         <p className="text-lg font-bold text-primary uppercase tracking-[0.3em] animate-pulse">Compondo Arte Final...</p>
                         <p className="text-xs text-muted-foreground italic max-w-xs mx-auto">Renderizando iluminação de estúdio e texturas cinematográficas em 8k.</p>
                       </div>
-                      <Progress value={generatingImage ? 65 : 100} className="h-1 w-48 mx-auto bg-white/5" />
+                      <Progress value={65} className="h-1 w-48 mx-auto bg-white/5" />
                     </div>
                   ) : finalImageUrl ? (
                     <>
@@ -377,7 +377,10 @@ export function AdGenerator() {
                       </div>
                     </>
                   ) : (
-                    <div className="text-center opacity-20"><ImageIcon className="w-24 h-24 mx-auto" /></div>
+                    <div className="text-center opacity-20 p-12 space-y-4">
+                       <ImageIcon className="w-24 h-24 mx-auto" />
+                       <p className="text-xs italic uppercase tracking-widest">Aguardando geração...</p>
+                    </div>
                   )}
                 </div>
 
@@ -387,18 +390,22 @@ export function AdGenerator() {
                     
                     <div className="space-y-4 relative">
                       <Label className="text-[10px] font-bold text-primary uppercase tracking-[0.4em]">Headline de Impacto</Label>
-                      <h3 className="text-4xl font-headline font-bold text-white leading-tight italic tracking-tight">{scriptResult?.campaignBriefing.copywriting.headline}</h3>
+                      <h3 className="text-4xl font-headline font-bold text-white leading-tight italic tracking-tight">
+                        {scriptResult?.campaignBriefing.copywriting.headline || "Processando Título..."}
+                      </h3>
                     </div>
 
                     <div className="space-y-4 relative">
                       <Label className="text-[10px] font-bold text-primary uppercase tracking-[0.4em]">Legenda Persuasiva</Label>
-                      <p className="text-muted-foreground leading-relaxed text-xl font-body italic">{scriptResult?.campaignBriefing.copywriting.description}</p>
+                      <p className="text-muted-foreground leading-relaxed text-xl font-body italic">
+                        {scriptResult?.campaignBriefing.copywriting.description || "Compondo legenda de alta performance..."}
+                      </p>
                     </div>
 
                     <div className="pt-8 border-t border-white/10 relative">
                       <Label className="text-[10px] font-bold text-primary uppercase tracking-[0.4em] mb-4 block">Call to Action (CTA)</Label>
                       <div className="bg-primary/20 text-primary border border-primary/40 py-5 px-8 rounded-3xl text-center font-bold tracking-[0.3em] uppercase text-sm italic shadow-inner">
-                        {scriptResult?.campaignBriefing.copywriting.callToAction}
+                        {scriptResult?.campaignBriefing.copywriting.callToAction || "SAIBA MAIS"}
                       </div>
                     </div>
                   </div>
