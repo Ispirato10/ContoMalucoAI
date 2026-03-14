@@ -1,98 +1,56 @@
 'use server';
 /**
- * @fileOverview Este arquivo implementa um fluxo Genkit para gerar imagens publicitárias profissionais.
- *
- * - createProfessionalAdImage - Uma função que gera uma imagem publicitária baseada em um prompt detalhado e imagem opcional do produto.
+ * @fileOverview Gerador de imagens publicitárias de alto impacto.
+ * Utiliza o Imagen 3 ou Gemini 2.0 para criar visuais de estúdio.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-const CreateProfessionalAdImageInputSchema = z.object({
-  textPrompt: z.string().describe('Um prompt textual detalhado descrevendo a imagem publicitária desejada.'),
-  productImage: z
-    .string()
-    .optional()
-    .describe(
-      "Uma foto opcional do produto, como um data URI que deve incluir um tipo MIME e usar codificação Base64. Formato esperado: 'data:<mimetype>;base64,<encoded_data>'."
-    ),
-  platform: z
-    .enum(['story', 'feed', 'banner'])
-    .describe('A plataforma social de destino ou formato para a imagem do anúncio.'),
+const CreateAdImageInputSchema = z.object({
+  prompt: z.string().describe('O prompt mestre em inglês.'),
+  productImage: z.string().optional().describe('Data URI da foto real do produto.'),
+  platform: z.string().describe('Plataforma alvo.'),
 });
-export type CreateProfessionalAdImageInput = z.infer<typeof CreateProfessionalAdImageInputSchema>;
 
-const CreateProfessionalAdImageOutputSchema = z.object({
-  imageUrl: z.string().describe('O data URI da imagem publicitária profissional gerada.'),
-});
-export type CreateProfessionalAdImageOutput = z.infer<typeof CreateProfessionalAdImageOutputSchema>;
+export type CreateAdImageInput = z.infer<typeof CreateAdImageInputSchema>;
 
-export async function createProfessionalAdImage(
-  input: CreateProfessionalAdImageInput
-): Promise<CreateProfessionalAdImageOutput> {
-  return createProfessionalAdImageFlow(input);
-}
+export async function createProfessionalAdImage(input: CreateAdImageInput): Promise<{ imageUrl: string }> {
+  const { prompt, productImage, platform } = input;
 
-const createProfessionalAdImageFlow = ai.defineFlow(
-  {
-    name: 'createProfessionalAdImageFlow',
-    inputSchema: CreateProfessionalAdImageInputSchema,
-    outputSchema: CreateProfessionalAdImageOutputSchema,
-  },
-  async (input) => {
-    const { textPrompt, productImage, platform } = input;
+  let aspectRatio: '1:1' | '9:16' | '16:9' = '1:1';
+  if (platform.includes('Story') || platform.includes('Reels') || platform.includes('TikTok')) {
+    aspectRatio = '9:16';
+  } else if (platform.includes('Banner') || platform.includes('Google')) {
+    aspectRatio = '16:9';
+  }
 
-    // Mapear proporção de tela para o formato do Imagen
-    let aspectRatio: '1:1' | '9:16' | '16:9' | undefined;
-    if (platform === 'story') {
-      aspectRatio = '9:16';
-    } else if (platform === 'feed') {
-      aspectRatio = '1:1';
-    } else { 
-      aspectRatio = '16:9'; 
-    }
-
+  try {
     if (productImage) {
-      // Usar Gemini 2.5 Flash Image para edição de imagem (Image-to-Image)
-      // Este modelo é excelente para manter a consistência do produto original
+      // Image-to-Image para manter o produto real
       const { media } = await ai.generate({
-        model: 'googleai/gemini-2.5-flash-image', 
+        model: 'googleai/gemini-2.0-flash', 
         prompt: [
-          {
-            media: {
-              contentType: productImage.split(';')[0].split(':')[1], 
-              url: productImage,
-            },
-          },
-          { text: `Crie uma imagem publicitária profissional de luxo baseada neste produto. O ambiente deve ser: ${textPrompt}. Mantenha o produto fiel ao original, com iluminação de estúdio e estética premium.` },
+          { media: { url: productImage, contentType: 'image/jpeg' } },
+          { text: `Create a professional high-end luxury commercial advertisement using this product image as the central subject. Scene: ${prompt}. High quality, 8k, studio lighting, sharp textures.` }
         ],
         config: {
           responseModalities: ['TEXT', 'IMAGE'],
-        },
+        }
       });
-
-      if (!media || !media.url) {
-        throw new Error('Falha ao gerar a imagem com Gemini Vision. Tente um prompt mais simples ou uma imagem menor.');
-      }
-
+      if (!media?.url) throw new Error('Erro na geração de imagem.');
       return { imageUrl: media.url };
-
     } else {
-      // Usar Imagen 4 ou Imagen 3 para geração de texto para imagem pura
-      // Tentamos o identificador mais estável conforme diretrizes
+      // Text-to-Image puro
       const { media } = await ai.generate({
         model: 'googleai/imagen-3',
-        prompt: textPrompt,
-        config: {
-          aspectRatio,
-        },
+        prompt: prompt,
+        config: { aspectRatio }
       });
-
-      if (!media || !media.url) {
-        throw new Error('Falha ao gerar a imagem com Imagen. Verifique se o modelo está disponível em sua região ou se o prompt é seguro.');
-      }
-
+      if (!media?.url) throw new Error('Erro na geração de imagem.');
       return { imageUrl: media.url };
     }
+  } catch (error) {
+    throw new Error('Falha técnica ao gerar imagem. Verifique seu limite de cota.');
   }
-);
+}

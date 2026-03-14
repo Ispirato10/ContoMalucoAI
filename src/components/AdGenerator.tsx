@@ -31,10 +31,12 @@ import {
   Lightbulb,
   Zap,
   Search,
-  Loader2
+  Loader2,
+  Image as ImageIcon
 } from 'lucide-react';
 import { generateAdScript, type GenerateAdScriptOutput } from '@/ai/flows/generate-ad-script';
 import { extractBenefits } from '@/ai/flows/extract-benefits';
+import { createProfessionalAdImage } from '@/ai/flows/create-professional-ad-image';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -54,9 +56,6 @@ const EVENTOS = [
   { id: 'New Year', name: 'Ano Novo (Champagne e Brilho)' },
   { id: 'Black Friday', name: 'Black Friday (Energia e Ofertas)' },
   { id: 'Valentines', name: 'Dia dos Namorados (Romance Elegante)' },
-  { id: 'Mothers Day', name: 'Dia das Mães' },
-  { id: 'Fathers Day', name: 'Dia dos Pais' },
-  { id: 'Halloween', name: 'Halloween (Estética Sombria Luxuosa)' },
   { id: 'Summer', name: 'Lançamento de Verão (Sol e Calor)' },
   { id: 'Winter', name: 'Lançamento de Inverno (Aconchego e Neve)' },
 ];
@@ -66,13 +65,13 @@ const PLATAFORMAS = [
   { id: 'Instagram/FB Feed', name: 'Feed Quadrado (1:1)' },
   { id: 'TikTok Ad', name: 'TikTok Viral (9:16)' },
   { id: 'Google Display', name: 'Banner Horizontal (16:9)' },
-  { id: 'YouTube Community', name: 'YouTube / WhatsApp' },
 ];
 
 export function AdGenerator() {
   const { toast } = useToast();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [generatingImage, setGeneratingImage] = useState(false);
   const [extracting, setExtracting] = useState(false);
   
   // Form State
@@ -88,6 +87,7 @@ export function AdGenerator() {
   const [benefits, setBenefits] = useState('');
   
   const [scriptResult, setScriptResult] = useState<GenerateAdScriptOutput | null>(null);
+  const [finalImageUrl, setFinalImageUrl] = useState<string | null>(null);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -103,31 +103,21 @@ export function AdGenerator() {
   };
 
   const handleExtractBenefits = async () => {
-    if (!productUrl) {
-      toast({ title: "URL Necessária", description: "Insira o link do produto para analisar.", variant: "destructive" });
-      return;
-    }
+    if (!productUrl) return;
     setExtracting(true);
     try {
       const result = await extractBenefits({ url: productUrl });
-      if (result && result.benefits) {
-        setBenefits(result.benefits);
-        toast({ title: "Análise Concluída", description: "Diferenciais extraídos com sucesso." });
-      } else {
-        throw new Error("Não foi possível extrair os benefícios.");
-      }
-    } catch (error: any) {
-      toast({ 
-        title: "Erro na Extração", 
-        description: "Não conseguimos ler o site automaticamente. Descreva os benefícios manualmente.", 
-        variant: "destructive" 
-      });
+      setBenefits(result.benefits);
+      if (result.productName) setProductName(result.productName);
+      toast({ title: "Análise Concluída", description: "Diferenciais extraídos com sucesso." });
+    } catch (error) {
+      toast({ title: "Erro na Extração", description: "Não conseguimos ler o site automaticamente.", variant: "destructive" });
     } finally {
       setExtracting(false);
     }
   };
 
-  const handleGenerateScript = async () => {
+  const handleProcessCampaign = async () => {
     if (!productName) {
       toast({ title: "Campo obrigatório", description: "Informe o nome do produto.", variant: "destructive" });
       return;
@@ -135,7 +125,7 @@ export function AdGenerator() {
 
     setLoading(true);
     try {
-      const result = await generateAdScript({
+      const script = await generateAdScript({
         productName,
         productUrl: productUrl || undefined,
         theme,
@@ -146,31 +136,32 @@ export function AdGenerator() {
         eventDate: eventDate !== 'Standard' ? eventDate : undefined,
         productBenefits: benefits || undefined,
       });
-      setScriptResult(result);
+      setScriptResult(script);
       setStep(3);
-      toast({ title: "Estratégia Gerada!", description: "Análise concluída com sucesso." });
+      
+      // Gerar imagem automaticamente após o script
+      setGeneratingImage(true);
+      const image = await createProfessionalAdImage({
+        prompt: script.campaignBriefing.dallePrompt,
+        productImage: productImage || undefined,
+        platform
+      });
+      setFinalImageUrl(image.imageUrl);
+      toast({ title: "Campanha Completa!", description: "Anúncio e imagem gerados." });
     } catch (error: any) {
-      toast({ title: "Erro na geração", description: error.message, variant: "destructive" });
+      toast({ title: "Erro técnico", description: error.message, variant: "destructive" });
     } finally {
       setLoading(false);
+      setGeneratingImage(false);
     }
   };
 
-  const downloadJson = () => {
-    if (!scriptResult) return;
-    const blob = new Blob([JSON.stringify(scriptResult, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `COMERCIAL-${productName.toUpperCase().replace(/\s+/g, '-')}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const copyPrompt = () => {
-    if (!scriptResult) return;
-    navigator.clipboard.writeText(scriptResult.campaignBriefing.dallePrompt);
-    toast({ title: "Copiado!", description: "O Prompt Maestro está pronto para o ChatGPT." });
+  const downloadFinalResult = () => {
+    if (!scriptResult || !finalImageUrl) return;
+    const link = document.createElement('a');
+    link.href = finalImageUrl;
+    link.download = `AD-${productName.replace(/\s+/g, '-')}.png`;
+    link.click();
   };
 
   return (
@@ -178,22 +169,17 @@ export function AdGenerator() {
       <Card className="bg-card border-border shadow-2xl overflow-hidden border-t-4 border-t-accent">
         <div className="bg-primary/20 p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border">
           <div className="flex items-center gap-3">
-            <div className="bg-accent p-2.5 rounded-xl shadow-lg shadow-accent/20">
+            <div className="bg-accent p-2.5 rounded-xl">
               <Zap className="w-6 h-6 text-white" />
             </div>
             <div>
               <h2 className="font-headline font-bold text-2xl text-white tracking-tight uppercase italic">DIRETOR DE ARTE IA</h2>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-[10px] text-accent border-accent/30 font-bold uppercase tracking-widest bg-accent/5">Comerciais de Elite</Badge>
-                <Badge variant="outline" className="text-[10px] text-green-400 border-green-400/30 font-bold uppercase tracking-widest bg-green-400/5">Análise de Mercado</Badge>
-              </div>
+              <Badge variant="outline" className="text-[10px] text-accent border-accent/30 font-bold uppercase tracking-widest bg-accent/5">Estilo PagePop Pro</Badge>
             </div>
           </div>
           <div className="flex gap-2">
             {[1, 2, 3].map((s) => (
-              <div key={s} className={`h-2 w-12 rounded-full transition-all duration-500 ${
-                step >= s ? 'bg-accent' : 'bg-muted'
-              }`} />
+              <div key={s} className={`h-2 w-12 rounded-full transition-all duration-500 ${step >= s ? 'bg-accent' : 'bg-muted'}`} />
             ))}
           </div>
         </div>
@@ -203,96 +189,58 @@ export function AdGenerator() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="space-y-6">
                 <div className="p-6 rounded-2xl bg-accent/5 border border-accent/20 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Globe className="w-4 h-4 text-accent" />
-                      <span className="text-xs font-bold text-accent uppercase tracking-tighter">BASE DE CONHECIMENTO IA</span>
-                    </div>
-                    <Badge className="bg-accent/20 text-accent border-none text-[9px] font-bold uppercase">Análise de Site</Badge>
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-sm font-bold text-white/90">URL do Produto (Para Extrair Benefícios)</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="Cole o link da página do produto aqui..."
-                        value={productUrl}
-                        onChange={(e) => setProductUrl(e.target.value)}
-                        className="bg-background border-accent/40 h-12 focus:ring-accent"
-                      />
-                      <Button 
-                        variant="secondary" 
-                        onClick={handleExtractBenefits} 
-                        disabled={extracting || !productUrl}
-                        className="h-12 px-4 bg-accent/20 text-accent hover:bg-accent/30 border border-accent/20"
-                      >
-                        {extracting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
-                      </Button>
-                    </div>
-                    <p className="text-[10px] text-muted-foreground leading-tight italic">Clique na lupa para preencher os diferenciais automaticamente.</p>
+                  <Label className="text-sm font-bold text-white/90">Interpretar Link do Produto</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="https://sualoja.com/produto"
+                      value={productUrl}
+                      onChange={(e) => setProductUrl(e.target.value)}
+                      className="bg-background border-accent/40 h-12"
+                    />
+                    <Button variant="secondary" onClick={handleExtractBenefits} disabled={extracting || !productUrl} className="h-12 px-4 bg-accent/20">
+                      {extracting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
+                    </Button>
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label className="font-bold flex items-center justify-between">
-                      Nome do Produto
-                    </Label>
-                    <Input
-                      placeholder="Ex: iPhone 15 Pro Max"
-                      value={productName}
-                      onChange={(e) => setProductName(e.target.value)}
-                      className="h-12 bg-background/50 border-border"
-                    />
+                    <Label className="font-bold">Nome do Produto</Label>
+                    <Input placeholder="Ex: Relógio Luxo" value={productName} onChange={(e) => setProductName(e.target.value)} className="h-12" />
                   </div>
-
                   <div className="space-y-2">
                     <Label className="font-bold flex items-center justify-between">
-                      <span className="flex items-center gap-2">
-                        <Lightbulb className="w-4 h-4 text-yellow-500" /> 
-                        Diferenciais & Benefícios (Auto-preenchido)
-                      </span>
-                      {extracting && <Badge variant="outline" className="animate-pulse text-[9px] border-accent text-accent">ANALISANDO SITE...</Badge>}
+                      Diferenciais do Produto
+                      {extracting && <Badge className="animate-pulse">ANALISANDO...</Badge>}
                     </Label>
                     <Textarea
-                      placeholder="Os diferenciais extraídos do site aparecerão aqui. Edite conforme necessário."
+                      placeholder="Descreva o que torna seu produto único..."
                       value={benefits}
                       onChange={(e) => setBenefits(e.target.value)}
-                      className="min-h-[180px] bg-background/50 resize-none font-body border-border leading-relaxed"
+                      className="min-h-[180px] bg-background/50 leading-relaxed"
                     />
                   </div>
                 </div>
               </div>
 
               <div className="space-y-6">
-                <Label className="font-bold text-white/90">Imagem Real do Produto (Para Referência)</Label>
+                <Label className="font-bold">Foto Real do Produto (Para Referência Visual)</Label>
                 {!productImage ? (
-                  <label className="flex flex-col items-center justify-center w-full min-h-[360px] border-2 border-dashed border-border/60 rounded-3xl cursor-pointer hover:bg-accent/5 transition-all group bg-background/20">
-                    <div className="bg-muted p-5 rounded-full mb-4 group-hover:scale-110 transition-transform">
-                      <Upload className="w-10 h-10 text-muted-foreground group-hover:text-accent transition-colors" />
-                    </div>
-                    <p className="text-sm font-bold text-white">Carregue a foto do seu produto</p>
-                    <p className="text-xs text-muted-foreground mt-2 px-10 text-center italic">A IA utilizará esta foto para criar a imagem de comercial.</p>
+                  <label className="flex flex-col items-center justify-center w-full min-h-[360px] border-2 border-dashed border-border/60 rounded-3xl cursor-pointer hover:bg-accent/5 transition-all bg-background/20">
+                    <Upload className="w-10 h-10 text-muted-foreground mb-4" />
+                    <p className="text-sm font-bold">Arraste a foto do produto aqui</p>
                     <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
                   </label>
                 ) : (
-                  <div className="relative rounded-3xl overflow-hidden border border-border aspect-square bg-background/50 group shadow-inner">
+                  <div className="relative rounded-3xl overflow-hidden border border-border aspect-square bg-background/50">
                     <img src={productImage} alt="Produto" className="w-full h-full object-contain p-8" />
-                    <button
-                      onClick={() => setProductImage(null)}
-                      className="absolute top-6 right-6 p-2.5 bg-destructive/90 hover:bg-destructive rounded-full text-white shadow-2xl transition-all hover:rotate-90"
-                    >
-                      <X className="w-5 h-5" />
+                    <button onClick={() => setProductImage(null)} className="absolute top-4 right-4 p-2 bg-destructive rounded-full text-white shadow-lg">
+                      <X className="w-4 h-4" />
                     </button>
-                    <div className="absolute bottom-6 left-6 right-6">
-                       <Badge className="bg-black/60 backdrop-blur-md border-white/20 text-[10px] w-full justify-center py-2 uppercase tracking-widest">Foto de Referência Ativa</Badge>
-                    </div>
                   </div>
                 )}
-                <Button 
-                  onClick={() => setStep(2)} 
-                  className="w-full bg-accent hover:bg-accent/90 h-14 text-lg font-bold shadow-xl shadow-accent/20 transition-all uppercase italic"
-                >
-                  Próximo: Estilo & Campanha
+                <Button onClick={() => setStep(2)} className="w-full bg-accent h-14 text-lg font-bold shadow-xl italic">
+                  PRÓXIMO: ESTILO & CAMPANHA
                 </Button>
               </div>
             </div>
@@ -302,33 +250,25 @@ export function AdGenerator() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="space-y-8">
                 <div className="space-y-4">
-                  <Label className="flex items-center gap-2 font-bold text-white uppercase tracking-tight italic">
-                    <Sparkles className="w-4 h-4 text-accent" /> Estilo Visual Publicitário
-                  </Label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <Label className="flex items-center gap-2 font-bold uppercase italic"><Sparkles className="w-4 h-4 text-accent" /> Estilo da Arte</Label>
+                  <div className="grid grid-cols-2 gap-3">
                     {TEMAS.map((t) => (
                       <button
                         key={t.id}
                         onClick={() => setTheme(t.id)}
-                        className={`text-left p-4 rounded-2xl border-2 transition-all duration-300 ${
-                          theme === t.id 
-                            ? 'bg-accent/10 border-accent ring-2 ring-accent/20' 
-                            : 'bg-background/50 border-border hover:border-accent/40'
-                        }`}
+                        className={`text-left p-4 rounded-xl border-2 transition-all ${theme === t.id ? 'border-accent bg-accent/10' : 'border-border'}`}
                       >
-                        <div className="font-bold text-sm text-white">{t.name}</div>
-                        <div className="text-[10px] text-muted-foreground leading-tight mt-1 italic">{t.desc}</div>
+                        <div className="font-bold text-xs text-white">{t.name}</div>
+                        <div className="text-[9px] text-muted-foreground mt-1">{t.desc}</div>
                       </button>
                     ))}
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <Label className="flex items-center gap-2 font-bold text-white uppercase tracking-tight italic">
-                    <Calendar className="w-4 h-4 text-accent" /> Data ou Evento Especial
-                  </Label>
+                  <Label className="flex items-center gap-2 font-bold uppercase italic"><Calendar className="w-4 h-4 text-accent" /> Evento / Data Especial</Label>
                   <Select value={eventDate} onValueChange={setEventDate}>
-                    <SelectTrigger className="h-12 bg-background/50 border-border rounded-xl">
+                    <SelectTrigger className="h-12 bg-background/50">
                       <SelectValue placeholder="Escolha um evento sazonal..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -337,131 +277,105 @@ export function AdGenerator() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <p className="text-[11px] text-muted-foreground italic">O cenário comercial fundirá o estilo visual com este evento.</p>
                 </div>
               </div>
 
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-2 font-bold uppercase tracking-tight italic"><Layout className="w-4 h-4 text-accent" /> Formato do Anúncio</Label>
+                  <Label className="font-bold italic">FORMATO DO ANÚNCIO</Label>
                   <Select value={platform} onValueChange={setPlatform}>
-                    <SelectTrigger className="h-12 bg-background/50 border-border rounded-xl">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {PLATAFORMAS.map((p) => (
-                        <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
-                      ))}
-                    </SelectContent>
+                    <SelectTrigger className="h-12 bg-background/50"><SelectValue /></SelectTrigger>
+                    <SelectContent>{PLATAFORMAS.map((p) => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="flex items-center gap-2 font-bold uppercase tracking-tight italic"><Ticket className="w-4 h-4 text-accent" /> Cupom</Label>
-                    <Input placeholder="Ex: PROMO50" value={couponCode} onChange={(e) => setCouponCode(e.target.value)} className="bg-background/50 rounded-xl" />
+                    <Label className="font-bold italic text-xs">CUPOM</Label>
+                    <Input placeholder="PROMO10" value={couponCode} onChange={(e) => setCouponCode(e.target.value)} />
                   </div>
                   <div className="space-y-2">
-                    <Label className="flex items-center gap-2 font-bold uppercase tracking-tight italic"><Globe className="w-4 h-4 text-accent" /> Website</Label>
-                    <Input placeholder="www.loja.com" value={targetWebsite} onChange={(e) => setTargetWebsite(e.target.value)} className="bg-background/50 rounded-xl" />
+                    <Label className="font-bold italic text-xs">SITE OFICIAL</Label>
+                    <Input placeholder="loja.com" value={targetWebsite} onChange={(e) => setTargetWebsite(e.target.value)} />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-2 font-bold uppercase tracking-tight italic"><Megaphone className="w-4 h-4 text-accent" /> Texto da Promoção</Label>
-                  <Input 
-                    placeholder="Ex: Oferta de Lançamento por tempo limitado!" 
-                    value={promoText} 
-                    onChange={(e) => setPromoText(e.target.value)} 
-                    className="bg-background/50 h-14 rounded-xl" 
-                  />
+                  <Label className="font-bold italic text-xs">OFERTA PRINCIPAL</Label>
+                  <Input placeholder="50% de Desconto apenas hoje!" value={promoText} onChange={(e) => setPromoText(e.target.value)} className="h-14" />
                 </div>
 
                 <div className="flex gap-4 pt-6">
-                  <Button variant="outline" onClick={() => setStep(1)} className="flex-1 h-14 border-border font-bold rounded-2xl uppercase tracking-widest text-xs">Voltar</Button>
-                  <Button 
-                    onClick={handleGenerateScript} 
-                    disabled={loading} 
-                    className="flex-[2] bg-accent hover:bg-accent/90 h-14 font-bold shadow-xl shadow-accent/20 rounded-2xl uppercase italic"
-                  >
+                  <Button variant="outline" onClick={() => setStep(1)} className="flex-1 h-14">VOLTAR</Button>
+                  <Button onClick={handleProcessCampaign} disabled={loading} className="flex-[2] bg-accent h-14 font-bold italic shadow-xl">
                     {loading ? <RefreshCw className="w-6 h-6 animate-spin mr-2" /> : <Wand2 className="w-6 h-6 mr-2" />}
-                    {loading ? 'ANALISANDO ESTRATÉGIA...' : 'GERAR BRIEFING DE COMERCIAL'}
+                    {loading ? 'CRIANDO CAMPANHA...' : 'CRIAR ANÚNCIO AGORA'}
                   </Button>
                 </div>
               </div>
             </div>
           )}
 
-          {step === 3 && scriptResult && (
+          {step === 3 && (
             <div className="space-y-8 animate-in zoom-in-95 duration-700">
-              <div className="flex flex-col items-center text-center space-y-3">
-                <div className="bg-green-500/10 p-5 rounded-full ring-8 ring-green-500/5">
-                  <CheckCircle2 className="w-16 h-16 text-green-500" />
-                </div>
-                <h2 className="text-4xl font-headline font-bold text-white italic underline decoration-accent/30 underline-offset-8 uppercase">ESTRATÉGIA COMERCIAL PRONTA</h2>
-                <p className="text-muted-foreground max-w-2xl font-body text-lg">
-                  Briefing para uma <span className="text-accent font-bold">Imagem de Anúncio de Elite</span> pronto para ser usado no ChatGPT.
-                </p>
+              <div className="text-center space-y-2">
+                <h2 className="text-4xl font-headline font-bold text-white italic uppercase underline decoration-accent/30 underline-offset-8">CAMPANHA FINALIZADA</h2>
+                <p className="text-muted-foreground">O anúncio perfeito foi gerado integrando seu produto com o cenário escolhido.</p>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                <div className="lg:col-span-7 space-y-6">
-                  <div className="bg-background/80 rounded-3xl border border-border overflow-hidden shadow-2xl">
-                    <div className="bg-muted p-5 flex items-center justify-between border-b border-border">
-                      <div className="flex items-center gap-2">
-                        <Zap className="w-4 h-4 text-accent" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">PROMPT MAESTRO (PARA CHATGPT/DALL-E)</span>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                <div className="space-y-6">
+                  <div className="bg-background/80 rounded-3xl border border-border overflow-hidden shadow-2xl group">
+                    <div className="aspect-[4/5] relative bg-muted/20">
+                      {generatingImage ? (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4">
+                          <Loader2 className="w-12 h-12 text-accent animate-spin" />
+                          <p className="text-xs font-bold uppercase text-accent animate-pulse">Revelando a Obra de Arte...</p>
+                        </div>
+                      ) : finalImageUrl ? (
+                        <img src={finalImageUrl} alt="Ad Final" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                      ) : (
+                        <div className="flex items-center justify-center h-full"><ImageIcon className="w-20 h-20 text-muted-foreground/20" /></div>
+                      )}
+                    </div>
+                    <div className="p-6 bg-muted/40 border-t border-border flex items-center justify-between">
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-accent uppercase">Arte Publicitária</span>
+                        <span className="text-sm font-bold text-white uppercase italic">{productName}</span>
                       </div>
-                      <Button variant="secondary" size="sm" onClick={copyPrompt} className="h-9 gap-2 font-bold text-xs uppercase italic rounded-xl px-4">
-                        <Copy className="w-3.5 h-3.5" /> COPIAR PROMPT
+                      <Button onClick={downloadFinalResult} disabled={!finalImageUrl} className="bg-accent h-10 px-6 font-bold italic">
+                        <Download className="w-4 h-4 mr-2" /> BAIXAR ARTE
                       </Button>
                     </div>
-                    <div className="p-8">
-                      <p className="text-lg text-white leading-relaxed italic font-body">
-                        "{scriptResult.campaignBriefing.dallePrompt}"
-                      </p>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="bg-muted/30 rounded-3xl border border-border p-8 space-y-6">
+                    <h4 className="font-bold text-white text-xl flex items-center gap-2 italic uppercase">COPYWRITING DA PEÇA</h4>
+                    <div className="space-y-4">
+                      <div className="p-4 bg-background/50 rounded-xl border border-border/50">
+                        <div className="text-[10px] text-accent font-bold uppercase mb-1">TÍTULO</div>
+                        <div className="text-lg text-white font-bold">{scriptResult?.campaignBriefing.copywriting.headline}</div>
+                      </div>
+                      <div className="p-4 bg-background/50 rounded-xl border border-border/50">
+                        <div className="text-[10px] text-accent font-bold uppercase mb-1">LEGENDA</div>
+                        <div className="text-sm text-muted-foreground italic leading-relaxed">{scriptResult?.campaignBriefing.copywriting.description}</div>
+                      </div>
                     </div>
                   </div>
 
                   <Alert className="bg-accent/5 border-accent/20 rounded-2xl">
-                    <Info className="h-5 w-5 text-accent" />
-                    <AlertTitle className="text-accent font-bold uppercase text-xs tracking-widest">COMO CRIAR O ANÚNCIO AGORA</AlertTitle>
-                    <AlertDescription className="text-sm text-muted-foreground leading-relaxed mt-2">
-                      1. Abra o **ChatGPT** (versão Plus/DALL-E).<br/>
-                      2. **ANEXE A FOTO** real do seu produto.<br/>
-                      3. **COLE O PROMPT MAESTRO** acima.<br/>
-                      4. A IA fundirá seu produto com o cenário elegante descrito.
+                    <CheckCircle2 className="h-5 w-5 text-accent" />
+                    <AlertTitle className="text-accent font-bold uppercase text-xs">CAMPANHA PRONTA</AlertTitle>
+                    <AlertDescription className="text-xs text-muted-foreground">
+                      Sua imagem foi gerada usando o Gemini 2.0 para manter a integridade do seu produto. Use a arte e a legenda nas suas redes sociais.
                     </AlertDescription>
                   </Alert>
-                </div>
 
-                <div className="lg:col-span-5 space-y-6">
-                  <div className="bg-muted/30 rounded-3xl border border-border p-8 space-y-6">
-                    <h4 className="font-bold text-white text-xl flex items-center gap-2 italic uppercase tracking-tight">COPYWRITING DO ANÚNCIO</h4>
-                    <div className="space-y-5">
-                      <div className="p-5 bg-background/50 rounded-2xl border border-border/50">
-                        <div className="text-[10px] text-accent uppercase font-bold tracking-widest mb-1.5 flex items-center gap-1.5"><Sparkles className="w-3 h-3"/> TÍTULO VIRAL</div>
-                        <div className="text-lg text-white font-bold leading-tight">{scriptResult.campaignBriefing.copywriting.headline}</div>
-                      </div>
-                      <div className="p-5 bg-background/50 rounded-2xl border border-border/50">
-                        <div className="text-[10px] text-accent uppercase font-bold tracking-widest mb-1.5">LEGENDA ESTRATÉGICA</div>
-                        <div className="text-sm text-muted-foreground italic leading-relaxed">{scriptResult.campaignBriefing.copywriting.description}</div>
-                      </div>
-                      <div className="p-5 bg-accent/10 rounded-2xl border border-accent/20">
-                        <div className="text-[10px] text-accent uppercase font-bold tracking-widest mb-1.5">BOTÃO DE CHAMADA</div>
-                        <div className="text-sm text-white font-bold uppercase tracking-widest">{scriptResult.campaignBriefing.copywriting.callToAction}</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col gap-3">
-                    <Button onClick={downloadJson} className="w-full bg-accent hover:bg-accent/90 h-16 text-lg font-bold shadow-2xl italic uppercase rounded-2xl">
-                      <Download className="w-6 h-6 mr-2" /> BAIXAR BRIEFING (.JSON)
-                    </Button>
-                    <Button variant="outline" onClick={() => { setStep(1); setScriptResult(null); }} className="w-full h-12 font-bold uppercase text-xs rounded-xl tracking-widest">
-                      NOVA ESTRATÉGIA
-                    </Button>
-                  </div>
+                  <Button variant="outline" onClick={() => { setStep(1); setFinalImageUrl(null); }} className="w-full h-12 font-bold uppercase text-xs rounded-xl">
+                    CRIAR NOVA CAMPANHA
+                  </Button>
                 </div>
               </div>
             </div>
