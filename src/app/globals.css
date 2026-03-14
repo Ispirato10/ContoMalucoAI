@@ -1,35 +1,29 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 240 5% 14%;
+    --background: 240 10% 4%;
     --foreground: 0 0% 98%;
-    --card: 240 5% 18%;
+    --card: 240 10% 7%;
     --card-foreground: 0 0% 98%;
-    --popover: 240 5% 14%;
+    --popover: 240 10% 4%;
     --popover-foreground: 0 0% 98%;
-    --primary: 240 40% 30%;
+    --primary: 263 70% 50%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 240 5% 25%;
+    --secondary: 240 10% 12%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 240 5% 20%;
-    --muted-foreground: 0 0% 70%;
-    --accent: 277 65% 60%;
+    --muted: 240 10% 15%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 263 70% 50%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5% 25%;
-    --input: 240 5% 25%;
-    --ring: 277 65% 60%;
-    --chart-1: 240 40% 30%;
-    --chart-2: 277 65% 60%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.75rem;
+    --border: 240 10% 12%;
+    --input: 240 10% 12%;
+    --ring: 263 70% 50%;
+    --radius: 1.25rem;
   }
 }
 
@@ -38,9 +32,21 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-body antialiased selection:bg-primary/30;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-headline;
+    @apply font-headline tracking-tight;
   }
+}
+
+.glass {
+  @apply bg-card/40 backdrop-blur-xl border border-white/5;
+}
+
+.premium-shadow {
+  box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.accent-gradient {
+  @apply bg-gradient-to-br from-primary to-purple-600;
 }
