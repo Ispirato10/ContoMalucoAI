@@ -27,23 +27,26 @@ export async function extractBenefits(input: { url: string }): Promise<z.infer<t
     const html = await response.text();
     const $ = load(html);
     
-    $('script, style, nav, footer, header, iframe').remove();
+    // Limpeza pesada do HTML para focar no conteúdo de marketing
+    $('script, style, nav, footer, header, iframe, noscript, svg, form').remove();
     const title = $('title').text();
-    const mainContent = $('body').text().replace(/\s+/g, ' ').trim().substring(0, 4000);
+    const metaDesc = $('meta[name="description"]').attr('content') || '';
+    const mainContent = $('body').text().replace(/\s+/g, ' ').trim().substring(0, 5000);
 
     const { output } = await ai.generate({
       model: 'googleai/gemini-1.5-flash',
       prompt: `Aja como um Estrategista de Marketing de Luxo. 
-Analise o site abaixo e extraia os 3 principais diferenciais exclusivos do produto.
-Retorne também o nome provável do produto.
+Analise os dados extraídos do site abaixo e identifique o Nome do Produto e os 3 diferenciais exclusivos que mais atrairiam um cliente premium.
 
-SITE: ${title}
-CONTEÚDO: ${mainContent}`,
+Título da Página: ${title}
+Descrição Meta: ${metaDesc}
+Conteúdo Principal: ${mainContent}`,
       output: { schema: ExtractBenefitsOutputSchema }
     });
 
     return output || { benefits: "Descreva manualmente os benefícios.", productName: "" };
   } catch (error) {
+    console.error('Erro na extração:', error);
     return { benefits: "Não foi possível ler o site automaticamente. Descreva os diferenciais manualmente.", productName: "" };
   }
 }

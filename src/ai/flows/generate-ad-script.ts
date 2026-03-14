@@ -23,7 +23,6 @@ export type GenerateAdScriptInput = z.infer<typeof GenerateAdScriptInputSchema>;
 const GenerateAdScriptOutputSchema = z.object({
   campaignBriefing: z.object({
     dallePrompt: z.string().describe('O prompt mestre em inglês para geradores de imagem.'),
-    chatGptInstructions: z.string().describe('Instruções estratégicas.'),
     copywriting: z.object({
       headline: z.string().describe('Título viral.'),
       description: z.string().describe('Legenda persuasiva.'),
@@ -39,37 +38,29 @@ const GenerateAdScriptOutputSchema = z.object({
 
 export type GenerateAdScriptOutput = z.infer<typeof GenerateAdScriptOutputSchema>;
 
-const generateAdScriptInternal = ai.definePrompt({
-  name: 'generateAdScriptPrompt',
-  input: {schema: GenerateAdScriptInputSchema},
-  output: {schema: GenerateAdScriptOutputSchema},
-  config: {
+export async function generateAdScript(input: GenerateAdScriptInput): Promise<GenerateAdScriptOutput> {
+  const { output } = await ai.generate({
     model: 'googleai/gemini-1.5-flash',
-  },
-  prompt: `Você é um Diretor de Arte Criativo de Agências de Publicidade Globais de Elite. 
+    prompt: `Você é um Diretor de Arte Criativo de Agências de Publicidade Globais de Elite. 
 Sua missão é criar um BRIEFING MAESTRO para uma IMAGEM DE COMERCIAL DE PRODUTO de impacto viral e luxo extremo.
 
 DADOS DA CAMPANHA:
-- Produto: {{{productName}}}
-- Estilo Visual: {{{theme}}}
-- Evento/Data: {{{eventDate}}}
-- Oferta: {{{promoText}}} | Cupom: {{{couponCode}}}
-- Site: {{{targetWebsite}}}
-- Benefícios Técnicos: {{{productBenefits}}}
-- Plataforma: {{{platform}}}
+- Produto: ${input.productName}
+- Estilo Visual: ${input.theme}
+- Evento Sazonal: ${input.eventDate || 'Padrão / Sem evento'}
+- Oferta: ${input.promoText || 'Lançamento Exclusivo'}
+- Site: ${input.targetWebsite || ''}
+- Diferenciais do Produto: ${input.productBenefits || ''}
+- Formato: ${input.platform}
 
-DIRETRIZES DE CRIAÇÃO (PROIBIDO SER MINIMALISTA):
-1. ESTÉTICA COMERCIAL: O anúncio deve ser "Elegante, Atraente, Luxuoso e Visualmente Rico". Fuja do básico.
-2. FUSÃO CINEMATOGRÁFICA: O cenário DEVE fundir profundamente o evento {{{eventDate}}} com o estilo visual {{{theme}}}.
-3. PROMPT MAESTRO (INGLÊS): Descreva uma cena de "High-end Professional Product Commercial". Use iluminação dramática, texturas 8k, e integre o Nome do Produto, o Cupom e o Site como elementos de design integrados e premium.
-4. VISUALIZAÇÃO DE BENEFÍCIOS: Transforme "{{{productBenefits}}}" em elementos visuais concretos no cenário.
+DIRETRIZES DE CRIAÇÃO:
+1. ESTÉTICA: O anúncio deve ser "Elegante, Atraente e Visualmente Rico". Fuja do minimalismo básico.
+2. FUSÃO DE CENÁRIO: Integre o evento ${input.eventDate} com o estilo ${input.theme}. Ex: Se for Natal e Luxo, use elementos de ouro e neve cintilante.
+3. PROMPT MAESTRO (INGLÊS): Descreva uma cena de "High-end Professional Product Commercial". Use iluminação dramática, texturas 8k, e foque na centralidade do produto.
+4. COPYWRITING: Títulos curtos e impactantes em Português.`,
+    output: { schema: GenerateAdScriptOutputSchema }
+  });
 
-SAÍDA:
-- dallePrompt: Prompt mestre ultra-detalhado em INGLÊS focado em "Professional Product Commercial Advertisement".
-- copywriting: Textos em PORTUGUÊS (Brasil) focados em vendas persuasivas.`,
-});
-
-export async function generateAdScript(input: GenerateAdScriptInput): Promise<GenerateAdScriptOutput> {
-  const {output} = await generateAdScriptInternal(input);
-  return output!;
+  if (!output) throw new Error('Falha ao gerar o briefing da campanha.');
+  return output;
 }
