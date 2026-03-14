@@ -1,7 +1,7 @@
 'use server';
 /**
- * @fileOverview Extrator de benefícios de elite via URL.
- * Analisa o conteúdo do site e extrai diferenciais de marketing.
+ * @fileOverview Extrator de Inteligência de Produto (Inspirado no PagePop).
+ * Analisa o site profundamente para entender a marca e os benefícios.
  */
 
 import {ai} from '@/ai/genkit';
@@ -9,8 +9,9 @@ import {z} from 'genkit';
 import { load } from 'cheerio';
 
 const ExtractBenefitsOutputSchema = z.object({
-  benefits: z.string().describe('Lista de benefícios formatada em bullet points.'),
-  productName: z.string().optional().describe('O nome do produto identificado na página.'),
+  benefits: z.string().describe('3 a 5 diferenciais premium em bullet points.'),
+  productName: z.string().describe('Nome comercial do produto.'),
+  brandVibe: z.string().describe('Descrição curta da estética da marca (ex: Minimalista, Luxuosa, Tech).'),
 });
 
 export async function extractBenefits(input: { url: string }): Promise<z.infer<typeof ExtractBenefitsOutputSchema>> {
@@ -22,31 +23,40 @@ export async function extractBenefits(input: { url: string }): Promise<z.infer<t
       next: { revalidate: 0 }
     });
     
-    if (!response.ok) throw new Error('Falha ao acessar o site.');
+    if (!response.ok) throw new Error('O site bloqueou o acesso automático.');
     
     const html = await response.text();
     const $ = load(html);
     
-    // Limpeza pesada do HTML para focar no conteúdo de marketing
-    $('script, style, nav, footer, header, iframe, noscript, svg, form').remove();
+    // Limpeza profunda para focar na semântica de venda
+    $('script, style, nav, footer, header, iframe, noscript, svg, form, .cookie-banner').remove();
     const title = $('title').text();
     const metaDesc = $('meta[name="description"]').attr('content') || '';
-    const mainContent = $('body').text().replace(/\s+/g, ' ').trim().substring(0, 5000);
+    const mainText = $('body').text().replace(/\s+/g, ' ').trim().substring(0, 8000);
 
     const { output } = await ai.generate({
       model: 'googleai/gemini-1.5-flash',
-      prompt: `Aja como um Estrategista de Marketing de Luxo. 
-Analise os dados extraídos do site abaixo e identifique o Nome do Produto e os 3 diferenciais exclusivos que mais atrairiam um cliente premium.
+      prompt: `Aja como um Analista de Marketing Digital de Elite. 
+Analise os dados extraídos deste site e identifique:
+1. O Nome do Produto.
+2. Os diferenciais mais atraentes para um anúncio (Premium/Luxo).
+3. A "Vibe" visual da marca.
 
-Título da Página: ${title}
-Descrição Meta: ${metaDesc}
-Conteúdo Principal: ${mainContent}`,
+DADOS:
+Título: ${title}
+Descrição: ${metaDesc}
+Conteúdo: ${mainText}`,
       output: { schema: ExtractBenefitsOutputSchema }
     });
 
-    return output || { benefits: "Descreva manualmente os benefícios.", productName: "" };
+    if (!output) throw new Error('A IA não conseguiu interpretar os dados.');
+    return output;
   } catch (error) {
-    console.error('Erro na extração:', error);
-    return { benefits: "Não foi possível ler o site automaticamente. Descreva os diferenciais manualmente.", productName: "" };
+    console.error('Erro de Extração:', error);
+    return { 
+      benefits: "Não foi possível ler o site. Descreva os benefícios manualmente.", 
+      productName: "",
+      brandVibe: "Comercial Padrão"
+    };
   }
 }
