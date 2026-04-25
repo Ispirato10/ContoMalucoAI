@@ -48,7 +48,7 @@ export function StoryGame() {
     localStorage.setItem('conto-maluco-api-key', trimmedKey);
     toast({ title: "Chave Salva!", description: "Tentaremos gerar sua história agora." });
     
-    // Se estávamos em uma tela de erro, tenta retomar automaticamente
+    // Retomada automática se houver erro e todas as perguntas respondidas
     if (error && answers.length === QUESTIONS.length) {
       processFinalStory(answers, trimmedKey);
     }
@@ -138,7 +138,6 @@ export function StoryGame() {
           </Card>
         ) : result ? (
           <div className="space-y-12 animate-in zoom-in-95 duration-700">
-            {/* Capa do Gibi */}
             <Card className="comic-border bg-primary p-12 text-center no-print shadow-2xl relative overflow-hidden comic-title-page">
                <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:20px_20px]"></div>
               <h2 className="text-5xl md:text-8xl font-black uppercase comic-text text-white drop-shadow-[6px_6px_0px_rgba(0,0,0,1)] relative z-10">
@@ -151,7 +150,6 @@ export function StoryGame() {
               </div>
             </Card>
 
-            {/* Páginas do Gibi */}
             <div className="space-y-8">
               {result.pages.map((page, index) => (
                 <Card key={index} className="comic-border bg-white overflow-hidden shadow-2xl comic-page print:page-break-after-always relative paper-texture">
@@ -164,20 +162,15 @@ export function StoryGame() {
                       <div className="absolute -top-6 -right-6 bg-primary border-4 border-black p-4 rotate-12 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                         <Sparkles className="w-10 h-10 text-white" />
                       </div>
-                      <p className="comic-text text-4xl md:text-6xl text-center text-black leading-tight italic font-black uppercase">
+                      <p className="comic-text text-3xl md:text-5xl text-center text-black leading-tight italic font-black uppercase">
                         {page.text}
                       </p>
-                    </div>
-                    
-                    <div className="mt-12 flex gap-4 opacity-20 no-print">
-                       {[1,2,3].map(i => <div key={i} className="w-24 h-4 bg-black rounded-full"></div>)}
                     </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
 
-            {/* Rodapé e Ações */}
             <div className="flex flex-wrap gap-4 justify-center no-print pb-24">
               <Button onClick={() => window.print()} className="bg-secondary hover:bg-secondary/90 text-white comic-border h-24 px-16 font-black uppercase text-3xl shadow-2xl hover:scale-105 transition-all active:scale-95">
                 <Printer className="w-10 h-10 mr-4" /> Baixar Gibi (PDF)
@@ -197,9 +190,9 @@ export function StoryGame() {
                 <Settings className="w-8 h-8" />
               </Button>
             </div>
-            <CardContent className="p-8 md:p-24 space-y-16">
+            <CardContent className="p-8 md:p-24 space-y-12">
               <div className="space-y-6">
-                <h2 className="text-5xl md:text-7xl font-black comic-text text-center text-black leading-none drop-shadow-sm uppercase">
+                <h2 className="text-4xl md:text-6xl font-black comic-text text-center text-black leading-tight drop-shadow-sm uppercase">
                   {QUESTIONS[currentStep]}
                 </h2>
               </div>
@@ -210,13 +203,13 @@ export function StoryGame() {
                   onChange={(e) => setCurrentAnswer(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleNext()}
                   placeholder="Capriche no absurdo!"
-                  className="h-28 text-4xl md:text-5xl border-[6px] border-black rounded-none comic-text bg-yellow-50/50 text-center focus-visible:ring-0 focus:border-primary transition-colors placeholder:opacity-30"
+                  className="h-24 text-2xl md:text-4xl border-[6px] border-black rounded-none comic-text bg-yellow-50/50 text-center focus-visible:ring-0 focus:border-primary transition-colors placeholder:opacity-30"
                   autoFocus
                 />
                 <Button 
                   onClick={handleNext} 
                   disabled={!currentAnswer.trim()}
-                  className="w-full h-28 bg-primary hover:bg-primary/90 text-white font-black text-4xl uppercase comic-border transition-all shadow-[0_12px_0_0_rgba(0,0,0,1)] hover:translate-y-[-4px] active:translate-y-[8px] active:shadow-none"
+                  className="w-full h-24 bg-primary hover:bg-primary/90 text-white font-black text-4xl uppercase comic-border transition-all shadow-[0_12px_0_0_rgba(0,0,0,1)] hover:translate-y-[-4px] active:translate-y-[8px] active:shadow-none"
                 >
                   PRÓXIMO <Send className="w-12 h-12 ml-4" />
                 </Button>
