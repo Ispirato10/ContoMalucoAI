@@ -101,13 +101,12 @@ export function StoryGame() {
 
   return (
     <div className="space-y-4">
-      {/* Container Principal com Renderização Condicional */}
       <div className="min-h-[400px]">
         {isFinalizing ? (
           <Card className="comic-border p-12 text-center space-y-6 bg-white animate-in fade-in zoom-in-95 duration-500">
             <Loader2 className="w-16 h-16 animate-spin text-primary mx-auto" />
             <h2 className="text-3xl font-black comic-text text-black uppercase">Escrevendo sua maluquice...</h2>
-            <p className="italic text-muted-foreground font-bold text-lg">O Gemini de última geração está processando tudo!</p>
+            <p className="italic text-muted-foreground font-bold text-lg">O Gemini 2.0 Flash está processando tudo!</p>
           </Card>
         ) : error ? (
           <Card className="comic-border p-12 text-center space-y-6 bg-white border-destructive">
@@ -192,7 +191,6 @@ export function StoryGame() {
         )}
       </div>
 
-      {/* Diálogo de Configurações - Agora sempre renderizado para estar acessível em qualquer estado */}
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
         <DialogContent className="comic-border bg-white p-8 max-w-md">
           <DialogHeader>
