@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -35,16 +36,24 @@
     @apply bg-background text-foreground font-sans antialiased;
     background-image: radial-gradient(#d1d1d1 1px, transparent 1px);
     background-size: 20px 20px;
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
 .comic-border {
   border: 4px solid black;
-  box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+  box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+}
+
+@media (min-width: 768px) {
+  .comic-border {
+    box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+  }
 }
 
 .comic-text {
-  font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+  font-family: 'Bangers', 'Comic Sans MS', cursive;
+  letter-spacing: 0.05em;
 }
 
 .paper-texture {
@@ -76,7 +85,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 2cm !important;
+    padding: 1.5cm !important;
     border: none !important;
     box-shadow: none !important;
   }
@@ -90,20 +99,14 @@
     text-align: center;
     page-break-after: always;
   }
-  .comic-image {
-    max-width: 100% !important;
-    height: auto !important;
-    border: 3px solid black !important;
-    margin-bottom: 1.5cm !important;
-  }
   .comic-caption {
     font-size: 2rem !important;
-    line-height: 1.4 !important;
+    line-height: 1.2 !important;
     color: black !important;
     text-align: center !important;
     max-width: 90% !important;
     background: #fff !important;
     padding: 1cm !important;
-    border: 2px dashed black !important;
+    border: 3px solid black !important;
   }
 }
