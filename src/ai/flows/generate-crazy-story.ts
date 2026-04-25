@@ -20,7 +20,7 @@ export type StoryOutput = z.infer<typeof StoryOutputSchema>;
 
 export async function generateCrazyStory(input: { answers: string[] }): Promise<StoryOutput> {
   const { output } = await ai.generate({
-    model: 'googleai/gemini-1.5-flash',
+    model: 'gemini-1.5-flash',
     prompt: `Você é um roteirista de gibis brasileiros experiente.
 Transforme estas respostas aleatórias (dadas às cegas) em uma história curta de gibi MUITO engraçada.
 

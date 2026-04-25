@@ -51,7 +51,7 @@ export function StoryGame() {
       setResult(story);
       setLoadingStory(false);
       
-      // Gera a imagem em paralelo
+      // Gera a imagem em paralelo para não travar a exibição da história
       setLoadingImage(true);
       try {
         const image = await generateComicVisual(story.imagePrompt);

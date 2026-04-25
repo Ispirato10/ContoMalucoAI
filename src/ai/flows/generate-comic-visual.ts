@@ -11,7 +11,7 @@ export async function generateComicVisual(prompt: string): Promise<string> {
 
   try {
     const { media } = await ai.generate({
-      model: 'googleai/imagen-3',
+      model: 'imagen-3',
       prompt: enhancedPrompt,
       config: {
         aspectRatio: '1:1',
@@ -28,7 +28,7 @@ export async function generateComicVisual(prompt: string): Promise<string> {
     // Tenta um fallback com prompt mais simples em caso de erro de segurança
     try {
         const fallback = await ai.generate({
-            model: 'googleai/imagen-3',
+            model: 'imagen-3',
             prompt: `Cartoon illustration, colorful, comic style. ${prompt}`,
             config: { aspectRatio: '1:1' }
         });
