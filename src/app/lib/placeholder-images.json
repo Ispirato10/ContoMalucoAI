@@ -2,16 +2,16 @@
 {
   "placeholderImages": [
     {
-      "id": "comic-cover",
-      "description": "Exemplo de capa de gibi para o Conto Maluco",
-      "imageUrl": "https://picsum.photos/seed/comic1/800/800",
-      "imageHint": "comic book colorful"
+      "id": "crazybook",
+      "description": "Uma ilustração vibrante de um livro de histórias malucas aberto com elementos saltando dele",
+      "imageUrl": "https://picsum.photos/seed/crazybook/1200/630",
+      "imageHint": "storybook magic"
     },
     {
-      "id": "share-image",
-      "description": "Imagem de compartilhamento nas redes sociais",
-      "imageUrl": "https://picsum.photos/seed/comic-share/1200/630",
-      "imageHint": "comic adventure background"
+      "id": "comic-cover",
+      "description": "Exemplo de capa de livro para o Conto Maluco",
+      "imageUrl": "https://picsum.photos/seed/bookcover1/800/800",
+      "imageHint": "colorful book"
     }
   ]
 }

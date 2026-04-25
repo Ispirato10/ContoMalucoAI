@@ -260,7 +260,7 @@ export function StoryGame() {
       });
       setResult(story);
       setIsFinalizing(false);
-      toast({ title: "Gibi Criado!", description: "Prepare-se para rir muito!" });
+      toast({ title: "História Criada!", description: "Prepare-se para rir muito!" });
     } catch (err: any) {
       console.error("Erro na geração:", err);
       if (isUsingUserKey) {
@@ -278,8 +278,10 @@ export function StoryGame() {
     if (audioUrl) {
       if (isPlaying) {
         audioRef.current?.pause();
+        setIsPlaying(false);
       } else {
         audioRef.current?.play();
+        setIsPlaying(true);
       }
       return;
     }
@@ -317,6 +319,13 @@ export function StoryGame() {
 
   return (
     <div className="space-y-4 max-w-full overflow-x-hidden">
+      <audio 
+        ref={audioRef} 
+        src={audioUrl || ''} 
+        onEnded={() => setIsPlaying(false)}
+        className="hidden"
+      />
+
       {userApiKey && userApiKey.length > 20 && !result && !isFinalizing && (
         <div className="flex justify-center no-print">
           <div className="bg-green-100 text-green-700 border-2 border-green-500 px-4 py-2 rounded-full text-[10px] md:text-xs font-black uppercase flex items-center gap-2 animate-bounce">
@@ -333,7 +342,7 @@ export function StoryGame() {
               <Sparkles className="w-8 h-8 md:w-12 md:h-12 text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
             </div>
             <h2 className="text-xl md:text-3xl font-black comic-text text-black uppercase leading-tight">Gemini 2.5 Flash está escrevendo...</h2>
-            <p className="italic text-muted-foreground font-bold text-sm md:text-lg">Transformando suas respostas em um gibi épico!</p>
+            <p className="italic text-muted-foreground font-bold text-sm md:text-lg">Transformando suas respostas em um conto épico!</p>
           </Card>
         ) : error ? (
           <Card className="comic-border p-8 md:p-12 text-center space-y-6 bg-white border-destructive mx-2">
@@ -358,34 +367,34 @@ export function StoryGame() {
           </Card>
         ) : result ? (
           <div className="space-y-8 md:space-y-12 animate-in zoom-in-95 duration-700 px-2 md:px-0">
-            <Card className="comic-border bg-primary p-8 md:p-12 text-center no-print shadow-2xl relative overflow-hidden flex flex-col items-center justify-center min-h-[250px] md:min-h-[400px]">
-               <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:20px_20px]"></div>
-              <h2 className="text-3xl md:text-7xl font-black uppercase comic-text text-white drop-shadow-[4px_4px_0px_rgba(0,0,0,1)] relative z-10 break-words leading-tight max-w-full">
+            {/* Capa do Livro (Visível no PDF como página de título) */}
+            <Card className="comic-border bg-primary p-8 md:p-12 text-center shadow-2xl relative overflow-hidden flex flex-col items-center justify-center min-h-[250px] md:min-h-[400px] comic-title-page">
+               <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:20px_20px] no-print"></div>
+              <h2 className="text-3xl md:text-7xl font-black uppercase comic-text text-white drop-shadow-[4px_4px_0px_rgba(0,0,0,1)] relative z-10 break-words leading-tight max-w-full print:text-black print:drop-shadow-none">
                 {result.title}
               </h2>
-              <div className="mt-6 md:mt-8 relative z-10">
+              <div className="mt-6 md:mt-8 relative z-10 no-print">
                 <span className="bg-yellow-400 border-[3px] md:border-4 border-black px-4 md:px-8 py-2 md:py-3 font-black text-lg md:text-2xl rotate-3 inline-block shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-black uppercase">
-                  GIBI DE COLECIONADOR
+                  CONTOS BIZARROS AI
                 </span>
               </div>
             </Card>
 
+            {/* Páginas do Livro */}
             <div className="space-y-6 md:space-y-8">
               {result.pages.map((page, index) => (
-                <Card key={index} className="comic-border bg-white overflow-hidden shadow-2xl relative paper-texture print:page-break-after-always">
+                <Card key={index} className="comic-border bg-white overflow-hidden shadow-2xl relative paper-texture comic-page">
                   <CardContent className="p-6 md:p-16 flex flex-col items-center gap-6 min-h-[400px] md:min-h-[600px] justify-center">
-                    <div className="absolute top-4 left-4 bg-yellow-400 border-[3px] border-black px-3 md:px-6 py-1 md:py-2 font-black text-sm md:text-2xl -rotate-6 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] z-20">
-                      PÁG. {index + 1}
+                    <div className="absolute top-4 left-4 bg-yellow-400 border-[3px] border-black px-3 md:px-6 py-1 md:py-2 font-black text-sm md:text-xl -rotate-6 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] z-20 no-print">
+                      CAPÍTULO {index + 1}
                     </div>
                     
-                    <div className="w-full max-w-4xl p-6 md:p-10 bg-white border-[4px] md:border-[6px] border-black relative shadow-[6px_6px_0px_0px_rgba(0,0,0,0.1)]">
-                      <div className="absolute -top-4 -right-4 md:-top-6 md:-right-6 bg-primary border-[3px] md:border-4 border-black p-2 md:p-4 rotate-12 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-                        <Sparkles className="w-6 h-6 md:w-10 md:h-10 text-white" />
-                      </div>
-                      <p className="comic-text text-lg md:text-4xl text-center text-black leading-tight italic font-black uppercase whitespace-pre-wrap">
+                    <div className="w-full max-w-3xl p-6 md:p-10 bg-white border-[4px] border-black relative shadow-[6px_6px_0px_0px_rgba(0,0,0,0.1)] print:border-none print:shadow-none comic-caption">
+                      <p className="book-font text-lg md:text-3xl text-center text-black leading-relaxed italic print:not-italic print:text-2xl print:text-left">
                         {page.text}
                       </p>
                     </div>
+                    <span className="hidden print:block page-number">- Pág. {index + 1} -</span>
                   </CardContent>
                 </Card>
               ))}
@@ -406,18 +415,18 @@ export function StoryGame() {
                 )}
               </Button>
               <Button onClick={() => window.print()} className="bg-secondary hover:bg-secondary/90 text-white comic-border h-auto py-4 md:py-6 px-6 md:px-12 font-black uppercase text-lg md:text-2xl shadow-2xl hover:scale-105 transition-all active:scale-95 text-center flex-1 min-w-[200px]">
-                <Printer className="w-6 h-6 md:w-8 md:h-8 mr-2 md:mr-4" /> PDF
+                <Printer className="w-6 h-6 md:w-8 md:h-8 mr-2 md:mr-4" /> Baixar PDF
               </Button>
               <Button onClick={restart} variant="outline" className="comic-border h-auto py-4 md:py-6 px-6 md:px-12 font-black uppercase text-lg md:text-2xl bg-white hover:bg-gray-50 shadow-2xl hover:scale-105 transition-all active:scale-95 text-center flex-1 min-w-[200px]">
-                <RotateCcw className="w-6 h-6 md:w-8 md:h-8 mr-2 md:mr-4" /> Novo
+                <RotateCcw className="w-6 h-6 md:w-8 md:h-8 mr-2 md:mr-4" /> Novo Conto
               </Button>
             </div>
           </div>
         ) : !selectedTheme ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500 px-2">
             <div className="sm:col-span-2 text-center space-y-2 md:space-y-4 mb-4">
-              <h2 className="text-2xl md:text-4xl font-black comic-text uppercase text-black leading-tight">Escolha seu Gênero!</h2>
-              <p className="font-bold text-primary italic text-sm md:text-lg">Qual confusão criaremos hoje?</p>
+              <h2 className="text-2xl md:text-4xl font-black comic-text uppercase text-black leading-tight">Qual confusão criaremos hoje?</h2>
+              <p className="font-bold text-primary italic text-sm md:text-lg">Escolha o seu gênero literário favorito!</p>
             </div>
             {THEMES.map((theme) => {
               const ThemeIcon = theme.icon;
@@ -431,7 +440,7 @@ export function StoryGame() {
                     <ThemeIcon className="w-6 h-6 md:w-8 md:h-8 text-white" />
                   </div>
                   <h3 className="text-xl md:text-3xl font-black comic-text uppercase text-black pr-10">{theme.name}</h3>
-                  <p className="font-bold text-muted-foreground italic text-xs md:text-lg leading-snug">{theme.description}</p>
+                  <p className="font-bold text-muted-foreground italic text-xs md:text-lg leading-snug book-font">{theme.description}</p>
                   <div className="mt-2 flex items-center gap-2 font-black uppercase text-[10px] md:text-xs bg-accent inline-flex px-2 py-1 border-2 border-black w-fit">
                     <BookOpen className="w-3 h-3" /> {theme.questions.length} Perguntas
                   </div>
@@ -456,7 +465,7 @@ export function StoryGame() {
             </div>
             <CardContent className="p-6 md:p-20 space-y-8 md:space-y-12">
               <div className="space-y-4 md:space-y-6">
-                <h2 className="text-xl md:text-4xl font-black comic-text text-center text-black leading-tight uppercase">
+                <h2 className="text-xl md:text-3xl font-bold book-font text-center text-black leading-tight">
                   {selectedTheme.questions[currentStep]}
                 </h2>
               </div>
@@ -466,16 +475,16 @@ export function StoryGame() {
                   value={currentAnswer}
                   onChange={(e) => setCurrentAnswer(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleNext()}
-                  placeholder="Escreva aqui..."
-                  className="h-14 md:h-20 text-base md:text-2xl border-[4px] md:border-[6px] border-black rounded-none comic-text bg-yellow-50/50 text-center focus-visible:ring-0 focus:border-primary transition-colors"
+                  placeholder="Escreva sua resposta..."
+                  className="h-14 md:h-20 text-base md:text-2xl border-[4px] md:border-[6px] border-black rounded-none book-font bg-yellow-50/50 text-center focus-visible:ring-0 focus:border-primary transition-colors"
                   autoFocus
                 />
                 <Button 
                   onClick={handleNext} 
                   disabled={!currentAnswer.trim()}
-                  className="w-full h-auto py-4 md:py-8 bg-primary hover:bg-primary/90 text-white font-black text-xl md:text-4xl uppercase comic-border transition-all shadow-[0_8px_0_0_rgba(0,0,0,1)] active:translate-y-[4px] active:shadow-[0_4px_0_0_rgba(0,0,0,1)] whitespace-normal"
+                  className="w-full h-auto py-4 md:py-8 bg-primary hover:bg-primary/90 text-white font-black text-xl md:text-3xl uppercase comic-border transition-all shadow-[0_8px_0_0_rgba(0,0,0,1)] active:translate-y-[4px] active:shadow-[0_4px_0_0_rgba(0,0,0,1)] whitespace-normal"
                 >
-                  PRÓXIMO <Send className="w-6 h-6 md:w-12 md:h-12 ml-2 md:ml-4" />
+                  PRÓXIMO <Send className="w-6 h-6 md:w-10 md:h-10 ml-2 md:ml-4" />
                 </Button>
               </div>
             </CardContent>
@@ -510,7 +519,7 @@ export function StoryGame() {
               onClick={() => { saveApiKey(userApiKey); setIsSettingsOpen(false); }} 
               className="comic-border bg-secondary hover:bg-secondary/90 w-full font-black uppercase text-white h-auto py-3 md:py-4 text-lg md:text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all"
             >
-              Salvar
+              Salvar Configuração
             </Button>
           </DialogFooter>
         </DialogContent>

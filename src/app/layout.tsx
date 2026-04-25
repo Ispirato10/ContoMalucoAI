@@ -4,21 +4,21 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'Conto Maluco AI - Seu Gibi Personalizado',
-  description: 'A brincadeira de papel agora com superpoderes de IA Gemini 2.5 Flash! Crie histórias bizarras e gibis hilários em segundos.',
-  keywords: ['PWA', 'IA', 'Gemini 2.5 Flash', 'Gibi', 'Histórias', 'Jogo', 'Criatividade'],
+  title: 'Conto Maluco AI - Seu Livro de Histórias Bizarras',
+  description: 'Transforme respostas cegas em contos hilários com IA! O clássico jogo de papel agora com superpoderes do Gemini 2.5 Flash.',
+  keywords: ['PWA', 'IA', 'Gemini 2.5 Flash', 'Gibi', 'Livro de Histórias', 'Jogo', 'Criatividade', 'Educação'],
   authors: [{ name: 'Conto Maluco AI' }],
   openGraph: {
     title: 'Conto Maluco AI - O Jogo de Criar Histórias Bizarras',
-    description: 'Você responde às cegas, a IA cria a confusão! Gere seu gibi personalizado e divirta-se com os amigos.',
+    description: 'Você responde às cegas, a IA cria a confusão! Gere seu livro personalizado e divirta-se.',
     url: 'https://conto-maluco-ai.vercel.app',
     siteName: 'Conto Maluco AI',
     images: [
       {
-        url: 'https://picsum.photos/seed/comic-share/1200/630',
+        url: 'https://picsum.photos/seed/crazybook/1200/630',
         width: 1200,
         height: 630,
-        alt: 'Conto Maluco AI - Seu Gibi Personalizado',
+        alt: 'Conto Maluco AI - Seu Livro de Histórias',
       },
     ],
     locale: 'pt_BR',
@@ -26,9 +26,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Conto Maluco AI - Seu Gibi Personalizado',
-    description: 'Transforme respostas malucas em gibis épicos com inteligência artificial!',
-    images: ['https://picsum.photos/seed/comic-share/1200/630'],
+    title: 'Conto Maluco AI - Seu Livro de Histórias',
+    description: 'Transforme respostas malucas em contos épicos com inteligência artificial!',
+    images: ['https://picsum.photos/seed/crazybook/1200/630'],
   },
   manifest: '/manifest.json',
   appleWebApp: {

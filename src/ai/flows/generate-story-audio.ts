@@ -2,6 +2,7 @@
 'use server';
 /**
  * @fileOverview Converte o texto da história em áudio usando Gemini TTS.
+ * Garante a conversão correta para WAV para reprodução estável.
  */
 
 import { ai } from '@/ai/genkit';
@@ -23,6 +24,7 @@ export async function generateStoryAudio(input: { text: string, userApiKey?: str
     });
   }
 
+  // O Gemini TTS retorna áudio em formato PCM
   const { media } = await currentAi.generate({
     model: googleAI.model('gemini-2.5-flash-preview-tts'),
     config: {
@@ -45,8 +47,11 @@ export async function generateStoryAudio(input: { text: string, userApiKey?: str
     'base64'
   );
 
+  // Convertemos PCM para WAV para garantir que todos os browsers consigam tocar
+  const wavData = await toWav(audioBuffer);
+
   return {
-    media: 'data:audio/wav;base64,' + (await toWav(audioBuffer)),
+    media: 'data:audio/wav;base64,' + wavData,
   };
 }
 
@@ -63,12 +68,10 @@ async function toWav(
       bitDepth: sampleWidth * 8,
     });
 
-    let bufs = [] as any[];
+    const bufs: Buffer[] = [];
     writer.on('error', reject);
-    writer.on('data', function (d) {
-      bufs.push(d);
-    });
-    writer.on('end', function () {
+    writer.on('data', (chunk) => bufs.push(chunk));
+    writer.on('end', () => {
       resolve(Buffer.concat(bufs).toString('base64'));
     });
 
