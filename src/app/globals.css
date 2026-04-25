@@ -40,7 +40,7 @@
 
 .comic-border {
   border: 4px solid black;
-  box-shadow: 10px 10px 0px 0px rgba(0,0,0,1);
+  box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
 }
 
 .comic-text {
@@ -52,12 +52,12 @@
   background-image: 
     linear-gradient(90deg, transparent 79px, #abced4 79px, #abced4 81px, transparent 81px),
     linear-gradient(#eee .1em, transparent .1em);
-  background-size: 100% 1.2em;
+  background-size: 100% 1.5em;
 }
 
 @media print {
   @page {
-    margin: 1.5cm;
+    margin: 0;
     size: A4;
   }
   .no-print {
@@ -69,34 +69,41 @@
     padding: 0 !important;
     margin: 0 !important;
   }
-  .comic-border {
-    box-shadow: none !important;
-    border: 2px solid black !important;
-    border-radius: 0 !important;
-    margin: 0 !important;
-  }
-  .paper-texture {
-    background-image: none !important;
+  .comic-page {
+    page-break-after: always;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2cm !important;
     border: none !important;
-    padding: 0 !important;
+    box-shadow: none !important;
   }
-  main {
+  .comic-title-page {
+    background-color: #f12711 !important;
+    color: white !important;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    page-break-after: always;
+  }
+  .comic-image {
     max-width: 100% !important;
-    padding: 0 !important;
-    margin: 0 !important;
+    height: auto !important;
+    border: 3px solid black !important;
+    margin-bottom: 1.5cm !important;
   }
-  h2 {
-    font-size: 3rem !important;
+  .comic-caption {
+    font-size: 2rem !important;
+    line-height: 1.4 !important;
     color: black !important;
     text-align: center !important;
-    margin-bottom: 2rem !important;
-  }
-  .prose {
-    font-size: 1.5rem !important;
-    line-height: 1.6 !important;
-    color: black !important;
-    max-width: 100% !important;
-    text-align: center !important;
-    margin: 0 auto !important;
+    max-width: 90% !important;
+    background: #fff !important;
+    padding: 1cm !important;
+    border: 2px dashed black !important;
   }
 }
