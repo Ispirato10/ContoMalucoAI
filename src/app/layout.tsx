@@ -5,7 +5,31 @@ import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
   title: 'Conto Maluco AI - Seu Gibi Personalizado',
-  description: 'A brincadeira de papel agora com superpoderes de IA Gemini 2.5 Flash!',
+  description: 'A brincadeira de papel agora com superpoderes de IA Gemini 2.5 Flash! Crie histórias bizarras e gibis hilários em segundos.',
+  keywords: ['PWA', 'IA', 'Gemini 2.5 Flash', 'Gibi', 'Histórias', 'Jogo', 'Criatividade'],
+  authors: [{ name: 'Conto Maluco AI' }],
+  openGraph: {
+    title: 'Conto Maluco AI - O Jogo de Criar Histórias Bizarras',
+    description: 'Você responde às cegas, a IA cria a confusão! Gere seu gibi personalizado e divirta-se com os amigos.',
+    url: 'https://conto-maluco-ai.vercel.app',
+    siteName: 'Conto Maluco AI',
+    images: [
+      {
+        url: 'https://picsum.photos/seed/comic-share/1200/630',
+        width: 1200,
+        height: 630,
+        alt: 'Conto Maluco AI - Seu Gibi Personalizado',
+      },
+    ],
+    locale: 'pt_BR',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Conto Maluco AI - Seu Gibi Personalizado',
+    description: 'Transforme respostas malucas em gibis épicos com inteligência artificial!',
+    images: ['https://picsum.photos/seed/comic-share/1200/630'],
+  },
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
