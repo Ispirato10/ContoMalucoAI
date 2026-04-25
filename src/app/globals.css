@@ -57,7 +57,7 @@
 
 @media print {
   @page {
-    margin: 1cm;
+    margin: 1.5cm;
     size: A4;
   }
   .no-print {
@@ -86,22 +86,17 @@
     margin: 0 !important;
   }
   h2 {
-    font-size: 2.5rem !important;
+    font-size: 3rem !important;
     color: black !important;
+    text-align: center !important;
+    margin-bottom: 2rem !important;
   }
   .prose {
-    font-size: 1.2rem !important;
-    line-height: 1.5 !important;
+    font-size: 1.5rem !important;
+    line-height: 1.6 !important;
     color: black !important;
     max-width: 100% !important;
-  }
-  img {
-    max-width: 400px !important;
-    display: block !important;
-    margin: 1cm auto !important;
-    border: 2px solid black !important;
-  }
-  .grid {
-    display: block !important;
+    text-align: center !important;
+    margin: 0 auto !important;
   }
 }
