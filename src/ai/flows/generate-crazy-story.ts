@@ -21,8 +21,8 @@ const StoryOutputSchema = z.object({
 export type StoryOutput = z.infer<typeof StoryOutputSchema>;
 
 export async function generateCrazyStory(input: { answers: string[], userApiKey?: string }): Promise<StoryOutput> {
-  // Se o usuário forneceu uma chave, criamos uma instância local do Genkit com essa chave
-  const currentAi = input.userApiKey 
+  // Se o usuário forneceu uma chave, criamos uma instância local do Genkit com essa chave para contornar cota
+  const currentAi = input.userApiKey && input.userApiKey.startsWith('AI')
     ? genkit({ plugins: [googleAI({ apiKey: input.userApiKey })] })
     : ai;
 

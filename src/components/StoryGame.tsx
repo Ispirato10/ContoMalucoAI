@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { generateCrazyStory, type StoryOutput } from '@/ai/flows/generate-crazy-story';
-import { Loader2, Send, RotateCcw, Printer, AlertTriangle, BookOpen, Settings, Key, Info } from 'lucide-react';
+import { Loader2, Send, RotateCcw, Printer, AlertTriangle, BookOpen, Settings, Key } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   Dialog,
@@ -13,7 +13,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
 
@@ -44,8 +43,9 @@ export function StoryGame() {
   }, []);
 
   const saveApiKey = (key: string) => {
-    setUserApiKey(key);
-    localStorage.setItem('conto-maluco-api-key', key);
+    const trimmedKey = key.trim();
+    setUserApiKey(trimmedKey);
+    localStorage.setItem('conto-maluco-api-key', trimmedKey);
     toast({ title: "Configuração Salva", description: "Sua chave de API será usada agora." });
   };
 
@@ -77,13 +77,17 @@ export function StoryGame() {
     } catch (err: any) {
       console.error("Erro na geração:", err);
       if (err.message?.includes('429') || err.message?.includes('RESOURCE_EXHAUSTED')) {
-        setError("Nossa cota gratuita acabou! Use sua própria chave Gemini para continuar.");
+        setError("A cota do sistema acabou! Configure sua própria chave Gemini para continuar.");
       } else {
-        setError("Ocorreu um erro ao gerar a história. Verifique sua chave ou tente novamente.");
+        setError("Ocorreu um erro ao gerar a história. Verifique sua conexão ou chave e tente novamente.");
       }
     } finally {
       setIsFinalizing(false);
     }
+  };
+
+  const handleRetry = () => {
+    processFinalStory(answers);
   };
 
   const restart = () => {
@@ -100,7 +104,7 @@ export function StoryGame() {
       <Card className="comic-border p-12 text-center space-y-6 bg-white animate-in fade-in zoom-in-95 duration-500">
         <Loader2 className="w-16 h-16 animate-spin text-primary mx-auto" />
         <h2 className="text-3xl font-black comic-text text-black uppercase">Escrevendo sua maluquice...</h2>
-        <p className="italic text-muted-foreground font-bold">O Gemini 2.5 está processando tudo!</p>
+        <p className="italic text-muted-foreground font-bold text-lg">O Gemini de última geração está processando tudo!</p>
       </Card>
     );
   }
@@ -110,16 +114,16 @@ export function StoryGame() {
       <Card className="comic-border p-12 text-center space-y-6 bg-white border-destructive">
         <AlertTriangle className="w-16 h-16 text-destructive mx-auto" />
         <h2 className="text-2xl font-black comic-text text-black">Eita! Deu zebra!</h2>
-        <p className="font-bold text-muted-foreground">{error}</p>
+        <p className="font-bold text-muted-foreground text-lg">{error}</p>
         <div className="flex flex-col gap-4 max-w-sm mx-auto">
-          <Button onClick={() => processFinalStory(answers)} className="comic-border bg-primary hover:bg-primary/90 h-14 font-black uppercase text-white">
-            Tentar Novamente
+          <Button onClick={handleRetry} className="comic-border bg-primary hover:bg-primary/90 h-14 font-black uppercase text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            Tentar Novamente agora
           </Button>
-          <Button variant="outline" onClick={() => setIsSettingsOpen(true)} className="comic-border h-14 font-bold flex gap-2 justify-center items-center">
+          <Button variant="outline" onClick={() => setIsSettingsOpen(true)} className="comic-border h-14 font-bold flex gap-2 justify-center items-center bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <Key className="w-5 h-5" /> Configurar Minha Chave
           </Button>
-          <Button variant="ghost" onClick={restart} className="font-bold underline">
-            Voltar para o Início
+          <Button variant="ghost" onClick={restart} className="font-bold underline mt-4">
+            Recomeçar do Zero
           </Button>
         </div>
       </Card>
@@ -135,19 +139,19 @@ export function StoryGame() {
               {result.title}
             </h2>
           </div>
-          <CardContent className="p-8 space-y-8 paper-texture print:bg-white">
+          <CardContent className="p-8 space-y-8 paper-texture print:bg-white min-h-[400px] flex flex-col justify-center">
             <div className="prose prose-xl max-w-none font-bold comic-text leading-relaxed whitespace-pre-wrap text-black text-2xl md:text-3xl text-center italic">
               {result.fullStory}
             </div>
-            <div className="mt-8 text-center text-[10px] font-black uppercase opacity-20">
-              Gerado por Conto Maluco AI - Gemini 2.5 Flash {userApiKey ? "(Via Chave Pessoal)" : ""}
+            <div className="mt-auto pt-8 text-center text-[10px] font-black uppercase opacity-20 italic">
+              Gerado por Conto Maluco AI - Gemini Engine {userApiKey ? "(Chave Pessoal)" : "(Chave App)"}
             </div>
           </CardContent>
         </Card>
 
         <div className="flex flex-wrap gap-4 justify-center no-print pb-12">
           <Button onClick={() => window.print()} className="bg-secondary hover:bg-secondary/90 text-white comic-border h-16 px-12 font-black uppercase text-xl shadow-xl hover:scale-105 transition-all">
-            <Printer className="w-7 h-7 mr-3" /> Salvar História (PDF)
+            <Printer className="w-7 h-7 mr-3" /> Salvar Gibi (PDF)
           </Button>
           <Button onClick={restart} variant="outline" className="comic-border h-16 px-12 font-black uppercase text-xl bg-white hover:bg-gray-50 shadow-xl hover:scale-105 transition-all">
             <RotateCcw className="w-7 h-7 mr-3" /> Jogar de Novo
@@ -180,8 +184,8 @@ export function StoryGame() {
               value={currentAnswer}
               onChange={(e) => setCurrentAnswer(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleNext()}
-              placeholder="Sua resposta secreta..."
-              className="h-24 text-3xl md:text-4xl border-4 border-black rounded-none comic-text bg-yellow-50/50 text-center"
+              placeholder="Digite aqui..."
+              className="h-24 text-3xl md:text-4xl border-4 border-black rounded-none comic-text bg-yellow-50/50 text-center focus-visible:ring-0 focus:border-primary transition-colors"
               autoFocus
             />
             <Button 
@@ -189,37 +193,37 @@ export function StoryGame() {
               disabled={!currentAnswer.trim()}
               className="w-full h-24 bg-primary hover:bg-primary/90 text-white font-black text-3xl uppercase comic-border transition-all shadow-[0_10px_0_0_rgba(0,0,0,1)] hover:translate-y-[-4px] active:translate-y-[6px] active:shadow-none"
             >
-              CONFIRMAR <Send className="w-10 h-10 ml-4" />
+              PRÓXIMO <Send className="w-10 h-10 ml-4" />
             </Button>
           </div>
         </CardContent>
       </Card>
 
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-        <DialogContent className="comic-border bg-white p-8">
+        <DialogContent className="comic-border bg-white p-8 max-w-md">
           <DialogHeader>
             <DialogTitle className="comic-text text-2xl font-black uppercase flex items-center gap-2">
-              <Key className="w-6 h-6 text-primary" /> Chave Gemini Pessoal
+              <Key className="w-6 h-6 text-primary" /> Minha Chave Gemini
             </DialogTitle>
-            <DialogDescription className="font-bold text-muted-foreground">
-              Se a cota do app acabar, use sua própria chave do Google AI Studio.
+            <DialogDescription className="font-bold text-muted-foreground text-base">
+              Se o sistema gratuito estiver lotado, use sua própria chave do Google AI Studio para continuar a brincadeira.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
+          <div className="space-y-4 py-6">
             <div className="space-y-2">
-              <label className="text-sm font-black uppercase tracking-widest text-black">API Key</label>
+              <label className="text-sm font-black uppercase tracking-widest text-black">API Key (Inicia com AI...)</label>
               <Input 
                 type="password" 
-                placeholder="AI_..." 
+                placeholder="Insira sua chave aqui..." 
                 value={userApiKey} 
                 onChange={(e) => setUserApiKey(e.target.value)}
-                className="border-2 border-black rounded-none comic-text"
+                className="border-2 border-black rounded-none comic-text h-14 text-xl"
               />
             </div>
           </div>
           <DialogFooter>
-            <Button onClick={() => { saveApiKey(userApiKey); setIsSettingsOpen(false); }} className="comic-border bg-secondary hover:bg-secondary/90 w-full font-black uppercase text-white">
-              Salvar e Fechar
+            <Button onClick={() => { saveApiKey(userApiKey); setIsSettingsOpen(false); }} className="comic-border bg-secondary hover:bg-secondary/90 w-full font-black uppercase text-white h-14 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              Salvar Configuração
             </Button>
           </DialogFooter>
         </DialogContent>
