@@ -138,6 +138,7 @@ export function StoryGame() {
     localStorage.setItem('conto-maluco-api-key', trimmedKey);
     toast({ title: "Chave Salva!", description: "Sua chave foi configurada com sucesso." });
     
+    // Se estávamos em uma tela de erro de cota, tenta processar novamente automaticamente
     if (error && selectedTheme && answers.length === selectedTheme.questions.length) {
       processFinalStory(answers, trimmedKey);
     }
@@ -178,7 +179,7 @@ export function StoryGame() {
       if (isUsingUserKey) {
         setError("Eita! Parece que sua própria chave de API também atingiu o limite ou é inválida.");
       } else if (err.message?.includes('429') || err.message?.includes('RESOURCE_EXHAUSTED')) {
-        setError("As requisições gratuitas do app acabaram.");
+        setError("As requisições gratuitas do app acabaram. Insira sua própria chave Gemini para continuar.");
       } else {
         setError("Ocorreu um erro ao conectar com o Gemini 2.5 Flash.");
       }
@@ -198,6 +199,7 @@ export function StoryGame() {
 
   return (
     <div className="space-y-4">
+      {/* Indicador de Chave Pessoal Ativa */}
       {userApiKey && userApiKey.length > 20 && !result && !isFinalizing && (
         <div className="flex justify-center no-print">
           <div className="bg-green-100 text-green-700 border-2 border-green-500 px-4 py-2 rounded-full text-xs font-black uppercase flex items-center gap-2 animate-bounce">
@@ -239,6 +241,7 @@ export function StoryGame() {
           </Card>
         ) : result ? (
           <div className="space-y-12 animate-in zoom-in-95 duration-700">
+            {/* Capa do Gibi */}
             <Card className="comic-border bg-primary p-12 text-center no-print shadow-2xl relative overflow-hidden comic-title-page">
                <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:20px_20px]"></div>
               <h2 className="text-5xl md:text-8xl font-black uppercase comic-text text-white drop-shadow-[6px_6px_0px_rgba(0,0,0,1)] relative z-10 break-words">
@@ -251,6 +254,7 @@ export function StoryGame() {
               </div>
             </Card>
 
+            {/* Páginas do Gibi */}
             <div className="space-y-8">
               {result.pages.map((page, index) => (
                 <Card key={index} className="comic-border bg-white overflow-hidden shadow-2xl comic-page print:page-break-after-always relative paper-texture">
@@ -351,6 +355,7 @@ export function StoryGame() {
         )}
       </div>
 
+      {/* Diálogo de Configuração de Chave API */}
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
         <DialogContent className="comic-border bg-white p-6 md:p-10 max-w-xl">
           <DialogHeader className="space-y-4">
