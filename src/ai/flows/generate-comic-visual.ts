@@ -1,6 +1,6 @@
 'use server';
 /**
- * @fileOverview Gera a ilustração estilo Gibi para a história final.
+ * @fileOverview Gera a ilustração estilo Gibi para a história final usando Imagen 3.
  */
 
 import {ai} from '@/ai/genkit';
@@ -24,6 +24,7 @@ export async function generateComicVisual(prompt: string): Promise<string> {
     return media.url;
   } catch (error) {
     console.error('Erro na geração Imagen:', error);
+    // Tentativa de fallback com prompt simplificado
     try {
         const fallback = await ai.generate({
             model: 'googleai/imagen-3',

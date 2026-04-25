@@ -46,19 +46,19 @@ export function StoryGame() {
   const processFinalStory = async (finalAnswers: string[]) => {
     setIsFinalizing(true);
     setError(null);
+    setResult(null); // Limpa resultados anteriores
+    setComicImage(null);
+
     try {
       const story = await generateCrazyStory({ answers: finalAnswers });
       setResult(story);
       
+      // Iniciamos a geração da imagem, mas não bloqueamos o resultado da história
       setLoadingImage(true);
-      try {
-        const image = await generateComicVisual(story.imagePrompt);
-        setComicImage(image);
-      } catch (imgError) {
-        console.error("Erro na imagem:", imgError);
-      } finally {
-        setLoadingImage(false);
-      }
+      generateComicVisual(story.imagePrompt)
+        .then((image) => setComicImage(image))
+        .catch((imgError) => console.error("Erro na imagem:", imgError))
+        .finally(() => setLoadingImage(false));
       
       toast({ title: "Gibi Criado!", description: "Sua história está pronta para ser lida!" });
     } catch (err: any) {
@@ -79,37 +79,40 @@ export function StoryGame() {
     setIsFinalizing(false);
   };
 
+  // Se estiver finalizando e ainda não tiver resultado, mostra loader fixo
   if (isFinalizing && !result) {
     return (
       <Card className="comic-border p-12 text-center space-y-6 bg-white animate-in fade-in zoom-in-95 duration-500">
         <div className="relative inline-block">
           <Loader2 className="w-16 h-16 animate-spin text-primary" />
-          <div className="absolute inset-0 flex items-center justify-center font-bold text-xs uppercase text-primary">IA</div>
+          <div className="absolute inset-0 flex items-center justify-center font-bold text-xs uppercase text-primary">2.5</div>
         </div>
-        <h2 className="text-3xl font-black comic-text text-black">Escrevendo as páginas do gibi...</h2>
-        <p className="italic text-muted-foreground font-bold">O desenhista está afiando os lápis!</p>
+        <h2 className="text-3xl font-black comic-text text-black">Gemini 2.5 está desenhando o gibi...</h2>
+        <p className="italic text-muted-foreground font-bold">Misturando as respostas para criar o caos!</p>
       </Card>
     );
   }
 
+  // Se houver erro, mostra tela de erro com opção de reinício
   if (error) {
     return (
       <Card className="comic-border p-12 text-center space-y-6 bg-white border-destructive">
         <AlertTriangle className="w-16 h-16 text-destructive mx-auto" />
-        <h2 className="text-2xl font-black comic-text text-black">Ué, algo deu errado!</h2>
+        <h2 className="text-2xl font-black comic-text text-black">Eita! Deu zebra!</h2>
         <p className="font-bold text-muted-foreground">{error}</p>
         <div className="flex flex-col gap-4">
           <Button onClick={() => processFinalStory(answers)} className="comic-border bg-primary hover:bg-primary/90 h-14 font-black uppercase text-lg shadow-xl text-white">
-            Tentar Gerar Novamente
+            Tentar Novamente
           </Button>
           <Button variant="ghost" onClick={restart} className="font-bold underline">
-            Recomeçar do Início
+            Voltar para o Início
           </Button>
         </div>
       </Card>
     );
   }
 
+  // Se tiver o resultado, mostra a história
   if (result) {
     return (
       <div className="space-y-8 animate-in zoom-in-95 duration-700">
@@ -131,17 +134,17 @@ export function StoryGame() {
                 {loadingImage ? (
                   <div className="comic-border bg-yellow-50 w-full aspect-square flex flex-col items-center justify-center space-y-4 p-8 text-center rotate-1 print:hidden">
                     <Loader2 className="w-12 h-12 animate-spin text-primary" />
-                    <p className="font-bold comic-text text-lg">Ilustrando a capa do seu gibi...</p>
+                    <p className="font-bold comic-text text-lg">Ilustrando sua loucura...</p>
                   </div>
                 ) : comicImage ? (
                   <div className="comic-border bg-white p-3 rotate-2 transition-transform hover:rotate-0 duration-500 shadow-2xl print:rotate-0 print:shadow-none print:max-w-md mx-auto">
                     <img src={comicImage} alt="Capa do Gibi" className="w-full h-auto border-4 border-black" />
-                    <div className="mt-4 text-center text-[10px] font-black uppercase opacity-40">Edição Especial: Conto Maluco AI</div>
+                    <div className="mt-4 text-center text-[10px] font-black uppercase opacity-40">Edição Especial: Gemini 2.5 Flash</div>
                   </div>
                 ) : (
                   <div className="comic-border bg-gray-50 w-full aspect-square flex flex-col items-center justify-center space-y-4 opacity-50 p-8 text-center italic print:hidden">
                     <ImageIcon className="w-16 h-16" />
-                    <p className="font-bold">O desenho não carregou, mas a história é nota 10!</p>
+                    <p className="font-bold">A imagem fugiu, mas a história é hilária!</p>
                   </div>
                 )}
               </div>
@@ -161,6 +164,7 @@ export function StoryGame() {
     );
   }
 
+  // Estado padrão: Perguntas
   return (
     <Card className="comic-border bg-white overflow-hidden shadow-2xl">
       <div className="bg-secondary p-5 text-white flex justify-between items-center border-b-4 border-black">
@@ -179,7 +183,7 @@ export function StoryGame() {
             {QUESTIONS[currentStep]}
           </h2>
           <p className="text-center text-lg font-bold italic text-primary animate-pulse">
-            Responda o que vier na cabeça! O segredo é ser absurdo!
+            Seja o mais absurdo possível!
           </p>
         </div>
         
@@ -188,7 +192,7 @@ export function StoryGame() {
             value={currentAnswer}
             onChange={(e) => setCurrentAnswer(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleNext()}
-            placeholder="Digite sua resposta maluca aqui..."
+            placeholder="Sua resposta secreta..."
             className="h-24 text-3xl md:text-4xl border-4 border-black focus-visible:ring-0 focus-visible:ring-offset-0 rounded-none comic-text shadow-[inset_0_4px_8px_rgba(0,0,0,0.1)] bg-yellow-50/50 text-center"
             autoFocus
           />
@@ -197,7 +201,7 @@ export function StoryGame() {
             disabled={!currentAnswer.trim()}
             className="w-full h-24 bg-primary hover:bg-primary/90 text-white font-black text-3xl uppercase comic-border transition-all active:scale-95 shadow-[0_10px_0_0_rgba(0,0,0,1)] hover:translate-y-[-4px] active:translate-y-[6px] active:shadow-none"
           >
-            PRÓXIMA PERGUNTA <Send className="w-10 h-10 ml-4" />
+            CONFIRMAR <Send className="w-10 h-10 ml-4" />
           </Button>
         </div>
       </CardContent>
