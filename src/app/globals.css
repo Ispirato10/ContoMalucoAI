@@ -56,12 +56,17 @@
 }
 
 @media print {
+  @page {
+    margin: 1cm;
+    size: auto;
+  }
   .no-print {
     display: none !important;
   }
   body {
     background: white !important;
     background-image: none !important;
+    padding: 0 !important;
   }
   .comic-border {
     box-shadow: none !important;
@@ -69,10 +74,15 @@
   }
   .paper-texture {
     background-image: none !important;
+    border: none !important;
   }
   main {
     max-width: 100% !important;
     padding: 0 !important;
     margin: 0 !important;
+  }
+  .prose {
+    font-size: 1.2rem !important;
+    line-height: 1.4 !important;
   }
 }

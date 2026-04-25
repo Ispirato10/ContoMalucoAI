@@ -21,17 +21,17 @@ export type StoryOutput = z.infer<typeof StoryOutputSchema>;
 export async function generateCrazyStory(input: { answers: string[] }): Promise<StoryOutput> {
   const { output } = await ai.generate({
     model: 'googleai/gemini-1.5-flash',
-    prompt: `Você é um roteirista de gibis infantis brasileiros conhecido pelo humor absurdo e criatividade.
-Sua tarefa é pegar uma lista de respostas aleatórias (que foram dadas sem os jogadores verem as perguntas) e transformá-las em uma história curta, coesa e MUITO engraçada.
+    prompt: `Você é um roteirista de gibis brasileiros experiente.
+Transforme estas respostas aleatórias (dadas às cegas) em uma história curta de gibi MUITO engraçada.
 
-RESPOSTAS DOS JOGADORES:
+RESPOSTAS:
 ${input.answers.map((a, i) => `${i + 1}. ${a}`).join('\n')}
 
 DIRETRIZES:
-1. Mantenha o tom de "brincadeira de criança".
-2. Tente usar todas as respostas na ordem em que aparecem, criando pontes criativas entre elas.
-3. O resultado deve ser em Português do Brasil.
-4. Gere também um prompt em INGLÊS detalhado para uma IA de imagem (DALL-E/Imagen) criar uma ilustração dessa história no estilo "Classic Brazilian Comic Book Art" (estilo Turma da Mônica ou Ziraldo).`,
+1. Use as respostas na ordem, criando pontes absurdas entre elas.
+2. Estilo "Turma da Mônica" ou "Ziraldo" moderno.
+3. Idioma: Português do Brasil.
+4. Gere um prompt em INGLÊS para gerar a imagem dessa cena. O prompt de imagem NÃO deve conter textos, apenas a descrição visual da cena absurda.`,
     output: { schema: StoryOutputSchema }
   });
 

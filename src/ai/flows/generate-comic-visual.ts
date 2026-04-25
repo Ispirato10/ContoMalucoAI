@@ -6,8 +6,8 @@
 import {ai} from '@/ai/genkit';
 
 export async function generateComicVisual(prompt: string): Promise<string> {
-  // Adicionamos mais contexto ao prompt para garantir o estilo de gibi brasileiro
-  const enhancedPrompt = `A vibrant comic book panel, professional digital illustration, bold ink outlines, dynamic composition, clean cel shading, style of classic Brazilian comics (Turma da Monica/Ziraldo inspiration but modern), high quality, storytelling focus. Scene: ${prompt}`;
+  // Prompt otimizado para estilo gibi clássico e amigável
+  const enhancedPrompt = `Clean comic book illustration, vibrant colors, bold black outlines, professional digital art, storytelling panel, Brazilian comic book style, high resolution. Subject: ${prompt}`;
 
   try {
     const { media } = await ai.generate({
@@ -24,7 +24,17 @@ export async function generateComicVisual(prompt: string): Promise<string> {
     
     return media.url;
   } catch (error) {
-    console.error('Erro na geração de imagem Genkit:', error);
-    throw new Error('Falha técnica ao gerar o visual do gibi.');
+    console.error('Erro na geração de imagem Imagen:', error);
+    // Tenta um fallback com prompt mais simples em caso de erro de segurança
+    try {
+        const fallback = await ai.generate({
+            model: 'googleai/imagen-3',
+            prompt: `Cartoon illustration, colorful, comic style. ${prompt}`,
+            config: { aspectRatio: '1:1' }
+        });
+        return fallback.media?.url || '';
+    } catch (e) {
+        throw new Error('Falha total na geração visual.');
+    }
   }
 }

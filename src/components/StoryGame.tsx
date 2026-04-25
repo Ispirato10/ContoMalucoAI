@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { generateCrazyStory, type StoryOutput } from '@/ai/flows/generate-crazy-story';
 import { generateComicVisual } from '@/ai/flows/generate-comic-visual';
-import { Loader2, Send, RotateCcw, Printer, Sparkles, Image as ImageIcon } from 'lucide-react';
+import { Loader2, Send, RotateCcw, Printer, Sparkles, Image as ImageIcon, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const QUESTIONS = [
@@ -25,6 +25,7 @@ export function StoryGame() {
   const [currentAnswer, setCurrentAnswer] = useState('');
   const [loadingStory, setLoadingStory] = useState(false);
   const [loadingImage, setLoadingImage] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<StoryOutput | null>(null);
   const [comicImage, setComicImage] = useState<string | null>(null);
 
@@ -44,12 +45,13 @@ export function StoryGame() {
 
   const processFinalStory = async (finalAnswers: string[]) => {
     setLoadingStory(true);
+    setError(null);
     try {
       const story = await generateCrazyStory({ answers: finalAnswers });
       setResult(story);
       setLoadingStory(false);
       
-      // Gera a imagem em paralelo para não travar a leitura
+      // Gera a imagem em paralelo
       setLoadingImage(true);
       try {
         const image = await generateComicVisual(story.imagePrompt);
@@ -62,11 +64,13 @@ export function StoryGame() {
       }
       
       toast({ title: "História Gerada!", description: "Prepare-se para rir!" });
-    } catch (error) {
+    } catch (err: any) {
+      console.error("Erro na geração da história:", err);
       setLoadingStory(false);
+      setError("A IA ficou confusa com tanta maluquice. Vamos tentar de novo?");
       toast({ 
         title: "Ops!", 
-        description: "A IA se confundiu com tanta maluquice. Tente de novo!", 
+        description: "Houve um problema técnico ao criar a história.", 
         variant: "destructive" 
       });
     }
@@ -78,6 +82,7 @@ export function StoryGame() {
     setCurrentAnswer('');
     setResult(null);
     setComicImage(null);
+    setError(null);
   };
 
   if (loadingStory) {
@@ -93,36 +98,52 @@ export function StoryGame() {
     );
   }
 
+  if (error) {
+    return (
+      <Card className="comic-border p-12 text-center space-y-6 bg-white">
+        <AlertTriangle className="w-16 h-16 text-destructive mx-auto" />
+        <h2 className="text-2xl font-black comic-text">Maluquice em excesso!</h2>
+        <p className="text-muted-foreground">{error}</p>
+        <Button onClick={() => processFinalStory(answers)} className="comic-border bg-primary hover:bg-primary/90 h-14 px-8 font-black uppercase shadow-xl">
+          Tentar Gerar Novamente
+        </Button>
+        <Button variant="ghost" onClick={restart} className="block mx-auto text-sm underline">
+          Recomeçar do Zero
+        </Button>
+      </Card>
+    );
+  }
+
   if (result) {
     return (
       <div className="space-y-8 animate-in zoom-in-95 duration-500">
-        <Card className="comic-border bg-white overflow-hidden shadow-2xl">
-          <div className="bg-primary p-6 text-white text-center border-b-4 border-black">
-            <h2 className="text-4xl font-black uppercase comic-text drop-shadow-md">{result.title}</h2>
+        <Card className="comic-border bg-white overflow-hidden shadow-2xl print:shadow-none print:border-2">
+          <div className="bg-primary p-6 text-white text-center border-b-4 border-black print:bg-white print:text-black">
+            <h2 className="text-4xl font-black uppercase comic-text drop-shadow-md print:drop-shadow-none">{result.title}</h2>
           </div>
-          <CardContent className="p-8 space-y-8 paper-texture min-h-[400px]">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-              <div className="space-y-6">
+          <CardContent className="p-8 space-y-8 paper-texture min-h-[400px] print:bg-white print:min-h-0">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center print:flex print:flex-col print:gap-4">
+              <div className="space-y-6 print:order-2">
                 <div className="prose prose-lg max-w-none font-bold comic-text text-xl md:text-2xl leading-relaxed whitespace-pre-wrap text-black">
                   {result.fullStory}
                 </div>
               </div>
               
-              <div className="flex flex-col items-center justify-center">
+              <div className="flex flex-col items-center justify-center print:order-1 print:mb-8">
                 {loadingImage ? (
-                  <div className="comic-border bg-gray-100 w-full aspect-square flex flex-col items-center justify-center space-y-4 p-8 text-center rotate-1">
+                  <div className="comic-border bg-gray-100 w-full aspect-square flex flex-col items-center justify-center space-y-4 p-8 text-center rotate-1 print:hidden">
                     <Loader2 className="w-12 h-12 animate-spin text-primary" />
-                    <p className="font-bold comic-text text-sm">IA está desenhando a cena principal...</p>
+                    <p className="font-bold comic-text text-sm">Desenhando a cena principal...</p>
                   </div>
                 ) : comicImage ? (
-                  <div className="comic-border bg-white p-2 rotate-2 transition-transform hover:rotate-0 duration-500 max-w-md w-full shadow-2xl">
+                  <div className="comic-border bg-white p-2 rotate-2 transition-transform hover:rotate-0 duration-500 max-w-md w-full shadow-2xl print:rotate-0 print:shadow-none print:max-w-none">
                     <img src={comicImage} alt="Ilustração do gibi" className="w-full h-auto border-2 border-black" />
                     <div className="mt-2 text-center text-[10px] font-black uppercase opacity-30">© Conto Maluco AI 2024</div>
                   </div>
                 ) : (
-                  <div className="comic-border bg-gray-50 w-full aspect-square flex flex-col items-center justify-center space-y-2 opacity-50 p-8 text-center italic">
+                  <div className="comic-border bg-gray-50 w-full aspect-square flex flex-col items-center justify-center space-y-2 opacity-50 p-8 text-center italic print:hidden">
                     <ImageIcon className="w-12 h-12 mb-2" />
-                    <p className="text-sm">O ilustrador saiu para o café. <br/>A imagem não pôde ser gerada.</p>
+                    <p className="text-sm">Imagem não disponível.</p>
                   </div>
                 )}
               </div>
