@@ -1,4 +1,6 @@
+
 import { StoryGame } from '@/components/StoryGame';
+import { InstallPWA } from '@/components/InstallPWA';
 import { BookOpen, Sparkles } from 'lucide-react';
 
 export default function Home() {
@@ -14,7 +16,7 @@ export default function Home() {
           </h1>
         </div>
         <p className="text-xl font-bold text-primary flex items-center justify-center gap-3 italic">
-          A brincadeira de papel agora com superpoderes de IA!
+          Sua fábrica bizarra de gibis com Gemini 2.5 Flash!
         </p>
       </header>
 
@@ -25,9 +27,11 @@ export default function Home() {
         <StoryGame />
       </div>
 
-      <footer className="mt-16 text-center text-sm font-bold opacity-60 italic no-print pb-8">
+      <footer className="mt-16 text-center text-sm font-bold opacity-60 italic no-print pb-24">
         Responda às perguntas e deixe a inteligência artificial criar a confusão!
       </footer>
+
+      <InstallPWA />
     </main>
   );
 }
