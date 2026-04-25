@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { generateCrazyStory, type StoryOutput } from '@/ai/flows/generate-crazy-story';
 import { generateComicVisual } from '@/ai/flows/generate-comic-visual';
-import { Loader2, Send, RotateCcw, Printer, Image as ImageIcon, AlertTriangle, BookOpen, Sparkles } from 'lucide-react';
+import { Loader2, Send, RotateCcw, Printer, Image as ImageIcon, AlertTriangle, BookOpen } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const QUESTIONS = [
@@ -46,24 +46,23 @@ export function StoryGame() {
   const processFinalStory = async (finalAnswers: string[]) => {
     setIsFinalizing(true);
     setError(null);
-    setResult(null); // Limpa resultados anteriores
+    setResult(null);
     setComicImage(null);
 
     try {
       const story = await generateCrazyStory({ answers: finalAnswers });
       setResult(story);
       
-      // Iniciamos a geração da imagem, mas não bloqueamos o resultado da história
       setLoadingImage(true);
       generateComicVisual(story.imagePrompt)
         .then((image) => setComicImage(image))
         .catch((imgError) => console.error("Erro na imagem:", imgError))
         .finally(() => setLoadingImage(false));
       
-      toast({ title: "Gibi Criado!", description: "Sua história está pronta para ser lida!" });
+      toast({ title: "Gibi Criado!", description: "Sua história está pronta!" });
     } catch (err: any) {
       console.error("Erro na geração:", err);
-      setError("A IA deu um nó no cérebro com tanta maluquice. Vamos tentar de novo?");
+      setError("A IA atingiu o limite de criatividade por agora. Vamos tentar de novo?");
     } finally {
       setIsFinalizing(false);
     }
@@ -79,21 +78,16 @@ export function StoryGame() {
     setIsFinalizing(false);
   };
 
-  // Se estiver finalizando e ainda não tiver resultado, mostra loader fixo
   if (isFinalizing && !result) {
     return (
       <Card className="comic-border p-12 text-center space-y-6 bg-white animate-in fade-in zoom-in-95 duration-500">
-        <div className="relative inline-block">
-          <Loader2 className="w-16 h-16 animate-spin text-primary" />
-          <div className="absolute inset-0 flex items-center justify-center font-bold text-xs uppercase text-primary">2.5</div>
-        </div>
-        <h2 className="text-3xl font-black comic-text text-black">Gemini 2.5 está desenhando o gibi...</h2>
-        <p className="italic text-muted-foreground font-bold">Misturando as respostas para criar o caos!</p>
+        <Loader2 className="w-16 h-16 animate-spin text-primary mx-auto" />
+        <h2 className="text-3xl font-black comic-text text-black uppercase">Escrevendo sua maluquice...</h2>
+        <p className="italic text-muted-foreground font-bold">Aguarde, os gnomos da IA estão trabalhando!</p>
       </Card>
     );
   }
 
-  // Se houver erro, mostra tela de erro com opção de reinício
   if (error) {
     return (
       <Card className="comic-border p-12 text-center space-y-6 bg-white border-destructive">
@@ -101,7 +95,7 @@ export function StoryGame() {
         <h2 className="text-2xl font-black comic-text text-black">Eita! Deu zebra!</h2>
         <p className="font-bold text-muted-foreground">{error}</p>
         <div className="flex flex-col gap-4">
-          <Button onClick={() => processFinalStory(answers)} className="comic-border bg-primary hover:bg-primary/90 h-14 font-black uppercase text-lg shadow-xl text-white">
+          <Button onClick={() => processFinalStory(answers)} className="comic-border bg-primary hover:bg-primary/90 h-14 font-black uppercase text-lg text-white">
             Tentar Novamente
           </Button>
           <Button variant="ghost" onClick={restart} className="font-bold underline">
@@ -112,7 +106,6 @@ export function StoryGame() {
     );
   }
 
-  // Se tiver o resultado, mostra a história
   if (result) {
     return (
       <div className="space-y-8 animate-in zoom-in-95 duration-700">
@@ -139,7 +132,7 @@ export function StoryGame() {
                 ) : comicImage ? (
                   <div className="comic-border bg-white p-3 rotate-2 transition-transform hover:rotate-0 duration-500 shadow-2xl print:rotate-0 print:shadow-none print:max-w-md mx-auto">
                     <img src={comicImage} alt="Capa do Gibi" className="w-full h-auto border-4 border-black" />
-                    <div className="mt-4 text-center text-[10px] font-black uppercase opacity-40">Edição Especial: Gemini 2.5 Flash</div>
+                    <div className="mt-4 text-center text-[10px] font-black uppercase opacity-40">Edição Especial AI</div>
                   </div>
                 ) : (
                   <div className="comic-border bg-gray-50 w-full aspect-square flex flex-col items-center justify-center space-y-4 opacity-50 p-8 text-center italic print:hidden">
@@ -164,7 +157,6 @@ export function StoryGame() {
     );
   }
 
-  // Estado padrão: Perguntas
   return (
     <Card className="comic-border bg-white overflow-hidden shadow-2xl">
       <div className="bg-secondary p-5 text-white flex justify-between items-center border-b-4 border-black">
