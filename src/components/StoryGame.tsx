@@ -5,8 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { generateCrazyStory, type StoryOutput } from '@/ai/flows/generate-crazy-story';
-import { generateComicVisual } from '@/ai/flows/generate-comic-visual';
-import { Loader2, Send, RotateCcw, Printer, AlertTriangle, BookOpen, Settings, Key, Sparkles, Image as ImageIcon } from 'lucide-react';
+import { Loader2, Send, RotateCcw, Printer, AlertTriangle, BookOpen, Settings, Key, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   Dialog,
@@ -34,8 +33,6 @@ export function StoryGame() {
   const [isFinalizing, setIsFinalizing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<StoryOutput | null>(null);
-  const [images, setImages] = useState<Record<number, string>>({});
-  const [loadingImages, setLoadingImages] = useState<Record<number, boolean>>({});
   
   const [userApiKey, setUserApiKey] = useState('');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -70,23 +67,15 @@ export function StoryGame() {
     setIsFinalizing(true);
     setError(null);
     setResult(null);
-    setImages({});
 
     try {
-      // 1. Gera o roteiro do gibi com Gemini 2.5 Flash
       const story = await generateCrazyStory({ 
         answers: finalAnswers,
         userApiKey: userApiKey || undefined
       });
       setResult(story);
       setIsFinalizing(false);
-
-      // 2. Gera as imagens para cada página em paralelo
-      story.pages.forEach((page, index) => {
-        generateImageForPage(index, page.visualPrompt);
-      });
-
-      toast({ title: "Gibi Criado!", description: "A história está pronta, as imagens estão carregando!" });
+      toast({ title: "Gibi Criado!", description: "A história está pronta para leitura!" });
     } catch (err: any) {
       console.error("Erro na geração:", err);
       if (err.message?.includes('429') || err.message?.includes('RESOURCE_EXHAUSTED')) {
@@ -98,22 +87,6 @@ export function StoryGame() {
     }
   };
 
-  const generateImageForPage = async (index: number, prompt: string) => {
-    setLoadingImages(prev => ({ ...prev, [index]: true }));
-    try {
-      const url = await generateComicVisual(prompt);
-      setImages(prev => ({ ...prev, [index]: url }));
-    } catch (e) {
-      console.error("Erro na imagem:", e);
-    } finally {
-      setLoadingImages(prev => ({ ...prev, [index]: false }));
-    }
-  };
-
-  const handleRetry = () => {
-    processFinalStory(answers);
-  };
-
   const restart = () => {
     setCurrentStep(0);
     setAnswers([]);
@@ -121,7 +94,6 @@ export function StoryGame() {
     setResult(null);
     setError(null);
     setIsFinalizing(false);
-    setImages({});
   };
 
   return (
@@ -130,8 +102,8 @@ export function StoryGame() {
         {isFinalizing ? (
           <Card className="comic-border p-12 text-center space-y-6 bg-white animate-in fade-in zoom-in-95 duration-500">
             <Loader2 className="w-16 h-16 animate-spin text-primary mx-auto" />
-            <h2 className="text-3xl font-black comic-text text-black uppercase">Desenhando com Gemini 2.5 Flash...</h2>
-            <p className="italic text-muted-foreground font-bold text-lg">Criando um gibi exclusivo com as suas respostas!</p>
+            <h2 className="text-3xl font-black comic-text text-black uppercase">Escrevendo com Gemini 2.5 Flash...</h2>
+            <p className="italic text-muted-foreground font-bold text-lg">Organizando a bagunça para criar seu gibi!</p>
           </Card>
         ) : error ? (
           <Card className="comic-border p-12 text-center space-y-6 bg-white border-destructive">
@@ -139,7 +111,7 @@ export function StoryGame() {
             <h2 className="text-2xl font-black comic-text text-black">Eita! Deu zebra na cota!</h2>
             <p className="font-bold text-muted-foreground text-lg">{error}</p>
             <div className="flex flex-col gap-4 max-w-sm mx-auto">
-              <Button onClick={handleRetry} className="comic-border bg-primary hover:bg-primary/90 h-14 font-black uppercase text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <Button onClick={() => processFinalStory(answers)} className="comic-border bg-primary hover:bg-primary/90 h-14 font-black uppercase text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 Tentar Novamente
               </Button>
               <Button 
@@ -153,42 +125,28 @@ export function StoryGame() {
           </Card>
         ) : result ? (
           <div className="space-y-12 animate-in zoom-in-95 duration-700">
-            {/* Capa do Gibi (Apenas Visual Web) */}
+            {/* Capa do Gibi */}
             <Card className="comic-border bg-primary p-12 text-center no-print shadow-2xl">
               <h2 className="text-5xl md:text-7xl font-black uppercase comic-text text-white drop-shadow-[4px_4px_0px_rgba(0,0,0,1)]">
                 {result.title}
               </h2>
-              <p className="text-xl font-bold text-yellow-300 mt-4 italic">Uma aventura maluca em {result.pages.length} páginas!</p>
+              <p className="text-xl font-bold text-yellow-300 mt-4 italic">Uma aventura maluca em {result.pages.length} partes!</p>
             </Card>
 
-            {/* Páginas do Gibi */}
-            <div className="space-y-12">
+            {/* Páginas do Gibi (Apenas Texto) */}
+            <div className="space-y-8">
               {result.pages.map((page, index) => (
-                <Card key={index} className="comic-border bg-white overflow-hidden shadow-2xl comic-page print:page-break-after-always">
-                  <CardContent className="p-8 md:p-12 flex flex-col items-center gap-8">
-                    {/* Imagem do Painel */}
-                    <div className="w-full aspect-square max-w-2xl bg-gray-50 border-4 border-black relative overflow-hidden flex items-center justify-center">
-                      {loadingImages[index] ? (
-                        <div className="text-center space-y-4">
-                          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
-                          <p className="comic-text font-bold animate-pulse">Desenhando cena {index + 1}...</p>
-                        </div>
-                      ) : images[index] ? (
-                        <img src={images[index]} alt={`Página ${index + 1}`} className="w-full h-full object-cover comic-image" />
-                      ) : (
-                        <div className="text-center opacity-20">
-                          <ImageIcon className="w-24 h-24 mx-auto" />
-                          <p className="font-bold uppercase tracking-widest mt-2">Aguardando IA...</p>
-                        </div>
-                      )}
-                      <div className="absolute top-4 left-4 bg-yellow-400 border-2 border-black px-4 py-1 font-black text-xl -rotate-6">
-                        {index + 1}
-                      </div>
+                <Card key={index} className="comic-border bg-white overflow-hidden shadow-2xl comic-page print:page-break-after-always relative paper-texture">
+                  <CardContent className="p-8 md:p-16 flex flex-col items-center gap-6">
+                    <div className="absolute top-4 left-4 bg-yellow-400 border-2 border-black px-6 py-2 font-black text-2xl -rotate-6 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                      PÁGINA {index + 1}
                     </div>
-
-                    {/* Legenda/Texto */}
-                    <div className="comic-caption w-full max-w-2xl p-6 bg-yellow-50 border-2 border-dashed border-black">
-                      <p className="comic-text text-2xl md:text-3xl text-center text-black leading-relaxed italic">
+                    
+                    <div className="w-full max-w-3xl mt-12 p-10 bg-white border-4 border-black relative">
+                      <div className="absolute -top-4 -right-4 bg-primary border-2 border-black p-2 rotate-12">
+                        <Sparkles className="w-6 h-6 text-white" />
+                      </div>
+                      <p className="comic-text text-3xl md:text-5xl text-center text-black leading-snug italic font-bold">
                         "{page.text}"
                       </p>
                     </div>
@@ -269,7 +227,7 @@ export function StoryGame() {
             </div>
           </div>
           <DialogFooter>
-            <Button onClick={() => { saveApiKey(userApiKey); setIsSettingsOpen(false); }} className="comic-border bg-secondary hover:bg-secondary/90 w-full font-black uppercase text-white h-14 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <Button onClick={() => { saveApiKey(userApiKey); setIsSettingsOpen(false); restart(); }} className="comic-border bg-secondary hover:bg-secondary/90 w-full font-black uppercase text-white h-14 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               Salvar Configuração
             </Button>
           </DialogFooter>

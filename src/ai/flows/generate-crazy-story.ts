@@ -1,7 +1,7 @@
 'use server';
 /**
- * @fileOverview Fluxo Genkit para transformar respostas em um GIBI ESTRUTURADO.
- * Utiliza o Gemini 2.5 Flash para narrativas de alto impacto e divisão em painéis.
+ * @fileOverview Fluxo Genkit para transformar respostas em um GIBI TEXTUAL ESTRUTURADO.
+ * Utiliza o Gemini 2.5 Flash para narrativas de alto impacto.
  */
 
 import {ai} from '@/ai/genkit';
@@ -10,11 +10,10 @@ import {googleAI} from '@genkit-ai/google-genai';
 
 const StoryPageSchema = z.object({
   text: z.string().describe('O texto/narração desta página ou painel.'),
-  visualPrompt: z.string().describe('Um prompt detalhado em inglês para gerar a imagem deste painel.'),
 });
 
 const StoryOutputSchema = z.object({
-  title: z.string().describe('Um título engraçado e chamativo para o gibi.'),
+  title: z.string().describe('Um título bombástico, engraçado e chamativo para o gibi.'),
   pages: z.array(StoryPageSchema).describe('Lista de páginas do gibi (mínimo 3, máximo 5).'),
 });
 
@@ -27,18 +26,17 @@ export async function generateCrazyStory(input: { answers: string[], userApiKey?
 
   const { output } = await currentAi.generate({
     model: 'googleai/gemini-2.5-flash',
-    prompt: `Você é um mestre roteirista de gibis brasileiros (estilo Turma da Mônica).
-Sua missão é transformar estas respostas dadas às cegas em um GIBI COMPLETO de 3 a 5 páginas.
+    prompt: `Você é um mestre roteirista de gibis brasileiros (estilo Turma da Mônica ou quadrinhos de humor).
+Sua missão é transformar estas respostas dadas às cegas em um GIBI TEXTUAL COMPLETO de 3 a 5 páginas.
 
 RESPOSTAS COLETADAS:
 ${input.answers.map((a, i) => `${i + 1}. ${a}`).join('\n')}
 
 DIRETRIZES:
-1. Use as respostas para criar uma narrativa absurda e engraçada.
-2. Divida a história em 3 a 5 páginas/painéis lógicos.
-3. Para cada página, escreva o texto (PT-BR) e um 'visualPrompt' (EM INGLÊS) detalhado para uma IA de imagem desenhar a cena.
-4. O 'visualPrompt' deve descrever o estilo 'colorful Brazilian comic book art, vibrant, professional ink' e a cena específica.
-5. O tom deve ser comédia pastelão.`,
+1. TÍTULO: Crie um título extremamente engraçado, bizarro e que use elementos das respostas.
+2. NARRATIVA: Use as respostas para criar uma história absurda, com começo, meio e fim.
+3. ESTRUTURA: Divida em 3 a 5 partes (páginas). Cada parte deve ter um texto narrativo impactante ou diálogos engraçados.
+4. ESTILO: Comédia pastelão brasileira.`,
     output: { schema: StoryOutputSchema }
   });
 
