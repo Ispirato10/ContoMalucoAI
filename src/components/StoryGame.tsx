@@ -105,8 +105,8 @@ export function StoryGame() {
         {isFinalizing ? (
           <Card className="comic-border p-12 text-center space-y-6 bg-white animate-in fade-in zoom-in-95 duration-500">
             <Loader2 className="w-16 h-16 animate-spin text-primary mx-auto" />
-            <h2 className="text-3xl font-black comic-text text-black uppercase">Escrevendo sua maluquice...</h2>
-            <p className="italic text-muted-foreground font-bold text-lg">O Gemini 2.0 Flash está processando tudo!</p>
+            <h2 className="text-3xl font-black comic-text text-black uppercase">Escrevendo com Gemini 2.5 Flash...</h2>
+            <p className="italic text-muted-foreground font-bold text-lg">Processando sua maluquice em alta performance!</p>
           </Card>
         ) : error ? (
           <Card className="comic-border p-12 text-center space-y-6 bg-white border-destructive">
@@ -117,7 +117,11 @@ export function StoryGame() {
               <Button onClick={handleRetry} className="comic-border bg-primary hover:bg-primary/90 h-14 font-black uppercase text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 Tentar Novamente
               </Button>
-              <Button variant="outline" onClick={() => setIsSettingsOpen(true)} className="comic-border h-14 font-bold flex gap-2 justify-center items-center bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <Button 
+                variant="outline" 
+                onClick={() => setIsSettingsOpen(true)} 
+                className="comic-border h-14 font-bold flex gap-2 justify-center items-center bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+              >
                 <Key className="w-5 h-5" /> Configurar Minha Chave
               </Button>
               <Button variant="ghost" onClick={restart} className="font-bold underline mt-4">
@@ -138,7 +142,7 @@ export function StoryGame() {
                   {result.fullStory}
                 </div>
                 <div className="mt-auto pt-8 text-center text-[10px] font-black uppercase opacity-20 italic">
-                  Gerado por Conto Maluco AI - Gemini Engine {userApiKey ? "(Chave Pessoal)" : "(Chave App)"}
+                  Gerado por Conto Maluco AI - Gemini 2.5 Flash {userApiKey ? "(Chave Pessoal)" : "(Chave App)"}
                 </div>
               </CardContent>
             </Card>
@@ -198,7 +202,7 @@ export function StoryGame() {
               <Key className="w-6 h-6 text-primary" /> Minha Chave Gemini
             </DialogTitle>
             <DialogDescription className="font-bold text-muted-foreground text-base">
-              Se o sistema gratuito estiver lotado, use sua própria chave do Google AI Studio para continuar a brincadeira.
+              Use sua própria chave do Google AI Studio para o Gemini 2.5 Flash e nunca mais pare a brincadeira.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-6">

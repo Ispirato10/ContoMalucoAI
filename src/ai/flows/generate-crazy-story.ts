@@ -1,7 +1,7 @@
 'use server';
 /**
  * @fileOverview Fluxo Genkit para transformar respostas aleatórias em uma história de gibi escrita.
- * Suporta o uso de uma chave de API personalizada caso a cota global expire.
+ * Utiliza o Gemini 2.5 Flash para narrativas de alto impacto.
  */
 
 import {ai} from '@/ai/genkit';
@@ -21,13 +21,13 @@ const StoryOutputSchema = z.object({
 export type StoryOutput = z.infer<typeof StoryOutputSchema>;
 
 export async function generateCrazyStory(input: { answers: string[], userApiKey?: string }): Promise<StoryOutput> {
-  // Se o usuário forneceu uma chave, criamos uma instância local do Genkit com essa chave para contornar cota
+  // Se o usuário forneceu uma chave, criamos uma instância local do Genkit com essa chave
   const currentAi = input.userApiKey && input.userApiKey.startsWith('AI')
     ? genkit({ plugins: [googleAI({ apiKey: input.userApiKey })] })
     : ai;
 
   const { output } = await currentAi.generate({
-    model: 'googleai/gemini-2.0-flash',
+    model: 'googleai/gemini-2.5-flash',
     prompt: `Você é um roteirista de gibis brasileiros clássicos (estilo Maurício de Sousa ou Ziraldo).
 Sua missão é transformar estas respostas dadas às cegas em uma história curta de gibi MUITO engraçada e absurda.
 
