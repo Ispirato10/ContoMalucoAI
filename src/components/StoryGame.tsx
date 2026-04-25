@@ -1,10 +1,12 @@
+
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { generateCrazyStory, type StoryOutput } from '@/ai/flows/generate-crazy-story';
+import { generateStoryAudio } from '@/ai/flows/generate-story-audio';
 import { 
   Loader2, 
   Send, 
@@ -16,7 +18,6 @@ import {
   Key, 
   Sparkles, 
   UserCheck,
-  ChevronRight,
   Ghost,
   Rocket,
   Heart,
@@ -24,7 +25,10 @@ import {
   Shield,
   Zap,
   Wand2,
-  Utensils
+  Utensils,
+  Volume2,
+  Play,
+  Pause
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -201,6 +205,12 @@ export function StoryGame() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<StoryOutput | null>(null);
   
+  // Audio states
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [isAudioLoading, setIsAudioLoading] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
   const [userApiKey, setUserApiKey] = useState('');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
@@ -238,6 +248,7 @@ export function StoryGame() {
     setIsFinalizing(true);
     setError(null);
     setResult(null);
+    setAudioUrl(null);
 
     const apiKeyToUse = forcedKey || userApiKey;
     const isUsingUserKey = apiKeyToUse && apiKeyToUse.length > 20;
@@ -263,6 +274,35 @@ export function StoryGame() {
     }
   };
 
+  const handlePlayAudio = async () => {
+    if (audioUrl) {
+      if (isPlaying) {
+        audioRef.current?.pause();
+      } else {
+        audioRef.current?.play();
+      }
+      return;
+    }
+
+    if (!result) return;
+
+    setIsAudioLoading(true);
+    try {
+      const fullText = `${result.title}. ${result.pages.map(p => p.text).join(' ')}`;
+      const audioResponse = await generateStoryAudio({ 
+        text: fullText,
+        userApiKey: userApiKey || undefined
+      });
+      setAudioUrl(audioResponse.media);
+      setIsPlaying(true);
+      toast({ title: "Áudio Pronto!", description: "Aumente o som para ouvir sua história." });
+    } catch (err) {
+      toast({ title: "Erro no Áudio", description: "Não conseguimos gerar a narração agora.", variant: "destructive" });
+    } finally {
+      setIsAudioLoading(false);
+    }
+  };
+
   const restart = () => {
     setSelectedTheme(null);
     setCurrentStep(0);
@@ -271,6 +311,8 @@ export function StoryGame() {
     setResult(null);
     setError(null);
     setIsFinalizing(false);
+    setAudioUrl(null);
+    setIsPlaying(false);
   };
 
   return (
@@ -321,7 +363,7 @@ export function StoryGame() {
               <h2 className="text-5xl md:text-8xl font-black uppercase comic-text text-white drop-shadow-[6px_6px_0px_rgba(0,0,0,1)] relative z-10 break-words">
                 {result.title}
               </h2>
-              <div className="mt-8 relative z-10">
+              <div className="mt-8 relative z-10 flex justify-center gap-4 flex-wrap">
                 <span className="bg-yellow-400 border-4 border-black px-8 py-3 font-black text-2xl rotate-3 inline-block shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-black uppercase">
                   GIBI DE COLECIONADOR
                 </span>
@@ -350,6 +392,29 @@ export function StoryGame() {
             </div>
 
             <div className="flex flex-wrap gap-4 justify-center no-print pb-24">
+              <Button 
+                onClick={handlePlayAudio} 
+                disabled={isAudioLoading}
+                className="bg-accent hover:bg-accent/90 text-black comic-border h-auto py-6 px-12 font-black uppercase text-2xl shadow-2xl hover:scale-105 transition-all active:scale-95 whitespace-normal text-center max-w-xs"
+              >
+                {isAudioLoading ? (
+                  <Loader2 className="w-8 h-8 animate-spin inline" />
+                ) : isPlaying ? (
+                  <><Pause className="w-8 h-8 mr-4 inline" /> Pausar</>
+                ) : (
+                  <><Volume2 className="w-8 h-8 mr-4 inline" /> Ouvir História</>
+                )}
+              </Button>
+              {audioUrl && (
+                <audio 
+                  ref={audioRef} 
+                  src={audioUrl} 
+                  onEnded={() => setIsPlaying(false)} 
+                  onPlay={() => setIsPlaying(true)}
+                  onPause={() => setIsPlaying(false)}
+                  className="hidden" 
+                />
+              )}
               <Button onClick={() => window.print()} className="bg-secondary hover:bg-secondary/90 text-white comic-border h-auto py-6 px-12 font-black uppercase text-2xl shadow-2xl hover:scale-105 transition-all active:scale-95 whitespace-normal text-center max-w-xs">
                 <Printer className="w-8 h-8 mr-4 inline" /> Baixar Gibi (PDF)
               </Button>
@@ -370,13 +435,13 @@ export function StoryGame() {
                 <button
                   key={theme.id}
                   onClick={() => setSelectedTheme(theme)}
-                  className="comic-border bg-white p-8 text-left hover:bg-yellow-50 transition-all hover:scale-[1.02] active:scale-[0.98] group flex flex-col gap-4 relative overflow-hidden"
+                  className="comic-border bg-white p-8 text-left hover:bg-yellow-50 transition-all hover:scale-[1.02] active:scale-[0.98] group flex flex-col gap-4 relative overflow-hidden h-auto"
                 >
                   <div className="absolute -top-4 -right-4 bg-primary p-6 rotate-12 group-hover:rotate-0 transition-transform">
                     <ThemeIcon className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-3xl font-black comic-text uppercase text-black">{theme.name}</h3>
-                  <p className="font-bold text-muted-foreground italic text-lg">{theme.description}</p>
+                  <h3 className="text-3xl font-black comic-text uppercase text-black whitespace-normal">{theme.name}</h3>
+                  <p className="font-bold text-muted-foreground italic text-lg whitespace-normal">{theme.description}</p>
                   <div className="mt-4 flex items-center gap-2 font-black uppercase text-xs bg-accent inline-flex px-3 py-1 border-2 border-black w-fit">
                     <BookOpen className="w-3 h-3" /> {theme.questions.length} Perguntas
                   </div>
@@ -401,7 +466,7 @@ export function StoryGame() {
             </div>
             <CardContent className="p-8 md:p-20 space-y-12">
               <div className="space-y-6">
-                <h2 className="text-2xl md:text-4xl font-black comic-text text-center text-black leading-tight drop-shadow-sm uppercase">
+                <h2 className="text-2xl md:text-4xl font-black comic-text text-center text-black leading-tight drop-shadow-sm uppercase whitespace-normal">
                   {selectedTheme.questions[currentStep]}
                 </h2>
               </div>
