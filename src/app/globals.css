@@ -54,3 +54,25 @@
     linear-gradient(#eee .1em, transparent .1em);
   background-size: 100% 1.2em;
 }
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+    background-image: none !important;
+  }
+  .comic-border {
+    box-shadow: none !important;
+    border: 2px solid black !important;
+  }
+  .paper-texture {
+    background-image: none !important;
+  }
+  main {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}
