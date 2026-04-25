@@ -46,7 +46,12 @@ export function StoryGame() {
     const trimmedKey = key.trim();
     setUserApiKey(trimmedKey);
     localStorage.setItem('conto-maluco-api-key', trimmedKey);
-    toast({ title: "Chave Salva!", description: "Tentaremos usar sua chave agora." });
+    toast({ title: "Chave Salva!", description: "Tentaremos gerar sua história agora." });
+    
+    // Se estávamos em uma tela de erro, tenta retomar automaticamente
+    if (error && answers.length === QUESTIONS.length) {
+      processFinalStory(answers, trimmedKey);
+    }
   };
 
   const handleNext = () => {
@@ -63,15 +68,17 @@ export function StoryGame() {
     }
   };
 
-  const processFinalStory = async (finalAnswers: string[]) => {
+  const processFinalStory = async (finalAnswers: string[], forcedKey?: string) => {
     setIsFinalizing(true);
     setError(null);
     setResult(null);
 
+    const apiKeyToUse = forcedKey || userApiKey;
+
     try {
       const story = await generateCrazyStory({ 
         answers: finalAnswers,
-        userApiKey: userApiKey || undefined
+        userApiKey: apiKeyToUse || undefined
       });
       setResult(story);
       setIsFinalizing(false);
@@ -115,17 +122,17 @@ export function StoryGame() {
             <p className="font-bold text-muted-foreground text-lg">{error}</p>
             <div className="flex flex-col gap-4 max-w-sm mx-auto">
               <Button 
+                variant="outline" 
+                onClick={() => setIsSettingsOpen(true)} 
+                className="comic-border h-16 font-bold flex gap-2 justify-center items-center bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-lg hover:bg-yellow-50"
+              >
+                <Key className="w-6 h-6 text-primary" /> Configurar Minha Chave
+              </Button>
+              <Button 
                 onClick={() => processFinalStory(answers)} 
                 className="comic-border bg-primary hover:bg-primary/90 h-16 font-black uppercase text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-xl"
               >
                 Tentar Novamente
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => setIsSettingsOpen(true)} 
-                className="comic-border h-16 font-bold flex gap-2 justify-center items-center bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-lg"
-              >
-                <Key className="w-6 h-6" /> Configurar Minha Chave
               </Button>
             </div>
           </Card>

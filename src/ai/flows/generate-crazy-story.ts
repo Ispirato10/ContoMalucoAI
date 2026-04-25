@@ -13,7 +13,7 @@ const StoryPageSchema = z.object({
 });
 
 const StoryOutputSchema = z.object({
-  title: z.string().describe('Um título bombástico, engraçado e chamativo para o gibi.'),
+  title: z.string().describe('Um título bombástico, engraçado e bizarro para o gibi.'),
   pages: z.array(StoryPageSchema).describe('Lista de páginas do gibi (mínimo 3, máximo 5).'),
 });
 
@@ -21,21 +21,20 @@ export type StoryOutput = z.infer<typeof StoryOutputSchema>;
 
 export async function generateCrazyStory(input: { answers: string[], userApiKey?: string }): Promise<StoryOutput> {
   // Se o usuário forneceu uma chave, criamos uma instância local do Genkit com essa chave.
-  // Caso contrário, usamos a instância padrão do app.
   const currentAi = input.userApiKey && input.userApiKey.length > 20
     ? genkit({ plugins: [googleAI({ apiKey: input.userApiKey })] })
     : ai;
 
   const { output } = await currentAi.generate({
     model: 'googleai/gemini-2.5-flash',
-    prompt: `Você é um mestre roteirista de gibis brasileiros lendário (estilo Maurício de Sousa encontra comédia absurda).
+    prompt: `Você é um mestre roteirista de gibis brasileiros lendário.
 Sua missão é transformar estas respostas dadas "às cegas" em um GIBI TEXTUAL COMPLETO e inesquecível.
 
 RESPOSTAS COLETADAS DO JOGADOR:
 ${input.answers.map((a, i) => `${i + 1}. ${a}`).join('\n')}
 
 REQUISITOS DE ELITE:
-1. TÍTULO: Crie um título EXPLOSIVO, engraçado e levemente bizarro. Use elementos das respostas para torná-lo único.
+1. TÍTULO: Crie um título EXPLOSIVO, engraçado e levemente bizarro. O título deve ser a coisa mais chamativa do gibi.
 2. NARRATIVA: Transforme as respostas em uma história coerente (mas absurda), com ritmo de quadrinhos.
 3. ESTRUTURA: Divida em exatamente 3 a 5 páginas. Cada página deve ter um texto narrativo forte ou diálogos marcantes.
 4. ESTILO: Humor brasileiro clássico, irreverente e vibrante.`,
