@@ -20,10 +20,15 @@ const StoryOutputSchema = z.object({
 export type StoryOutput = z.infer<typeof StoryOutputSchema>;
 
 export async function generateCrazyStory(input: { answers: string[], userApiKey?: string }): Promise<StoryOutput> {
-  // Se o usuário forneceu uma chave, criamos uma instância local do Genkit com essa chave.
-  const currentAi = input.userApiKey && input.userApiKey.length > 20
-    ? genkit({ plugins: [googleAI({ apiKey: input.userApiKey })] })
-    : ai;
+  // Se o usuário forneceu uma chave válida, criamos uma instância TOTALMENTE ISOLADA do Genkit.
+  // Isso garante que a cota do app não interfira na requisição do usuário.
+  let currentAi = ai;
+  
+  if (input.userApiKey && input.userApiKey.trim().startsWith('AIza')) {
+    currentAi = genkit({
+      plugins: [googleAI({ apiKey: input.userApiKey.trim() })],
+    });
+  }
 
   const { output } = await currentAi.generate({
     model: 'googleai/gemini-2.5-flash',

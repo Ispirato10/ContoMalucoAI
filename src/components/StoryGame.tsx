@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { generateCrazyStory, type StoryOutput } from '@/ai/flows/generate-crazy-story';
-import { Loader2, Send, RotateCcw, Printer, AlertTriangle, BookOpen, Settings, Key, Sparkles } from 'lucide-react';
+import { Loader2, Send, RotateCcw, Printer, AlertTriangle, BookOpen, Settings, Key, Sparkles, UserCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   Dialog,
@@ -48,7 +48,7 @@ export function StoryGame() {
     localStorage.setItem('conto-maluco-api-key', trimmedKey);
     toast({ title: "Chave Salva!", description: "Sua chave foi configurada com sucesso." });
     
-    // Retomada automática se houver erro e todas as perguntas respondidas
+    // Se estávamos em uma tela de erro e temos todas as respostas, tenta gerar de novo imediatamente
     if (error && answers.length === QUESTIONS.length) {
       processFinalStory(answers, trimmedKey);
     }
@@ -74,6 +74,7 @@ export function StoryGame() {
     setResult(null);
 
     const apiKeyToUse = forcedKey || userApiKey;
+    const isUsingUserKey = apiKeyToUse && apiKeyToUse.length > 20;
 
     try {
       const story = await generateCrazyStory({ 
@@ -85,8 +86,12 @@ export function StoryGame() {
       toast({ title: "Gibi Criado!", description: "Prepare-se para rir muito!" });
     } catch (err: any) {
       console.error("Erro na geração:", err);
-      if (err.message?.includes('429') || err.message?.includes('RESOURCE_EXHAUSTED')) {
-        setError("Eita! As requisições gratuitas do app acabaram.");
+      
+      // Se deu erro de cota mas o usuário ESTAVA usando a própria chave, o erro é na chave dele
+      if (isUsingUserKey) {
+        setError("Eita! Parece que sua própria chave de API também atingiu o limite ou é inválida.");
+      } else if (err.message?.includes('429') || err.message?.includes('RESOURCE_EXHAUSTED')) {
+        setError("As requisições gratuitas do app acabaram.");
       } else {
         setError("Ocorreu um erro ao conectar com o Gemini 2.5 Flash.");
       }
@@ -105,6 +110,14 @@ export function StoryGame() {
 
   return (
     <div className="space-y-4">
+      {userApiKey && userApiKey.length > 20 && !result && !isFinalizing && (
+        <div className="flex justify-center no-print">
+          <div className="bg-green-100 text-green-700 border-2 border-green-500 px-4 py-2 rounded-full text-xs font-black uppercase flex items-center gap-2 animate-bounce">
+            <UserCheck className="w-4 h-4" /> Usando sua Chave Pessoal (Sem limites!)
+          </div>
+        </div>
+      )}
+
       <div className="min-h-[400px]">
         {isFinalizing ? (
           <Card className="comic-border p-12 text-center space-y-6 bg-white animate-in fade-in zoom-in-95 duration-500">
@@ -113,7 +126,7 @@ export function StoryGame() {
               <Sparkles className="w-12 h-12 text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
             </div>
             <h2 className="text-3xl font-black comic-text text-black uppercase">Gemini 2.5 Flash está escrevendo...</h2>
-            <p className="italic text-muted-foreground font-bold text-lg">Criando seu gibi bizarro de colecionador!</p>
+            <p className="italic text-muted-foreground font-bold text-lg">Transformando suas respostas em um gibi épico!</p>
           </Card>
         ) : error ? (
           <Card className="comic-border p-12 text-center space-y-6 bg-white border-destructive">
@@ -126,7 +139,7 @@ export function StoryGame() {
                 onClick={() => setIsSettingsOpen(true)} 
                 className="comic-border h-16 font-bold flex gap-2 justify-center items-center bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-lg hover:bg-yellow-50"
               >
-                <Key className="w-6 h-6 text-primary" /> Configurar Minha Chave
+                <Key className="w-6 h-6 text-primary" /> {userApiKey ? "Atualizar Minha Chave" : "Configurar Minha Chave"}
               </Button>
               <Button 
                 onClick={() => processFinalStory(answers)} 
@@ -162,7 +175,7 @@ export function StoryGame() {
                       <div className="absolute -top-6 -right-6 bg-primary border-4 border-black p-4 rotate-12 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                         <Sparkles className="w-10 h-10 text-white" />
                       </div>
-                      <p className="comic-text text-3xl md:text-5xl text-center text-black leading-tight italic font-black uppercase">
+                      <p className="comic-text text-3xl md:text-5xl text-center text-black leading-tight italic font-black uppercase whitespace-pre-wrap">
                         {page.text}
                       </p>
                     </div>
@@ -226,7 +239,7 @@ export function StoryGame() {
               <Key className="w-8 h-8 text-primary" /> Chave Gemini
             </DialogTitle>
             <DialogDescription className="font-bold text-muted-foreground text-lg leading-tight">
-              Use sua própria chave do <strong>Google AI Studio</strong> para continuar gerando gibis se a cota gratuita acabar.
+              Use sua própria chave do <strong>Google AI Studio</strong> para ignorar os limites do app.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-6 py-8">
@@ -246,7 +259,7 @@ export function StoryGame() {
               onClick={() => { saveApiKey(userApiKey); setIsSettingsOpen(false); }} 
               className="comic-border bg-secondary hover:bg-secondary/90 w-full font-black uppercase text-white h-20 text-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all"
             >
-              Salvar e Fechar
+              Salvar e Continuar
             </Button>
           </DialogFooter>
         </DialogContent>
