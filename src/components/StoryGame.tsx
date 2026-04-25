@@ -46,7 +46,7 @@ export function StoryGame() {
     const trimmedKey = key.trim();
     setUserApiKey(trimmedKey);
     localStorage.setItem('conto-maluco-api-key', trimmedKey);
-    toast({ title: "Configuração Salva", description: "Sua chave de API será usada agora." });
+    toast({ title: "Chave Salva!", description: "Tentaremos usar sua chave agora." });
   };
 
   const handleNext = () => {
@@ -75,13 +75,13 @@ export function StoryGame() {
       });
       setResult(story);
       setIsFinalizing(false);
-      toast({ title: "Gibi Criado!", description: "A história está pronta para leitura!" });
+      toast({ title: "História Gerada!", description: "Seu gibi está pronto para a leitura!" });
     } catch (err: any) {
       console.error("Erro na geração:", err);
       if (err.message?.includes('429') || err.message?.includes('RESOURCE_EXHAUSTED')) {
-        setError("A cota do sistema acabou! Configure sua própria chave Gemini para continuar.");
+        setError("A cota do sistema esgotou! Por favor, insira sua própria API Key do Google AI Studio para continuar.");
       } else {
-        setError("Ocorreu um erro ao gerar a história. Verifique sua chave e tente novamente.");
+        setError("Ocorreu um erro inesperado. Verifique sua conexão ou API Key.");
       }
       setIsFinalizing(false);
     }
@@ -101,54 +101,69 @@ export function StoryGame() {
       <div className="min-h-[400px]">
         {isFinalizing ? (
           <Card className="comic-border p-12 text-center space-y-6 bg-white animate-in fade-in zoom-in-95 duration-500">
-            <Loader2 className="w-16 h-16 animate-spin text-primary mx-auto" />
-            <h2 className="text-3xl font-black comic-text text-black uppercase">Escrevendo com Gemini 2.5 Flash...</h2>
-            <p className="italic text-muted-foreground font-bold text-lg">Organizando a bagunça para criar seu gibi!</p>
+            <div className="relative inline-block">
+              <Loader2 className="w-24 h-24 animate-spin text-primary mx-auto opacity-20" />
+              <Sparkles className="w-12 h-12 text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+            </div>
+            <h2 className="text-3xl font-black comic-text text-black uppercase">Gemini 2.5 Flash está escrevendo...</h2>
+            <p className="italic text-muted-foreground font-bold text-lg">Organizando suas respostas em um gibi épico!</p>
           </Card>
         ) : error ? (
           <Card className="comic-border p-12 text-center space-y-6 bg-white border-destructive">
             <AlertTriangle className="w-16 h-16 text-destructive mx-auto" />
-            <h2 className="text-2xl font-black comic-text text-black">Eita! Deu zebra na cota!</h2>
+            <h2 className="text-2xl font-black comic-text text-black uppercase">Eita! Cota esgotada!</h2>
             <p className="font-bold text-muted-foreground text-lg">{error}</p>
             <div className="flex flex-col gap-4 max-w-sm mx-auto">
-              <Button onClick={() => processFinalStory(answers)} className="comic-border bg-primary hover:bg-primary/90 h-14 font-black uppercase text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <Button 
+                onClick={() => processFinalStory(answers)} 
+                className="comic-border bg-primary hover:bg-primary/90 h-16 font-black uppercase text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-xl"
+              >
                 Tentar Novamente
               </Button>
               <Button 
                 variant="outline" 
                 onClick={() => setIsSettingsOpen(true)} 
-                className="comic-border h-14 font-bold flex gap-2 justify-center items-center bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                className="comic-border h-16 font-bold flex gap-2 justify-center items-center bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-lg"
               >
-                <Key className="w-5 h-5" /> Configurar Minha Chave
+                <Key className="w-6 h-6" /> Configurar Minha Chave
               </Button>
             </div>
           </Card>
         ) : result ? (
           <div className="space-y-12 animate-in zoom-in-95 duration-700">
             {/* Capa do Gibi */}
-            <Card className="comic-border bg-primary p-12 text-center no-print shadow-2xl">
-              <h2 className="text-5xl md:text-7xl font-black uppercase comic-text text-white drop-shadow-[4px_4px_0px_rgba(0,0,0,1)]">
+            <Card className="comic-border bg-primary p-12 text-center no-print shadow-2xl relative overflow-hidden comic-title-page">
+               <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:20px_20px]"></div>
+              <h2 className="text-5xl md:text-8xl font-black uppercase comic-text text-white drop-shadow-[6px_6px_0px_rgba(0,0,0,1)] relative z-10">
                 {result.title}
               </h2>
-              <p className="text-xl font-bold text-yellow-300 mt-4 italic">Uma aventura maluca em {result.pages.length} partes!</p>
+              <div className="mt-8 relative z-10">
+                <span className="bg-yellow-400 border-4 border-black px-8 py-3 font-black text-2xl rotate-3 inline-block shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-black">
+                  EDIÇÃO DE COLECIONADOR
+                </span>
+              </div>
             </Card>
 
-            {/* Páginas do Gibi (Apenas Texto) */}
+            {/* Páginas do Gibi */}
             <div className="space-y-8">
               {result.pages.map((page, index) => (
                 <Card key={index} className="comic-border bg-white overflow-hidden shadow-2xl comic-page print:page-break-after-always relative paper-texture">
-                  <CardContent className="p-8 md:p-16 flex flex-col items-center gap-6">
-                    <div className="absolute top-4 left-4 bg-yellow-400 border-2 border-black px-6 py-2 font-black text-2xl -rotate-6 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-                      PÁGINA {index + 1}
+                  <CardContent className="p-8 md:p-16 flex flex-col items-center gap-6 min-h-[600px] justify-center">
+                    <div className="absolute top-6 left-6 bg-yellow-400 border-4 border-black px-8 py-3 font-black text-3xl -rotate-6 shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] z-20">
+                      PÁG. {index + 1}
                     </div>
                     
-                    <div className="w-full max-w-3xl mt-12 p-10 bg-white border-4 border-black relative">
-                      <div className="absolute -top-4 -right-4 bg-primary border-2 border-black p-2 rotate-12">
-                        <Sparkles className="w-6 h-6 text-white" />
+                    <div className="w-full max-w-4xl p-12 bg-white border-[6px] border-black relative shadow-[10px_10px_0px_0px_rgba(0,0,0,0.1)]">
+                      <div className="absolute -top-6 -right-6 bg-primary border-4 border-black p-4 rotate-12 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                        <Sparkles className="w-10 h-10 text-white" />
                       </div>
-                      <p className="comic-text text-3xl md:text-5xl text-center text-black leading-snug italic font-bold">
-                        "{page.text}"
+                      <p className="comic-text text-4xl md:text-6xl text-center text-black leading-tight italic font-black uppercase">
+                        {page.text}
                       </p>
+                    </div>
+                    
+                    <div className="mt-12 flex gap-4 opacity-20 no-print">
+                       {[1,2,3].map(i => <div key={i} className="w-24 h-4 bg-black rounded-full"></div>)}
                     </div>
                   </CardContent>
                 </Card>
@@ -156,47 +171,47 @@ export function StoryGame() {
             </div>
 
             {/* Rodapé e Ações */}
-            <div className="flex flex-wrap gap-4 justify-center no-print pb-12">
-              <Button onClick={() => window.print()} className="bg-secondary hover:bg-secondary/90 text-white comic-border h-20 px-12 font-black uppercase text-2xl shadow-xl hover:scale-105 transition-all">
-                <Printer className="w-8 h-8 mr-4" /> Baixar Gibi (PDF)
+            <div className="flex flex-wrap gap-4 justify-center no-print pb-24">
+              <Button onClick={() => window.print()} className="bg-secondary hover:bg-secondary/90 text-white comic-border h-24 px-16 font-black uppercase text-3xl shadow-2xl hover:scale-105 transition-all active:scale-95">
+                <Printer className="w-10 h-10 mr-4" /> Baixar Gibi (PDF)
               </Button>
-              <Button onClick={restart} variant="outline" className="comic-border h-20 px-12 font-black uppercase text-2xl bg-white hover:bg-gray-50 shadow-xl hover:scale-105 transition-all">
-                <RotateCcw className="w-8 h-8 mr-4" /> Jogar de Novo
+              <Button onClick={restart} variant="outline" className="comic-border h-24 px-16 font-black uppercase text-3xl bg-white hover:bg-gray-50 shadow-2xl hover:scale-105 transition-all active:scale-95">
+                <RotateCcw className="w-10 h-10 mr-4" /> Novo Conto
               </Button>
             </div>
           </div>
         ) : (
           <Card className="comic-border bg-white overflow-hidden shadow-2xl relative">
-            <div className="bg-secondary p-5 text-white flex justify-between items-center border-b-4 border-black">
-              <span className="font-black uppercase tracking-widest text-sm flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-accent" /> PERGUNTA {currentStep + 1} DE {QUESTIONS.length}
+            <div className="bg-secondary p-6 text-white flex justify-between items-center border-b-4 border-black">
+              <span className="font-black uppercase tracking-widest text-lg flex items-center gap-3">
+                <BookOpen className="w-6 h-6 text-accent" /> PERGUNTA {currentStep + 1} / {QUESTIONS.length}
               </span>
-              <Button variant="ghost" size="icon" onClick={() => setIsSettingsOpen(true)} className="text-white hover:bg-white/20">
-                <Settings className="w-5 h-5" />
+              <Button variant="ghost" size="icon" onClick={() => setIsSettingsOpen(true)} className="text-white hover:bg-white/20 h-12 w-12">
+                <Settings className="w-8 h-8" />
               </Button>
             </div>
-            <CardContent className="p-8 md:p-20 space-y-12">
+            <CardContent className="p-8 md:p-24 space-y-16">
               <div className="space-y-6">
-                <h2 className="text-4xl md:text-6xl font-black comic-text text-center text-black leading-tight">
+                <h2 className="text-5xl md:text-7xl font-black comic-text text-center text-black leading-none drop-shadow-sm uppercase">
                   {QUESTIONS[currentStep]}
                 </h2>
               </div>
               
-              <div className="space-y-8 max-w-3xl mx-auto">
+              <div className="space-y-10 max-w-4xl mx-auto">
                 <Input
                   value={currentAnswer}
                   onChange={(e) => setCurrentAnswer(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleNext()}
-                  placeholder="Sua resposta maluca..."
-                  className="h-24 text-3xl md:text-4xl border-4 border-black rounded-none comic-text bg-yellow-50/50 text-center focus-visible:ring-0 focus:border-primary transition-colors"
+                  placeholder="Capriche no absurdo!"
+                  className="h-28 text-4xl md:text-5xl border-[6px] border-black rounded-none comic-text bg-yellow-50/50 text-center focus-visible:ring-0 focus:border-primary transition-colors placeholder:opacity-30"
                   autoFocus
                 />
                 <Button 
                   onClick={handleNext} 
                   disabled={!currentAnswer.trim()}
-                  className="w-full h-24 bg-primary hover:bg-primary/90 text-white font-black text-3xl uppercase comic-border transition-all shadow-[0_10px_0_0_rgba(0,0,0,1)] hover:translate-y-[-4px] active:translate-y-[6px] active:shadow-none"
+                  className="w-full h-28 bg-primary hover:bg-primary/90 text-white font-black text-4xl uppercase comic-border transition-all shadow-[0_12px_0_0_rgba(0,0,0,1)] hover:translate-y-[-4px] active:translate-y-[8px] active:shadow-none"
                 >
-                  PRÓXIMO <Send className="w-10 h-10 ml-4" />
+                  PRÓXIMO <Send className="w-12 h-12 ml-4" />
                 </Button>
               </div>
             </CardContent>
@@ -205,30 +220,33 @@ export function StoryGame() {
       </div>
 
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-        <DialogContent className="comic-border bg-white p-8 max-w-md">
-          <DialogHeader>
-            <DialogTitle className="comic-text text-2xl font-black uppercase flex items-center gap-2">
-              <Key className="w-6 h-6 text-primary" /> Minha Chave Gemini
+        <DialogContent className="comic-border bg-white p-10 max-w-xl">
+          <DialogHeader className="space-y-4">
+            <DialogTitle className="comic-text text-3xl font-black uppercase flex items-center gap-3 text-black">
+              <Key className="w-8 h-8 text-primary" /> Minha Chave Gemini
             </DialogTitle>
-            <DialogDescription className="font-bold text-muted-foreground text-base">
-              Use sua própria chave para o Gemini 2.5 Flash e garanta gerações ilimitadas.
+            <DialogDescription className="font-bold text-muted-foreground text-lg leading-tight">
+              Se a cota do app acabar, use sua própria chave do <strong>Google AI Studio</strong> para continuar gerando gibis ilimitados.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-6">
-            <div className="space-y-2">
-              <label className="text-sm font-black uppercase tracking-widest text-black">API Key (Google AI Studio)</label>
+          <div className="space-y-6 py-8">
+            <div className="space-y-3">
+              <label className="text-lg font-black uppercase tracking-widest text-black">API Key (Gemini 2.5 Flash)</label>
               <Input 
                 type="password" 
-                placeholder="Insira sua chave aqui..." 
+                placeholder="Insira sua chave (AIza...)" 
                 value={userApiKey} 
                 onChange={(e) => setUserApiKey(e.target.value)}
-                className="border-2 border-black rounded-none comic-text h-14 text-xl"
+                className="border-4 border-black rounded-none comic-text h-16 text-2xl bg-yellow-50"
               />
             </div>
           </div>
           <DialogFooter>
-            <Button onClick={() => { saveApiKey(userApiKey); setIsSettingsOpen(false); restart(); }} className="comic-border bg-secondary hover:bg-secondary/90 w-full font-black uppercase text-white h-14 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              Salvar Configuração
+            <Button 
+              onClick={() => { saveApiKey(userApiKey); setIsSettingsOpen(false); }} 
+              className="comic-border bg-secondary hover:bg-secondary/90 w-full font-black uppercase text-white h-20 text-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all"
+            >
+              Salvar e Fechar
             </Button>
           </DialogFooter>
         </DialogContent>
