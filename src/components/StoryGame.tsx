@@ -21,7 +21,10 @@ import {
   Rocket,
   Heart,
   Sword,
-  Search
+  Shield,
+  Zap,
+  Wand2,
+  Utensils
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -111,6 +114,80 @@ const THEMES = [
       "Quem se casou com quem no final das contas?",
       "Qual foi a última palavra dita no último episódio?",
     ]
+  },
+  {
+    id: 'western',
+    name: 'Velho Oeste',
+    icon: Shield,
+    description: 'Duelos ao meio-dia e xerifes medrosos.',
+    questions: [
+      "Quem é o xerife mais medroso da cidade?",
+      "Qual o nome da cidade poeirenta onde ninguém toma banho?",
+      "O que o xerife carrega no lugar da estrela de metal?",
+      "Quem é o bandido que roubou o banco de algodão doce?",
+      "Qual o apelido terrível desse bandido?",
+      "O que eles usaram no duelo ao meio-dia (não era arma)?",
+      "O que o perdedor teve que gritar enquanto fugia?",
+      "Como a cidade comemorou a paz de um jeito estranho?",
+    ]
+  },
+  {
+    id: 'superhero',
+    name: 'Super-Heróis',
+    icon: Zap,
+    description: 'Poderes inúteis e vilões com planos bobos.',
+    questions: [
+      "Qual o nome artístico do seu herói ou heroína?",
+      "Qual o seu disfarce bizarro no dia a dia?",
+      "Qual o seu superpoder totalmente inútil?",
+      "Qual o seu ponto fraco ridículo?",
+      "Qual o nome da sua base secreta (que não é nada secreta)?",
+      "Quem é o vilão que quer dominar o mundo com buchos?",
+      "Qual o plano maligno do vilão?",
+      "O que o vilão usa como uniforme?",
+      "Qual a frase de efeito que você grita ao entrar em ação?",
+      "Qual veículo maluco você usa para se locomover?",
+      "O que aconteceu na primeira batalha épica?",
+      "Quem veio te ajudar e acabou atrapalhando?",
+      "Qual objeto foi destruído durante a luta?",
+      "Como vocês fizeram as pazes no final?",
+    ]
+  },
+  {
+    id: 'magic',
+    name: 'Escola de Magia',
+    icon: Wand2,
+    description: 'Feitiços que dão errado e poções nojentas.',
+    questions: [
+      "Qual o nome da sua escola de magia escondida?",
+      "Qual o formato da sua varinha mágica?",
+      "Qual o seu feitiço favorito que nunca funciona?",
+      "Qual animal de estimação estranho você levou para a aula?",
+      "Qual o nome do professor mais rabugento da escola?",
+      "O que ele estava ensinando quando tudo explodiu?",
+      "Qual ingrediente nojento você colocou na poção por engano?",
+      "Qual foi o efeito colateral dessa poção em você?",
+      "O que o troféu da escola começou a dizer para todo mundo?",
+      "Onde você se escondeu para não levar bronca?",
+      "Como você salvou a escola usando apenas um sapato?",
+    ]
+  },
+  {
+    id: 'cooking',
+    name: 'Culinária Maluca',
+    icon: Utensils,
+    description: 'Desastres na cozinha e jurados bravos.',
+    questions: [
+      "Quem é o cozinheiro que se acha o melhor do mundo?",
+      "Qual o nome do restaurante mais chique e estranho da cidade?",
+      "Qual o prato principal que ele estava tentando inventar?",
+      "Qual ingrediente bizarro ele encontrou na geladeira?",
+      "O que ele usou para mexer a comida (não era colher)?",
+      "Qual o nome do crítico gastronômico que veio avaliar?",
+      "Qual foi a reação do crítico ao dar a primeira garfada?",
+      "O que o cozinheiro fez para tentar disfarçar o gosto ruim?",
+      "Qual nota o restaurante recebeu no final dessa bagunça?",
+    ]
   }
 ];
 
@@ -138,7 +215,6 @@ export function StoryGame() {
     localStorage.setItem('conto-maluco-api-key', trimmedKey);
     toast({ title: "Chave Salva!", description: "Sua chave foi configurada com sucesso." });
     
-    // Se estávamos em uma tela de erro de cota, tenta processar novamente automaticamente
     if (error && selectedTheme && answers.length === selectedTheme.questions.length) {
       processFinalStory(answers, trimmedKey);
     }
@@ -199,7 +275,6 @@ export function StoryGame() {
 
   return (
     <div className="space-y-4">
-      {/* Indicador de Chave Pessoal Ativa */}
       {userApiKey && userApiKey.length > 20 && !result && !isFinalizing && (
         <div className="flex justify-center no-print">
           <div className="bg-green-100 text-green-700 border-2 border-green-500 px-4 py-2 rounded-full text-xs font-black uppercase flex items-center gap-2 animate-bounce">
@@ -233,7 +308,7 @@ export function StoryGame() {
               </Button>
               <Button 
                 onClick={() => processFinalStory(answers)} 
-                className="comic-border bg-primary hover:bg-primary/90 h-16 font-black uppercase text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-xl"
+                className="comic-border bg-primary hover:bg-primary/90 h-auto py-4 px-6 font-black uppercase text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-xl whitespace-normal text-center"
               >
                 Tentar Novamente
               </Button>
@@ -241,7 +316,6 @@ export function StoryGame() {
           </Card>
         ) : result ? (
           <div className="space-y-12 animate-in zoom-in-95 duration-700">
-            {/* Capa do Gibi */}
             <Card className="comic-border bg-primary p-12 text-center no-print shadow-2xl relative overflow-hidden comic-title-page">
                <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:20px_20px]"></div>
               <h2 className="text-5xl md:text-8xl font-black uppercase comic-text text-white drop-shadow-[6px_6px_0px_rgba(0,0,0,1)] relative z-10 break-words">
@@ -254,7 +328,6 @@ export function StoryGame() {
               </div>
             </Card>
 
-            {/* Páginas do Gibi */}
             <div className="space-y-8">
               {result.pages.map((page, index) => (
                 <Card key={index} className="comic-border bg-white overflow-hidden shadow-2xl comic-page print:page-break-after-always relative paper-texture">
@@ -355,7 +428,6 @@ export function StoryGame() {
         )}
       </div>
 
-      {/* Diálogo de Configuração de Chave API */}
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
         <DialogContent className="comic-border bg-white p-6 md:p-10 max-w-xl">
           <DialogHeader className="space-y-4">
