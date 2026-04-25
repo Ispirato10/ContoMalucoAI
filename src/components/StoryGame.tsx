@@ -46,7 +46,7 @@ export function StoryGame() {
     const trimmedKey = key.trim();
     setUserApiKey(trimmedKey);
     localStorage.setItem('conto-maluco-api-key', trimmedKey);
-    toast({ title: "Chave Salva!", description: "Tentaremos gerar sua história agora." });
+    toast({ title: "Chave Salva!", description: "Sua chave foi configurada com sucesso." });
     
     // Retomada automática se houver erro e todas as perguntas respondidas
     if (error && answers.length === QUESTIONS.length) {
@@ -82,13 +82,13 @@ export function StoryGame() {
       });
       setResult(story);
       setIsFinalizing(false);
-      toast({ title: "História Gerada!", description: "Seu gibi está pronto para a leitura!" });
+      toast({ title: "Gibi Criado!", description: "Prepare-se para rir muito!" });
     } catch (err: any) {
       console.error("Erro na geração:", err);
       if (err.message?.includes('429') || err.message?.includes('RESOURCE_EXHAUSTED')) {
-        setError("A cota do sistema esgotou! Por favor, insira sua própria API Key do Google AI Studio para continuar.");
+        setError("Eita! As requisições gratuitas do app acabaram.");
       } else {
-        setError("Ocorreu um erro inesperado. Verifique sua conexão ou API Key.");
+        setError("Ocorreu um erro ao conectar com o Gemini 2.5 Flash.");
       }
       setIsFinalizing(false);
     }
@@ -113,12 +113,12 @@ export function StoryGame() {
               <Sparkles className="w-12 h-12 text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
             </div>
             <h2 className="text-3xl font-black comic-text text-black uppercase">Gemini 2.5 Flash está escrevendo...</h2>
-            <p className="italic text-muted-foreground font-bold text-lg">Organizando suas respostas em um gibi épico!</p>
+            <p className="italic text-muted-foreground font-bold text-lg">Criando seu gibi bizarro de colecionador!</p>
           </Card>
         ) : error ? (
           <Card className="comic-border p-12 text-center space-y-6 bg-white border-destructive">
             <AlertTriangle className="w-16 h-16 text-destructive mx-auto" />
-            <h2 className="text-2xl font-black comic-text text-black uppercase">Eita! Cota esgotada!</h2>
+            <h2 className="text-2xl font-black comic-text text-black uppercase">Cota Esgotada!</h2>
             <p className="font-bold text-muted-foreground text-lg">{error}</p>
             <div className="flex flex-col gap-4 max-w-sm mx-auto">
               <Button 
@@ -145,7 +145,7 @@ export function StoryGame() {
               </h2>
               <div className="mt-8 relative z-10">
                 <span className="bg-yellow-400 border-4 border-black px-8 py-3 font-black text-2xl rotate-3 inline-block shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-black">
-                  EDIÇÃO DE COLECIONADOR
+                  GIBI DE COLECIONADOR
                 </span>
               </div>
             </Card>
@@ -190,9 +190,9 @@ export function StoryGame() {
                 <Settings className="w-8 h-8" />
               </Button>
             </div>
-            <CardContent className="p-8 md:p-24 space-y-12">
+            <CardContent className="p-8 md:p-20 space-y-12">
               <div className="space-y-6">
-                <h2 className="text-4xl md:text-6xl font-black comic-text text-center text-black leading-tight drop-shadow-sm uppercase">
+                <h2 className="text-2xl md:text-4xl font-black comic-text text-center text-black leading-tight drop-shadow-sm uppercase">
                   {QUESTIONS[currentStep]}
                 </h2>
               </div>
@@ -202,8 +202,8 @@ export function StoryGame() {
                   value={currentAnswer}
                   onChange={(e) => setCurrentAnswer(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleNext()}
-                  placeholder="Capriche no absurdo!"
-                  className="h-24 text-2xl md:text-4xl border-[6px] border-black rounded-none comic-text bg-yellow-50/50 text-center focus-visible:ring-0 focus:border-primary transition-colors placeholder:opacity-30"
+                  placeholder="Escreva algo absurdo..."
+                  className="h-20 text-xl md:text-3xl border-[6px] border-black rounded-none comic-text bg-yellow-50/50 text-center focus-visible:ring-0 focus:border-primary transition-colors placeholder:opacity-30"
                   autoFocus
                 />
                 <Button 
@@ -223,10 +223,10 @@ export function StoryGame() {
         <DialogContent className="comic-border bg-white p-10 max-w-xl">
           <DialogHeader className="space-y-4">
             <DialogTitle className="comic-text text-3xl font-black uppercase flex items-center gap-3 text-black">
-              <Key className="w-8 h-8 text-primary" /> Minha Chave Gemini
+              <Key className="w-8 h-8 text-primary" /> Chave Gemini
             </DialogTitle>
             <DialogDescription className="font-bold text-muted-foreground text-lg leading-tight">
-              Se a cota do app acabar, use sua própria chave do <strong>Google AI Studio</strong> para continuar gerando gibis ilimitados.
+              Use sua própria chave do <strong>Google AI Studio</strong> para continuar gerando gibis se a cota gratuita acabar.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-6 py-8">
@@ -234,7 +234,7 @@ export function StoryGame() {
               <label className="text-lg font-black uppercase tracking-widest text-black">API Key (Gemini 2.5 Flash)</label>
               <Input 
                 type="password" 
-                placeholder="Insira sua chave (AIza...)" 
+                placeholder="Cole sua chave AIza..." 
                 value={userApiKey} 
                 onChange={(e) => setUserApiKey(e.target.value)}
                 className="border-4 border-black rounded-none comic-text h-16 text-2xl bg-yellow-50"
