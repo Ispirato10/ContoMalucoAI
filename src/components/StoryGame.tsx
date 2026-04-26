@@ -57,14 +57,34 @@ const THEMES = [
       "Qual o trabalho dele?", 
       "Onde ele vive?", 
       "O que ele carrega na mochila?", 
-      "Qual o seu maior medo?", 
       "Quem apareceu de repente?", 
-      "Qual o nome do vilão?", 
-      "O que o vilão gritou?", 
-      "Qual arma o herói usou?", 
-      "Qual o grito de guerra do herói?", 
-      "O que aconteceu com o vilão?", 
       "Como essa loucura terminou?"
+    ] 
+  },
+  { 
+    id: 'drama', 
+    name: 'Novela Mexicana', 
+    icon: Heart, 
+    description: 'Revelações bombásticas e dramas exagerados.', 
+    questions: [
+      "Quem é a protagonista?", 
+      "Ela é rica ou pobre?",
+      "Onde ela trabalha?", 
+      "Quem é o grande vilão amargurado?", 
+      "Qual o segredo obscuro do passado?", 
+      "Qual o nome do cachorro que viu tudo?", 
+      "O que houve de errado no casamento?", 
+      "Qual a frase antes do desmaio?", 
+      "Quem é o herdeiro perdido?", 
+      "Qual a cor do vestido de noiva?",
+      "Quem interrompeu a cerimônia?",
+      "Qual o nome da herança disputada?",
+      "Quem era o gêmeo malvado?",
+      "Qual o tapa mais dramático?",
+      "Para onde ela fugiu chorando?",
+      "Qual a revelação final bombástica?",
+      "Como foi o beijo apaixonado?",
+      "Qual a última frase antes dos créditos?"
     ] 
   },
   { 
@@ -105,24 +125,6 @@ const THEMES = [
       "Qual o segredo do porão?", 
       "Como a pessoa fugiu?", 
       "O que ela nunca mais esqueceu?"
-    ] 
-  },
-  { 
-    id: 'drama', 
-    name: 'Novela Mexicana', 
-    icon: Heart, 
-    description: 'Revelações bombásticas e dramas exagerados.', 
-    questions: [
-      "Quem é a protagonista?", 
-      "Onde ela trabalha?", 
-      "Quem é o grande vilão?", 
-      "Qual o segredo obscuro do passado?", 
-      "Qual o nome do cachorro?", 
-      "O que houve de errado no casamento?", 
-      "Qual a frase antes do desmaio?", 
-      "Quem é o herdeiro perdido?", 
-      "Qual o tapa dramático?", 
-      "Como foi o final feliz (ou trágico)?"
     ] 
   },
   { 
