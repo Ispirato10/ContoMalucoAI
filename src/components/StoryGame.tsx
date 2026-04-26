@@ -12,7 +12,6 @@ import {
   RotateCcw, 
   Printer, 
   AlertTriangle, 
-  BookOpen, 
   Settings, 
   Key, 
   Sparkles, 
@@ -257,8 +256,8 @@ export function StoryGame() {
                 className="h-20 md:h-40 text-2xl md:text-5xl lg:text-7xl border-[4px] md:border-[6px] border-black rounded-none book-font bg-yellow-50 text-center focus:ring-primary shadow-inner font-black italic"
                 autoFocus
               />
-              <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-auto py-8 md:py-12 bg-primary text-white font-black text-3xl md:text-5xl uppercase comic-border shadow-[0_6px_0_0_rgba(0,0,0,1)] md:shadow-[0_12px_0_0_rgba(0,0,0,1)] active:translate-y-2 active:shadow-none transition-all comic-text">
-                PRÓXIMO <Send className="ml-4 md:ml-6 w-8 h-8 md:w-12 md:h-12" />
+              <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-auto py-4 md:py-6 bg-primary text-white font-black text-2xl md:text-4xl uppercase comic-border shadow-[0_4px_0_0_rgba(0,0,0,1)] md:shadow-[0_8px_0_0_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all comic-text">
+                PRÓXIMO <Send className="ml-3 md:ml-4 w-6 h-6 md:w-10 md:h-10" />
               </Button>
               <div className="text-center no-print pt-2 md:pt-6">
                  <Button onClick={restart} variant="ghost" className="text-muted-foreground font-black hover:text-black italic text-sm md:text-xl uppercase tracking-widest">

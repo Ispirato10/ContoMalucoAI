@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     siteName: 'Conto Maluco AI',
     images: [
       {
-        url: '/logo.png',
+        url: '/logo.png?v=1',
         width: 1200,
         height: 630,
         alt: 'Conto Maluco AI',
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Conto Maluco AI - Sua Fábrica de Histórias!',
     description: 'Você não vai acreditar no que a IA criou com minhas respostas! Gere seu gibi também.',
-    images: ['/logo.png'],
+    images: ['/logo.png?v=1'],
   },
 };
 
