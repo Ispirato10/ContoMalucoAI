@@ -28,7 +28,9 @@ import {
   Pause,
   Download,
   ExternalLink,
-  Info
+  Info,
+  ChevronDown,
+  HelpCircle
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -39,6 +41,11 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 const THEMES = [
   { id: 'classic', name: 'Aventura Clássica', icon: Sword, description: 'O herói contra o vilão em um lugar estranho.', questions: ["Quem é o herói?", "Onde vive?", "O que faz?", "Quem apareceu?", "O que gritou?", "Como terminou?"] },
@@ -68,6 +75,7 @@ export function StoryGame() {
 
   const [userApiKey, setUserApiKey] = useState('');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
 
   useEffect(() => {
     const savedKey = localStorage.getItem('conto-maluco-api-key');
@@ -266,41 +274,54 @@ export function StoryGame() {
           
           <ScrollArea className="flex-1 pr-4">
             <div className="space-y-8 py-4">
-              {/* Guia Passo a Passo */}
-              <div className="bg-accent/10 comic-border p-6 space-y-6 relative overflow-hidden">
-                <div className="absolute -top-4 -right-4 p-4 opacity-10 rotate-12">
-                  <Info className="w-32 h-32 text-black" />
-                </div>
+              {/* Ajuda Retrátil */}
+              <Collapsible open={isHelpOpen} onOpenChange={setIsHelpOpen}>
+                <CollapsibleTrigger asChild>
+                  <Button variant="outline" className="w-full h-auto py-4 comic-border bg-accent hover:bg-accent/90 text-black font-black uppercase flex items-center justify-between shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all mb-4">
+                    <span className="flex items-center gap-2">
+                      <HelpCircle className="w-6 h-6" /> Como conseguir chave grátis?
+                    </span>
+                    <ChevronDown className={`w-6 h-6 transition-transform duration-300 ${isHelpOpen ? 'rotate-180' : ''}`} />
+                  </Button>
+                </CollapsibleTrigger>
                 
-                <h3 className="font-black uppercase text-xl md:text-2xl text-black flex items-center gap-3">
-                  <Sparkles className="w-6 h-6 text-primary" /> Como conseguir sua chave grátis:
-                </h3>
-                
-                <div className="grid gap-4">
-                  {[
-                    { step: 1, text: "Acesse o portal oficial:", link: "https://aistudio.google.com/", linkLabel: "Google AI Studio" },
-                    { step: 2, text: "Faça login com sua conta Google (é rápido e seguro!)" },
-                    { step: 3, text: "No menu lateral esquerdo, clique no botão azul 'Get API key'" },
-                    { step: 4, text: "Clique em 'Create API key in new project' para gerar seu código único." },
-                    { step: 5, text: "Copie o código que aparece (ele começa com 'AIza...')" },
-                    { step: 6, text: "Cole no campo abaixo e salve para liberar a magia!" }
-                  ].map((item, i) => (
-                    <div key={i} className="flex gap-4 items-start">
-                      <div className="bg-primary text-white comic-border w-8 h-8 shrink-0 flex items-center justify-center font-black italic -rotate-6">
-                        {item.step}
-                      </div>
-                      <p className="font-bold italic text-base md:text-lg text-black leading-tight">
-                        {item.text}
-                        {item.link && (
-                          <a href={item.link} target="_blank" rel="noopener noreferrer" className="ml-2 text-primary underline inline-flex items-center gap-1 hover:text-black transition-colors">
-                            {item.linkLabel} <ExternalLink className="w-4 h-4" />
-                          </a>
-                        )}
-                      </p>
+                <CollapsibleContent className="animate-in slide-in-from-top-4 duration-300">
+                  <div className="bg-accent/10 comic-border p-6 space-y-6 relative overflow-hidden mb-6">
+                    <div className="absolute -top-4 -right-4 p-4 opacity-10 rotate-12">
+                      <Info className="w-32 h-32 text-black" />
                     </div>
-                  ))}
-                </div>
-              </div>
+                    
+                    <h3 className="font-black uppercase text-xl md:text-2xl text-black flex items-center gap-3">
+                      <Sparkles className="w-6 h-6 text-primary" /> Manual do Super-Herói:
+                    </h3>
+                    
+                    <div className="grid gap-4">
+                      {[
+                        { step: 1, text: "Acesse o portal oficial:", link: "https://aistudio.google.com/", linkLabel: "Google AI Studio" },
+                        { step: 2, text: "Faça login com sua conta Google (é rápido e seguro!)" },
+                        { step: 3, text: "No menu lateral esquerdo, clique em 'Get API key'" },
+                        { step: 4, text: "Gere seu código único no botão azul." },
+                        { step: 5, text: "Copie o código (ele começa com 'AIza...')" },
+                        { step: 6, text: "Cole no campo abaixo e salve para liberar a magia!" }
+                      ].map((item, i) => (
+                        <div key={i} className="flex gap-4 items-start">
+                          <div className="bg-primary text-white comic-border w-8 h-8 shrink-0 flex items-center justify-center font-black italic -rotate-6">
+                            {item.step}
+                          </div>
+                          <p className="font-bold italic text-base md:text-lg text-black leading-tight">
+                            {item.text}
+                            {item.link && (
+                              <a href={item.link} target="_blank" rel="noopener noreferrer" className="ml-2 text-primary underline inline-flex items-center gap-1 hover:text-black transition-colors">
+                                {item.linkLabel} <ExternalLink className="w-4 h-4" />
+                              </a>
+                            )}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
 
               {/* Campo de Entrada */}
               <div className="space-y-4">
