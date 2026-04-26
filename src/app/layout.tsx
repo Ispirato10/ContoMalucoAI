@@ -1,23 +1,28 @@
+
 import type {Metadata, Viewport} from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
   title: 'Conto Maluco AI - Seu Gibi de Histórias Bizarras',
-  description: 'Crie contos épicos e bizarros com suas respostas "às cegas"! O jogo clássico agora com narração e superpoderes do Gemini 2.5 Flash.',
-  keywords: ['PWA', 'IA', 'Gemini 2.5 Flash', 'Gibi', 'Livro de Histórias', 'Jogo', 'Criatividade', 'Educação'],
-  authors: [{ name: 'Conto Maluco AI' }],
+  description: 'Transforme respostas malucas em contos épicos com inteligência artificial!',
+  manifest: '/manifest.json',
+  icons: {
+    icon: '/logo.png',
+    shortcut: '/logo.png',
+    apple: '/logo.png',
+  },
   openGraph: {
-    title: 'Conto Maluco AI - O Jogo de Criar Histórias Bizarras',
-    description: 'Você responde sem saber, a IA cria a confusão! Gere seu gibi personalizado, ouça a narração e divirta-se.',
+    title: 'Conto Maluco AI',
+    description: 'Você responde sem saber, a IA cria a confusão! Gere seu gibi e ouça a narração.',
     url: 'https://conto-maluco-ai.vercel.app',
     siteName: 'Conto Maluco AI',
     images: [
       {
         url: '/logo.png',
-        width: 512,
-        height: 512,
-        alt: 'Conto Maluco AI - Seu Livro de Histórias',
+        width: 1200,
+        height: 630,
+        alt: 'Conto Maluco AI',
       },
     ],
     locale: 'pt_BR',
@@ -25,29 +30,15 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Conto Maluco AI - Seu Livro de Histórias',
-    description: 'Transforme respostas malucas em contos épicos com inteligência artificial!',
+    title: 'Conto Maluco AI',
+    description: 'Histórias bizarras e divertidas geradas por IA!',
     images: ['/logo.png'],
   },
-  manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
     title: 'Conto Maluco',
   },
-  formatDetection: {
-    telephone: false,
-  },
-  icons: {
-    icon: [
-      { url: '/logo.png' },
-      { url: '/logo.png', sizes: '32x32', type: 'image/png' },
-    ],
-    apple: [
-      { url: '/logo.png', sizes: '180x180', type: 'image/png' },
-    ],
-    shortcut: '/logo.png',
-  }
 };
 
 export const viewport: Viewport = {
