@@ -1,4 +1,3 @@
-
 import type {Metadata, Viewport} from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
@@ -9,14 +8,9 @@ export const metadata: Metadata = {
   description: 'Transforme respostas malucas em contos épicos com inteligência artificial!',
   manifest: '/manifest.json',
   icons: {
-    icon: [
-      { url: '/logo.png' },
-      { url: '/logo.png', sizes: '32x32', type: 'image/png' },
-    ],
+    icon: '/logo.png',
     shortcut: '/logo.png',
-    apple: [
-      { url: '/logo.png', sizes: '180x180', type: 'image/png' },
-    ],
+    apple: '/logo.png',
   },
   openGraph: {
     title: 'Conto Maluco AI',

@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -153,13 +152,13 @@ export function StoryGame() {
         {isFinalizing ? (
           <Card className="comic-border p-12 text-center space-y-6 bg-white animate-bounce">
             <Sparkles className="w-16 h-16 text-primary mx-auto animate-pulse" />
-            <h2 className="text-3xl font-black comic-text uppercase">Escrevendo sua loucura...</h2>
+            <h2 className="text-3xl font-black comic-text uppercase text-black">Escrevendo sua loucura...</h2>
           </Card>
         ) : error ? (
           <Card className="comic-border p-12 text-center space-y-6 bg-white border-destructive">
             <AlertTriangle className="w-16 h-16 text-destructive mx-auto" />
-            <p className="font-bold text-lg">{error}</p>
-            <Button onClick={() => setIsSettingsOpen(true)} className="comic-border bg-yellow-400 text-black">Configurar Chave</Button>
+            <p className="font-bold text-lg text-black">{error}</p>
+            <Button onClick={() => setIsSettingsOpen(true)} className="comic-border bg-yellow-400 text-black font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">Configurar Chave</Button>
           </Card>
         ) : result ? (
           <div className="space-y-8 animate-in zoom-in-95 duration-700">
@@ -172,7 +171,7 @@ export function StoryGame() {
             {result.pages.map((page, index) => (
               <Card key={index} className="comic-border bg-white paper-texture comic-page">
                 <CardContent className="p-8 md:p-16 flex flex-col items-center justify-center min-h-[500px]">
-                  <p className="book-font text-5xl md:text-7xl text-center text-black leading-tight italic font-black">
+                  <p className="book-font text-6xl md:text-8xl text-center text-black leading-tight italic font-black">
                     {page.text}
                   </p>
                 </CardContent>
@@ -180,18 +179,18 @@ export function StoryGame() {
             ))}
 
             <div className="flex flex-wrap gap-4 justify-center no-print pb-24">
-              <Button onClick={handlePlayAudio} disabled={isAudioLoading} className="bg-accent text-black comic-border h-auto py-6 px-10 font-black uppercase text-2xl shadow-xl flex-1">
+              <Button onClick={handlePlayAudio} disabled={isAudioLoading} className="bg-accent text-black comic-border h-auto py-6 px-10 font-black uppercase text-2xl shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1">
                 {isAudioLoading ? <Loader2 className="animate-spin" /> : isPlaying ? <Pause /> : <Volume2 />} {isPlaying ? 'Pausar' : 'Ouvir'}
               </Button>
               {audioUrl && (
-                <Button onClick={handleDownloadAudio} className="bg-yellow-500 text-black comic-border h-auto py-6 px-10 font-black uppercase text-2xl shadow-xl flex-1">
-                  <Download /> Baixar Áudio
+                <Button onClick={handleDownloadAudio} className="bg-yellow-500 text-black comic-border h-auto py-6 px-10 font-black uppercase text-2xl shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1">
+                  <Download /> Baixar
                 </Button>
               )}
-              <Button onClick={() => window.print()} className="bg-secondary text-white comic-border h-auto py-6 px-10 font-black uppercase text-2xl shadow-xl flex-1">
+              <Button onClick={() => window.print()} className="bg-secondary text-white comic-border h-auto py-6 px-10 font-black uppercase text-2xl shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1">
                 <Printer /> PDF
               </Button>
-              <Button onClick={restart} variant="outline" className="comic-border h-auto py-6 px-10 font-black uppercase text-2xl flex-1">
+              <Button onClick={restart} variant="outline" className="bg-white text-black comic-border h-auto py-6 px-10 font-black uppercase text-2xl shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1">
                 <RotateCcw /> Novo
               </Button>
             </div>
@@ -199,7 +198,7 @@ export function StoryGame() {
         ) : !selectedTheme ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 px-2">
             {THEMES.map((theme) => (
-              <button key={theme.id} onClick={() => setSelectedTheme(theme)} className="comic-border bg-white p-8 text-left hover:bg-yellow-50 transition-all group flex flex-col gap-3">
+              <button key={theme.id} onClick={() => setSelectedTheme(theme)} className="comic-border bg-white p-8 text-left hover:bg-yellow-50 transition-all group flex flex-col gap-3 shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none">
                 <h3 className="text-3xl font-black comic-text uppercase text-black">{theme.name}</h3>
                 <p className="font-bold text-muted-foreground italic book-font">{theme.description}</p>
               </button>
@@ -216,10 +215,10 @@ export function StoryGame() {
                 onChange={(e) => setCurrentAnswer(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleNext()}
                 placeholder="Sua resposta bizarra..."
-                className="h-20 text-3xl border-4 border-black rounded-none book-font bg-yellow-50 text-center"
+                className="h-24 text-3xl border-4 border-black rounded-none book-font bg-yellow-50 text-center focus:ring-primary"
                 autoFocus
               />
-              <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-auto py-8 bg-primary text-white font-black text-3xl uppercase comic-border shadow-[0_8px_0_0_rgba(0,0,0,1)] active:translate-y-2 active:shadow-none">
+              <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-auto py-8 bg-primary text-white font-black text-4xl uppercase comic-border shadow-[0_10px_0_0_rgba(0,0,0,1)] active:translate-y-2 active:shadow-none transition-all">
                 PRÓXIMO <Send className="ml-4" />
               </Button>
             </CardContent>
@@ -228,16 +227,17 @@ export function StoryGame() {
       </div>
 
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-        <DialogContent className="comic-border bg-white p-10">
+        <DialogContent className="comic-border bg-white p-10 max-w-md">
           <DialogHeader>
-            <DialogTitle className="comic-text text-3xl font-black uppercase">Configurações</DialogTitle>
+            <DialogTitle className="comic-text text-3xl font-black uppercase text-black">Configurações</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <label className="font-black uppercase">Sua API Key Gemini</label>
-            <Input type="password" value={userApiKey} onChange={(e) => setUserApiKey(e.target.value)} className="border-4 border-black h-16 text-xl" />
+            <label className="font-black uppercase text-black">Sua API Key Gemini</label>
+            <Input type="password" value={userApiKey} onChange={(e) => setUserApiKey(e.target.value)} className="border-4 border-black h-16 text-xl rounded-none" />
+            <p className="text-xs font-bold text-muted-foreground italic">Use sua chave para evitar erros de cota.</p>
           </div>
           <DialogFooter className="mt-6">
-            <Button onClick={() => { saveApiKey(userApiKey); setIsSettingsOpen(false); }} className="w-full bg-secondary text-white font-black h-16 text-2xl comic-border">Salvar</Button>
+            <Button onClick={() => { saveApiKey(userApiKey); setIsSettingsOpen(false); }} className="w-full bg-secondary text-white font-black h-16 text-2xl comic-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none">Salvar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
