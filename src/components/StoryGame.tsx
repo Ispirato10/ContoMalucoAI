@@ -367,30 +367,30 @@ export function StoryGame() {
           </Card>
         ) : result ? (
           <div className="space-y-8 md:space-y-12 animate-in zoom-in-95 duration-700 px-2 md:px-0">
-            {/* Capa do Livro (Visível no PDF como página de título) */}
-            <Card className="comic-border bg-primary p-8 md:p-12 text-center shadow-2xl relative overflow-hidden flex flex-col items-center justify-center min-h-[250px] md:min-h-[400px] comic-title-page">
+            {/* Capa do Livro */}
+            <Card className="comic-border bg-primary p-8 md:p-12 text-center shadow-2xl relative overflow-hidden flex flex-col items-center justify-center min-h-[300px] md:min-h-[500px] comic-title-page">
                <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:20px_20px] no-print"></div>
-              <h2 className="text-3xl md:text-7xl font-black uppercase comic-text text-white drop-shadow-[4px_4px_0px_rgba(0,0,0,1)] relative z-10 break-words leading-tight max-w-full print:text-black print:drop-shadow-none">
+              <h2 className="text-4xl md:text-8xl font-black uppercase comic-text text-white drop-shadow-[6px_6px_0px_rgba(0,0,0,1)] relative z-10 break-words leading-tight max-w-full print:text-black print:drop-shadow-none">
                 {result.title}
               </h2>
-              <div className="mt-6 md:mt-8 relative z-10 no-print">
-                <span className="bg-yellow-400 border-[3px] md:border-4 border-black px-4 md:px-8 py-2 md:py-3 font-black text-lg md:text-2xl rotate-3 inline-block shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-black uppercase">
+              <div className="mt-8 md:mt-12 relative z-10 no-print">
+                <span className="bg-yellow-400 border-[3px] md:border-6 border-black px-6 md:px-12 py-3 md:py-5 font-black text-xl md:text-4xl rotate-3 inline-block shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] text-black uppercase">
                   CONTOS BIZARROS AI
                 </span>
               </div>
             </Card>
 
             {/* Páginas do Livro */}
-            <div className="space-y-6 md:space-y-8">
+            <div className="space-y-8 md:space-y-12">
               {result.pages.map((page, index) => (
                 <Card key={index} className="comic-border bg-white overflow-hidden shadow-2xl relative paper-texture comic-page">
-                  <CardContent className="p-6 md:p-16 flex flex-col items-center gap-6 min-h-[400px] md:min-h-[600px] justify-center">
-                    <div className="absolute top-4 left-4 bg-yellow-400 border-[3px] border-black px-3 md:px-6 py-1 md:py-2 font-black text-sm md:text-xl -rotate-6 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] z-20 no-print">
+                  <CardContent className="p-8 md:p-24 flex flex-col items-center gap-10 min-h-[500px] md:min-h-[700px] justify-center">
+                    <div className="absolute top-6 left-6 bg-yellow-400 border-[4px] border-black px-4 md:px-10 py-2 md:py-4 font-black text-lg md:text-3xl -rotate-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-20 no-print">
                       CAPÍTULO {index + 1}
                     </div>
                     
-                    <div className="w-full max-w-3xl p-6 md:p-10 bg-white border-[4px] border-black relative shadow-[6px_6px_0px_0px_rgba(0,0,0,0.1)] print:border-none print:shadow-none comic-caption">
-                      <p className="book-font text-lg md:text-3xl text-center text-black leading-relaxed italic print:not-italic print:text-2xl print:text-left">
+                    <div className="w-full max-w-4xl p-8 md:p-16 bg-white border-[6px] border-black relative shadow-[10px_10px_0px_0px_rgba(0,0,0,0.1)] print:border-none print:shadow-none comic-caption">
+                      <p className="book-font text-2xl md:text-5xl text-center text-black leading-tight italic font-bold print:not-italic print:text-3xl print:text-left">
                         {page.text}
                       </p>
                     </div>
@@ -400,25 +400,25 @@ export function StoryGame() {
               ))}
             </div>
 
-            <div className="flex flex-col md:flex-row flex-wrap gap-4 justify-center no-print pb-24 items-stretch">
+            <div className="flex flex-col md:flex-row flex-wrap gap-6 justify-center no-print pb-24 items-stretch">
               <Button 
                 onClick={handlePlayAudio} 
                 disabled={isAudioLoading}
-                className="bg-accent hover:bg-accent/90 text-black comic-border h-auto py-4 md:py-6 px-6 md:px-12 font-black uppercase text-lg md:text-2xl shadow-2xl hover:scale-105 transition-all active:scale-95 text-center flex-1 min-w-[200px]"
+                className="bg-accent hover:bg-accent/90 text-black comic-border h-auto py-5 md:py-8 px-8 md:px-16 font-black uppercase text-xl md:text-3xl shadow-2xl hover:scale-105 transition-all active:scale-95 text-center flex-1 min-w-[240px]"
               >
                 {isAudioLoading ? (
-                  <Loader2 className="w-6 h-6 animate-spin mr-2" />
+                  <Loader2 className="w-8 h-8 animate-spin mr-3" />
                 ) : isPlaying ? (
-                  <><Pause className="w-6 h-6 md:w-8 md:h-8 mr-2 md:mr-4" /> Pausar</>
+                  <><Pause className="w-8 h-8 md:w-12 md:h-12 mr-3 md:mr-6" /> Pausar</>
                 ) : (
-                  <><Volume2 className="w-6 h-6 md:w-8 md:h-8 mr-2 md:mr-4" /> Ouvir</>
+                  <><Volume2 className="w-8 h-8 md:w-12 md:h-12 mr-3 md:mr-6" /> Ouvir</>
                 )}
               </Button>
-              <Button onClick={() => window.print()} className="bg-secondary hover:bg-secondary/90 text-white comic-border h-auto py-4 md:py-6 px-6 md:px-12 font-black uppercase text-lg md:text-2xl shadow-2xl hover:scale-105 transition-all active:scale-95 text-center flex-1 min-w-[200px]">
-                <Printer className="w-6 h-6 md:w-8 md:h-8 mr-2 md:mr-4" /> Baixar PDF
+              <Button onClick={() => window.print()} className="bg-secondary hover:bg-secondary/90 text-white comic-border h-auto py-5 md:py-8 px-8 md:px-16 font-black uppercase text-xl md:text-3xl shadow-2xl hover:scale-105 transition-all active:scale-95 text-center flex-1 min-w-[240px]">
+                <Printer className="w-8 h-8 md:w-12 md:h-12 mr-3 md:mr-6" /> Baixar PDF
               </Button>
-              <Button onClick={restart} variant="outline" className="comic-border h-auto py-4 md:py-6 px-6 md:px-12 font-black uppercase text-lg md:text-2xl bg-white hover:bg-gray-50 shadow-2xl hover:scale-105 transition-all active:scale-95 text-center flex-1 min-w-[200px]">
-                <RotateCcw className="w-6 h-6 md:w-8 md:h-8 mr-2 md:mr-4" /> Novo Conto
+              <Button onClick={restart} variant="outline" className="comic-border h-auto py-5 md:py-8 px-8 md:px-16 font-black uppercase text-xl md:text-3xl bg-white hover:bg-gray-50 shadow-2xl hover:scale-105 transition-all active:scale-95 text-center flex-1 min-w-[240px]">
+                <RotateCcw className="w-8 h-8 md:w-12 md:h-12 mr-3 md:mr-6" /> Novo Conto
               </Button>
             </div>
           </div>

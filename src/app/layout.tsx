@@ -42,6 +42,7 @@ export const metadata: Metadata = {
   icons: {
     icon: "/logo.png",
     apple: "/logo.png",
+    shortcut: "/logo.png",
   }
 };
 
@@ -64,6 +65,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Alegreya:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
+        <link rel="icon" href="/logo.png" />
       </head>
       <body className="font-sans antialiased bg-background text-foreground overflow-x-hidden">
         {children}

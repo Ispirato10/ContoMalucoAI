@@ -86,15 +86,15 @@
   .comic-page {
     page-break-after: always;
     height: auto;
-    display: block;
-    padding: 1.5cm !important;
+    display: block !important;
+    padding: 2cm !important;
     border: none !important;
     box-shadow: none !important;
     background: none !important;
   }
   .comic-title-page {
     height: 100vh;
-    display: flex;
+    display: flex !important;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -104,18 +104,19 @@
     background: none !important;
   }
   .comic-title-page h2 {
-    font-size: 3.5rem !important;
+    font-size: 4rem !important;
+    line-height: 1.1 !important;
     color: black !important;
     text-transform: uppercase;
     font-family: 'Alegreya', serif !important;
     font-weight: 900 !important;
-    border-bottom: 4px solid black;
-    padding-bottom: 0.5cm;
-    margin-bottom: 1cm;
+    border-bottom: 6px solid black;
+    padding-bottom: 1cm;
+    margin-bottom: 2cm;
   }
   .comic-caption {
-    font-size: 1.4rem !important;
-    line-height: 1.8 !important;
+    font-size: 1.8rem !important;
+    line-height: 1.6 !important;
     color: black !important;
     text-align: justify !important;
     max-width: 100% !important;
@@ -124,12 +125,17 @@
     border: none !important;
     font-family: 'Alegreya', serif !important;
   }
+  .comic-caption p {
+    font-size: 1.8rem !important;
+    font-weight: 700 !important;
+  }
   .page-number {
     display: block;
     text-align: center;
-    margin-top: 2cm;
-    font-size: 1rem;
+    margin-top: 3cm;
+    font-size: 1.2rem;
     font-family: 'Alegreya', serif !important;
     font-style: italic;
+    color: #666;
   }
 }
