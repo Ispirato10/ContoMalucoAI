@@ -16,7 +16,6 @@ import {
   Settings, 
   Key, 
   Sparkles, 
-  UserCheck,
   Sword,
   Rocket,
   Ghost,
@@ -33,7 +32,6 @@ import { useToast } from '@/hooks/use-toast';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogFooter,
@@ -203,9 +201,15 @@ export function StoryGame() {
                 <button key={theme.id} onClick={() => setSelectedTheme(theme)} className="comic-border bg-white p-8 text-left hover:bg-yellow-50 transition-all group flex flex-col gap-3 shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none">
                   <div className="flex items-center justify-between">
                     <h3 className="text-3xl font-black comic-text uppercase text-black">{theme.name}</h3>
-                    <Icon className="w-10 h-10 text-primary group-hover:rotate-12 transition-transform" />
+                    <div className="bg-accent p-2 comic-border -rotate-3 group-hover:rotate-6 transition-transform">
+                      <Icon className="w-10 h-10 text-black" />
+                    </div>
                   </div>
                   <p className="font-bold text-muted-foreground italic book-font text-lg">{theme.description}</p>
+                  <div className="mt-2 flex items-center gap-2 text-[10px] font-black uppercase text-primary">
+                    <span className="bg-primary text-white px-2 py-0.5 comic-border">{theme.questions.length} PERGUNTAS</span>
+                    <Sparkles className="w-3 h-3" />
+                  </div>
                 </button>
               )
             })}
@@ -218,15 +222,18 @@ export function StoryGame() {
                   <selectedTheme.icon className="w-12 h-12 text-black" />
                 </div>
               </div>
-              <h2 className="text-3xl md:text-5xl font-bold book-font text-center text-black">
-                {selectedTheme.questions[currentStep]}
-              </h2>
+              <div className="text-center space-y-2">
+                <p className="text-xs font-black text-primary uppercase tracking-widest">Pergunta {currentStep + 1} de {selectedTheme.questions.length}</p>
+                <h2 className="text-3xl md:text-5xl font-bold book-font text-black">
+                  {selectedTheme.questions[currentStep]}
+                </h2>
+              </div>
               <Input
                 value={currentAnswer}
                 onChange={(e) => setCurrentAnswer(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleNext()}
                 placeholder="Sua resposta bizarra..."
-                className="h-24 text-3xl border-4 border-black rounded-none book-font bg-yellow-50 text-center focus:ring-primary"
+                className="h-24 text-3xl border-4 border-black rounded-none book-font bg-yellow-50 text-center focus:ring-primary shadow-inner"
                 autoFocus
               />
               <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-auto py-8 bg-primary text-white font-black text-4xl uppercase comic-border shadow-[0_10px_0_0_rgba(0,0,0,1)] active:translate-y-2 active:shadow-none transition-all">
