@@ -170,20 +170,52 @@ export function StoryGame() {
           </Card>
         ) : result ? (
           <div className="space-y-8 animate-in zoom-in-95 duration-700">
-            <Card className="comic-border bg-primary p-6 md:p-12 text-center shadow-2xl comic-title-page overflow-hidden">
-              <h2 className="text-4xl md:text-8xl lg:text-9xl font-black uppercase comic-text text-white drop-shadow-[4px_4px_0px_rgba(0,0,0,1)] md:drop-shadow-[6px_6px_0px_rgba(0,0,0,1)] leading-tight italic break-words whitespace-normal px-2">
+            {/* Capa do Gibi */}
+            <Card className="comic-border bg-primary p-6 md:p-12 text-center shadow-2xl comic-title-page overflow-hidden relative">
+              <div className="hidden print:print-header no-print">
+                <div className="flex items-center gap-3">
+                  <img src="/logo.png" alt="Logo" className="w-12 h-12" />
+                  <span className="comic-text text-xl text-white">Conto Maluco AI</span>
+                </div>
+                <div className="text-xs text-white/60 italic">Edição Especial de Luxo</div>
+              </div>
+              
+              <h2 className="text-4xl md:text-8xl lg:text-9xl font-black uppercase comic-text text-white drop-shadow-[4px_4px_0px_rgba(0,0,0,1)] md:drop-shadow-[6px_6px_0px_rgba(0,0,0,1)] leading-tight italic break-words whitespace-normal px-2 overflow-wrap-anywhere">
                 {result.title}
               </h2>
+
+              <div className="hidden print:print-footer no-print text-white/80 border-white/20">
+                <span>https://conto-maluco-ai.vercel.app</span>
+                <span>Obra prima gerada por IA</span>
+              </div>
             </Card>
 
+            {/* Páginas Internas */}
             {result.pages.map((page, index) => (
-              <Card key={index} className="comic-border bg-white paper-texture comic-page">
-                <CardContent className="p-8 md:p-16 flex flex-col items-center justify-center min-h-[400px] md:min-h-[500px]">
+              <Card key={index} className="comic-border bg-white paper-texture comic-page relative">
+                {/* Header de Impressão */}
+                <div className="hidden print:print-header">
+                  <div className="flex items-center gap-3">
+                    <img src="/logo.png" alt="Logo" className="w-10 h-10" />
+                    <span className="comic-text text-lg">Conto Maluco AI</span>
+                  </div>
+                  <div className="text-xs italic font-bold">História: {result.title.substring(0, 30)}...</div>
+                </div>
+
+                <CardContent className="p-8 md:p-16 flex flex-col items-center justify-center min-h-[400px] md:min-h-[500px] w-full">
                   <p className="book-font text-4xl md:text-7xl lg:text-8xl text-center text-black leading-tight italic font-black break-words w-full overflow-wrap-anywhere">
                     {page.text}
                   </p>
-                  <span className="page-number no-print mt-12">Página {index + 1} de {result.pages.length}</span>
+                  <span className="page-number no-print mt-12 block text-center text-muted-foreground font-bold">
+                    Página {index + 1} de {result.pages.length}
+                  </span>
                 </CardContent>
+
+                {/* Footer de Impressão */}
+                <div className="hidden print:print-footer">
+                  <span>https://conto-maluco-ai.vercel.app</span>
+                  <span>Página {index + 1} de {result.pages.length}</span>
+                </div>
               </Card>
             ))}
 
@@ -237,7 +269,7 @@ export function StoryGame() {
           </div>
         ) : (
           <Card className="comic-border bg-white overflow-hidden shadow-2xl mx-2">
-            <CardContent className="p-6 md:p-20 space-y-8 md:space-y-16">
+            <CardContent className="p-6 md:p-12 space-y-6 md:space-y-10">
               <div className="flex justify-center mb-2">
                 <div className="bg-accent p-4 md:p-6 comic-border -rotate-3 scale-110">
                   <selectedTheme.icon className="w-12 h-12 md:w-16 md:h-16 text-black" />
@@ -245,7 +277,7 @@ export function StoryGame() {
               </div>
               <div className="text-center space-y-4">
                 <p className="text-[10px] md:text-sm font-black text-primary uppercase tracking-[0.3em]">Pergunta {currentStep + 1} de {selectedTheme.questions.length}</p>
-                <h2 className="text-3xl md:text-6xl lg:text-8xl font-black book-font text-black leading-tight italic break-words px-2">
+                <h2 className="text-3xl md:text-5xl lg:text-7xl font-black book-font text-black leading-tight italic break-words px-2 overflow-wrap-anywhere">
                   {selectedTheme.questions[currentStep]}
                 </h2>
               </div>
@@ -254,14 +286,14 @@ export function StoryGame() {
                 onChange={(e) => setCurrentAnswer(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleNext()}
                 placeholder="Sua resposta bizarra..."
-                className="h-16 md:h-32 text-xl md:text-4xl lg:text-6xl border-[4px] md:border-[6px] border-black rounded-none book-font bg-yellow-50 text-center focus:ring-primary shadow-inner font-black italic px-4"
+                className="h-14 md:h-24 text-xl md:text-3xl lg:text-5xl border-[4px] md:border-[6px] border-black rounded-none book-font bg-yellow-50 text-center focus:ring-primary shadow-inner font-black italic px-4"
                 autoFocus
               />
-              <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-auto py-3 md:py-4 bg-primary text-white font-black text-2xl md:text-4xl uppercase comic-border shadow-[0_4px_0_0_rgba(0,0,0,1)] md:shadow-[0_8px_0_0_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all comic-text">
-                PRÓXIMO <Send className="ml-2 md:ml-4 w-6 h-6 md:w-10 md:h-10" />
+              <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-auto py-2 md:py-4 bg-primary text-white font-black text-xl md:text-3xl uppercase comic-border shadow-[0_4px_0_0_rgba(0,0,0,1)] md:shadow-[0_8px_0_0_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all comic-text">
+                PRÓXIMO <Send className="ml-2 md:ml-4 w-5 h-5 md:w-8 md:h-8" />
               </Button>
-              <div className="text-center no-print pt-2 md:pt-6">
-                 <Button onClick={restart} variant="ghost" className="text-muted-foreground font-black hover:text-black italic text-xs md:text-xl uppercase tracking-widest">
+              <div className="text-center no-print pt-2 md:pt-4">
+                 <Button onClick={restart} variant="ghost" className="text-muted-foreground font-black hover:text-black italic text-xs md:text-lg uppercase tracking-widest">
                    Escolher outro tema
                  </Button>
               </div>
