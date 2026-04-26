@@ -1,10 +1,10 @@
 {
   "name": "Conto Maluco AI",
   "short_name": "Conto Maluco",
-  "description": "Fábrica bizarra de gibis com inteligência artificial!",
+  "description": "Fábrica de Gibis Bizarras com Gemini 2.5 Flash",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#fffce6",
+  "background_color": "#ffffff",
   "theme_color": "#f12711",
   "icons": [
     {

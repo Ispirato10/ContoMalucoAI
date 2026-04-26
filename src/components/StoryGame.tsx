@@ -237,15 +237,15 @@ export function StoryGame() {
           </div>
         ) : (
           <Card className="comic-border bg-white overflow-hidden shadow-2xl">
-            <CardContent className="p-8 md:p-20 space-y-10 md:space-y-16">
+            <CardContent className="p-8 md:p-20 space-y-8 md:space-y-16">
               <div className="flex justify-center mb-2 md:mb-4">
                 <div className="bg-accent p-4 md:p-6 comic-border -rotate-3 scale-110">
                   <selectedTheme.icon className="w-12 h-12 md:w-16 md:h-16 text-black" />
                 </div>
               </div>
-              <div className="text-center space-y-4">
-                <p className="text-xs md:text-sm font-black text-primary uppercase tracking-[0.3em]">Pergunta {currentStep + 1} de {selectedTheme.questions.length}</p>
-                <h2 className="text-4xl md:text-9xl font-black book-font text-black leading-[1.1] md:leading-tight italic">
+              <div className="text-center space-y-2 md:space-y-4">
+                <p className="text-[10px] md:text-sm font-black text-primary uppercase tracking-[0.3em]">Pergunta {currentStep + 1} de {selectedTheme.questions.length}</p>
+                <h2 className="text-3xl md:text-9xl font-black book-font text-black leading-tight md:leading-tight italic">
                   {selectedTheme.questions[currentStep]}
                 </h2>
               </div>
@@ -254,7 +254,7 @@ export function StoryGame() {
                 onChange={(e) => setCurrentAnswer(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleNext()}
                 placeholder="Sua resposta bizarra..."
-                className="h-20 md:h-32 text-2xl md:text-7xl border-[4px] md:border-[6px] border-black rounded-none book-font bg-yellow-50 text-center focus:ring-primary shadow-inner font-black italic"
+                className="h-16 md:h-32 text-xl md:text-7xl border-[4px] md:border-[6px] border-black rounded-none book-font bg-yellow-50 text-center focus:ring-primary shadow-inner font-black italic"
                 autoFocus
               />
               <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-auto py-6 md:py-10 bg-primary text-white font-black text-2xl md:text-5xl uppercase comic-border shadow-[0_6px_0_0_rgba(0,0,0,1)] md:shadow-[0_12px_0_0_rgba(0,0,0,1)] active:translate-y-2 active:shadow-none transition-all comic-text">
@@ -270,7 +270,7 @@ export function StoryGame() {
         )}
       </div>
 
-      <div className="fixed top-2 md:top-4 right-2 md:right-4 z-50 no-print">
+      <div className="fixed top-2 md:top-4 right-2 md:right-4 z-[100] no-print">
         <Button onClick={() => setIsSettingsOpen(true)} variant="outline" size="icon" className="comic-border bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] w-10 h-10 md:w-12 md:h-12">
           <Settings className="w-5 h-5 md:w-6 md:h-6" />
         </Button>
@@ -279,7 +279,7 @@ export function StoryGame() {
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
         <DialogContent className="comic-border bg-white p-4 md:p-10 w-[95vw] max-w-2xl overflow-hidden flex flex-col h-[90vh]">
           <DialogHeader className="mb-4">
-            <DialogTitle className="comic-text text-3xl md:text-5xl font-black uppercase text-black italic">Configurações de Elite</DialogTitle>
+            <DialogTitle className="comic-text text-3xl md:text-5xl font-black uppercase text-black italic">Configurações</DialogTitle>
           </DialogHeader>
           
           <ScrollArea className="flex-1 pr-2 md:pr-4">
@@ -355,7 +355,7 @@ export function StoryGame() {
               onClick={() => { saveApiKey(userApiKey); setIsSettingsOpen(false); }} 
               className="w-full bg-secondary text-white font-black h-16 md:h-24 text-xl md:text-4xl uppercase comic-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all"
             >
-              SALVAR MINHA CHAVE!
+              SALVAR CHAVE!
             </Button>
           </DialogFooter>
         </DialogContent>

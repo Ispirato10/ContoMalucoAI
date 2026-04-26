@@ -5,17 +5,17 @@ import { BookOpen, Sparkles } from 'lucide-react';
 
 export default function Home() {
   return (
-    <main className="min-h-screen p-4 md:p-8 max-w-5xl mx-auto">
+    <main className="min-h-screen p-4 md:p-8 max-w-5xl mx-auto pt-16 md:pt-8">
       <header className="text-center mb-12 space-y-4 no-print">
         <div className="inline-block bg-accent comic-border p-6 -rotate-2 relative">
           <div className="absolute -top-3 -right-3 w-8 h-8 bg-white border-2 border-black rounded-full flex items-center justify-center animate-bounce">
             <Sparkles className="w-4 h-4 text-primary" />
           </div>
-          <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter comic-text text-black">
+          <h1 className="text-4xl md:text-7xl font-black uppercase tracking-tighter comic-text text-black">
             Conto Maluco AI
           </h1>
         </div>
-        <p className="text-xl font-bold text-primary flex items-center justify-center gap-3 italic">
+        <p className="text-lg md:text-xl font-bold text-primary flex items-center justify-center gap-3 italic">
           Sua fábrica bizarra de gibis com Gemini 2.5 Flash!
         </p>
       </header>
