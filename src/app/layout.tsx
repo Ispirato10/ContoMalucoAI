@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     siteName: 'Conto Maluco AI',
     images: [
       {
-        url: 'https://picsum.photos/seed/crazybooklogo/1200/630',
+        url: 'https://picsum.photos/seed/crazybook/1200/630',
         width: 1200,
         height: 630,
         alt: 'Conto Maluco AI - Seu Livro de Histórias',
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Conto Maluco AI - Seu Livro de Histórias',
     description: 'Transforme respostas malucas em contos épicos com inteligência artificial!',
-    images: ['https://picsum.photos/seed/crazybooklogo/1200/630'],
+    images: ['https://picsum.photos/seed/crazybook/1200/630'],
   },
   manifest: '/manifest.json',
   appleWebApp: {
