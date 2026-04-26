@@ -26,7 +26,9 @@ import {
   Utensils,
   Volume2,
   Pause,
-  Download
+  Download,
+  ExternalLink,
+  Info
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -36,6 +38,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const THEMES = [
   { id: 'classic', name: 'Aventura Clássica', icon: Sword, description: 'O herói contra o vilão em um lugar estranho.', questions: ["Quem é o herói?", "Onde vive?", "O que faz?", "Quem apareceu?", "O que gritou?", "Como terminou?"] },
@@ -224,7 +227,7 @@ export function StoryGame() {
               </div>
               <div className="text-center space-y-4">
                 <p className="text-sm font-black text-primary uppercase tracking-[0.3em]">Pergunta {currentStep + 1} de {selectedTheme.questions.length}</p>
-                <h2 className="text-5xl md:text-8xl font-black book-font text-black leading-tight">
+                <h2 className="text-6xl md:text-9xl font-black book-font text-black leading-tight">
                   {selectedTheme.questions[currentStep]}
                 </h2>
               </div>
@@ -233,7 +236,7 @@ export function StoryGame() {
                 onChange={(e) => setCurrentAnswer(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleNext()}
                 placeholder="Sua resposta bizarra..."
-                className="h-32 text-4xl md:text-6xl border-[6px] border-black rounded-none book-font bg-yellow-50 text-center focus:ring-primary shadow-inner font-black"
+                className="h-32 text-4xl md:text-7xl border-[6px] border-black rounded-none book-font bg-yellow-50 text-center focus:ring-primary shadow-inner font-black"
                 autoFocus
               />
               <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-auto py-10 bg-primary text-white font-black text-5xl uppercase comic-border shadow-[0_12px_0_0_rgba(0,0,0,1)] active:translate-y-2 active:shadow-none transition-all">
@@ -256,19 +259,75 @@ export function StoryGame() {
       </div>
 
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-        <DialogContent className="comic-border bg-white p-10 max-w-md">
+        <DialogContent className="comic-border bg-white p-6 md:p-10 max-w-2xl overflow-hidden flex flex-col h-[90vh]">
           <DialogHeader>
-            <DialogTitle className="comic-text text-4xl font-black uppercase text-black">Configurações</DialogTitle>
+            <DialogTitle className="comic-text text-4xl md:text-5xl font-black uppercase text-black italic">Configurações de Elite</DialogTitle>
           </DialogHeader>
-          <div className="space-y-6">
-            <label className="font-black uppercase text-black flex items-center gap-2 text-lg">
-              <Key className="w-5 h-5" /> Sua API Key Gemini
-            </label>
-            <Input type="password" value={userApiKey} onChange={(e) => setUserApiKey(e.target.value)} className="border-4 border-black h-20 text-2xl rounded-none font-bold" />
-            <p className="text-sm font-bold text-muted-foreground italic leading-tight">Use sua chave para evitar erros de cota e garantir a diversão infinita!</p>
-          </div>
+          
+          <ScrollArea className="flex-1 pr-4">
+            <div className="space-y-8 py-4">
+              {/* Guia Passo a Passo */}
+              <div className="bg-accent/10 comic-border p-6 space-y-6 relative overflow-hidden">
+                <div className="absolute -top-4 -right-4 p-4 opacity-10 rotate-12">
+                  <Info className="w-32 h-32 text-black" />
+                </div>
+                
+                <h3 className="font-black uppercase text-xl md:text-2xl text-black flex items-center gap-3">
+                  <Sparkles className="w-6 h-6 text-primary" /> Como conseguir sua chave grátis:
+                </h3>
+                
+                <div className="grid gap-4">
+                  {[
+                    { step: 1, text: "Acesse o portal oficial:", link: "https://aistudio.google.com/", linkLabel: "Google AI Studio" },
+                    { step: 2, text: "Faça login com sua conta Google (é rápido e seguro!)" },
+                    { step: 3, text: "No menu lateral esquerdo, clique no botão azul 'Get API key'" },
+                    { step: 4, text: "Clique em 'Create API key in new project' para gerar seu código único." },
+                    { step: 5, text: "Copie o código que aparece (ele começa com 'AIza...')" },
+                    { step: 6, text: "Cole no campo abaixo e salve para liberar a magia!" }
+                  ].map((item, i) => (
+                    <div key={i} className="flex gap-4 items-start">
+                      <div className="bg-primary text-white comic-border w-8 h-8 shrink-0 flex items-center justify-center font-black italic -rotate-6">
+                        {item.step}
+                      </div>
+                      <p className="font-bold italic text-base md:text-lg text-black leading-tight">
+                        {item.text}
+                        {item.link && (
+                          <a href={item.link} target="_blank" rel="noopener noreferrer" className="ml-2 text-primary underline inline-flex items-center gap-1 hover:text-black transition-colors">
+                            {item.linkLabel} <ExternalLink className="w-4 h-4" />
+                          </a>
+                        )}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Campo de Entrada */}
+              <div className="space-y-4">
+                <label className="font-black uppercase text-black flex items-center gap-2 text-xl italic">
+                  <Key className="w-6 h-6 text-primary" /> Sua API Key Gemini
+                </label>
+                <Input 
+                  type="password" 
+                  value={userApiKey} 
+                  onChange={(e) => setUserApiKey(e.target.value)} 
+                  placeholder="AIza..."
+                  className="border-[6px] border-black h-24 text-3xl md:text-4xl rounded-none font-black bg-yellow-50 focus:ring-primary shadow-inner" 
+                />
+                <p className="text-sm md:text-base font-bold text-muted-foreground italic leading-tight">
+                  Usar sua própria chave evita erros de cota e garante que suas histórias nunca parem de ser geradas!
+                </p>
+              </div>
+            </div>
+          </ScrollArea>
+
           <DialogFooter className="mt-8">
-            <Button onClick={() => { saveApiKey(userApiKey); setIsSettingsOpen(false); }} className="w-full bg-secondary text-white font-black h-20 text-3xl comic-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none">Salvar Chave</Button>
+            <Button 
+              onClick={() => { saveApiKey(userApiKey); setIsSettingsOpen(false); }} 
+              className="w-full bg-secondary text-white font-black h-24 text-3xl md:text-4xl uppercase comic-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all"
+            >
+              SALVAR MINHA CHAVE!
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
