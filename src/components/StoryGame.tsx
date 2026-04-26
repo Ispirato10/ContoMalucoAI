@@ -26,7 +26,6 @@ import {
   Wand2,
   Utensils,
   Volume2,
-  Play,
   Pause
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -204,7 +203,6 @@ export function StoryGame() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<StoryOutput | null>(null);
   
-  // Audio states
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [isAudioLoading, setIsAudioLoading] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -320,7 +318,7 @@ export function StoryGame() {
     <div className="space-y-4 max-w-full overflow-x-hidden">
       <audio 
         ref={audioRef} 
-        src={audioUrl || ''} 
+        src={audioUrl || undefined} 
         onEnded={() => setIsPlaying(false)}
         className="hidden"
       />
@@ -366,7 +364,6 @@ export function StoryGame() {
           </Card>
         ) : result ? (
           <div className="space-y-8 md:space-y-12 animate-in zoom-in-95 duration-700 px-2 md:px-0">
-            {/* Capa do Livro */}
             <Card className="comic-border bg-primary p-8 md:p-12 text-center shadow-2xl relative overflow-hidden flex flex-col items-center justify-center min-h-[300px] md:min-h-[500px] comic-title-page">
                <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:20px_20px] no-print"></div>
               <h2 className="text-4xl md:text-8xl font-black uppercase comic-text text-white drop-shadow-[6px_6px_0px_rgba(0,0,0,1)] relative z-10 break-words leading-tight max-w-full print:text-black print:drop-shadow-none">
@@ -379,7 +376,6 @@ export function StoryGame() {
               </div>
             </Card>
 
-            {/* Páginas do Livro */}
             <div className="space-y-8 md:space-y-12">
               {result.pages.map((page, index) => (
                 <Card key={index} className="comic-border bg-white overflow-hidden shadow-2xl relative paper-texture comic-page">
