@@ -179,33 +179,34 @@ export function StoryGame() {
             {result.pages.map((page, index) => (
               <Card key={index} className="comic-border bg-white paper-texture comic-page">
                 <CardContent className="p-8 md:p-16 flex flex-col items-center justify-center min-h-[400px] md:min-h-[500px]">
-                  <p className="book-font text-5xl md:text-8xl lg:text-9xl text-center text-black leading-tight italic font-black break-words">
+                  <p className="book-font text-4xl md:text-7xl lg:text-8xl text-center text-black leading-tight italic font-black break-words w-full overflow-wrap-anywhere">
                     {page.text}
                   </p>
+                  <span className="page-number no-print mt-12">Página {index + 1} de {result.pages.length}</span>
                 </CardContent>
               </Card>
             ))}
 
-            <div className="flex flex-wrap gap-4 justify-center no-print pb-24">
-              <Button onClick={handlePlayAudio} disabled={isAudioLoading} className="bg-accent text-black comic-border h-auto py-4 md:py-6 px-6 md:px-10 font-black uppercase text-xl md:text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1">
+            <div className="flex flex-wrap gap-4 justify-center no-print pb-24 px-2">
+              <Button onClick={handlePlayAudio} disabled={isAudioLoading} className="bg-accent text-black comic-border h-auto py-4 md:py-6 px-6 md:px-10 font-black uppercase text-xl md:text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1 min-w-[140px]">
                 {isAudioLoading ? <Loader2 className="animate-spin" /> : isPlaying ? <Pause /> : <Volume2 />} {isPlaying ? 'Pausar' : 'Ouvir'}
               </Button>
               {audioUrl && (
-                <Button onClick={handleDownloadAudio} className="bg-yellow-500 text-black comic-border h-auto py-4 md:py-6 px-6 md:px-10 font-black uppercase text-xl md:text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1">
+                <Button onClick={handleDownloadAudio} className="bg-yellow-500 text-black comic-border h-auto py-4 md:py-6 px-6 md:px-10 font-black uppercase text-xl md:text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1 min-w-[140px]">
                   <Download className="w-5 h-5 md:w-6 md:h-6 mr-2" /> Baixar
                 </Button>
               )}
-              <Button onClick={() => window.print()} className="bg-secondary text-white comic-border h-auto py-4 md:py-6 px-6 md:px-10 font-black uppercase text-xl md:text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1">
+              <Button onClick={() => window.print()} className="bg-secondary text-white comic-border h-auto py-4 md:py-6 px-6 md:px-10 font-black uppercase text-xl md:text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1 min-w-[140px]">
                 <Printer className="w-5 h-5 md:w-6 md:h-6 mr-2" /> PDF
               </Button>
-              <Button onClick={restart} variant="outline" className="bg-white text-black comic-border h-auto py-4 md:py-6 px-6 md:px-10 font-black uppercase text-xl md:text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1">
+              <Button onClick={restart} variant="outline" className="bg-white text-black comic-border h-auto py-4 md:py-6 px-6 md:px-10 font-black uppercase text-xl md:text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1 min-w-[140px]">
                 <RotateCcw className="w-5 h-5 md:w-6 md:h-6 mr-2" /> Novo
               </Button>
             </div>
           </div>
         ) : !selectedTheme ? (
           <div className="space-y-12">
-            <div className="text-center space-y-4 animate-in fade-in slide-in-from-top-4 duration-700">
+            <div className="text-center space-y-4 animate-in fade-in slide-in-from-top-4 duration-700 px-2">
               <h2 className="text-4xl md:text-6xl font-black comic-text text-black uppercase tracking-tighter drop-shadow-[4px_4px_0px_rgba(255,255,255,1)]">
                 QUAL CONFUSÃO CRIAREMOS HOJE?
               </h2>
@@ -235,16 +236,16 @@ export function StoryGame() {
             </div>
           </div>
         ) : (
-          <Card className="comic-border bg-white overflow-hidden shadow-2xl">
-            <CardContent className="p-6 md:p-20 space-y-6 md:space-y-16">
+          <Card className="comic-border bg-white overflow-hidden shadow-2xl mx-2">
+            <CardContent className="p-6 md:p-20 space-y-8 md:space-y-16">
               <div className="flex justify-center mb-2">
                 <div className="bg-accent p-4 md:p-6 comic-border -rotate-3 scale-110">
                   <selectedTheme.icon className="w-12 h-12 md:w-16 md:h-16 text-black" />
                 </div>
               </div>
-              <div className="text-center space-y-2 md:space-y-4">
+              <div className="text-center space-y-4">
                 <p className="text-[10px] md:text-sm font-black text-primary uppercase tracking-[0.3em]">Pergunta {currentStep + 1} de {selectedTheme.questions.length}</p>
-                <h2 className="text-3xl md:text-6xl lg:text-9xl font-black book-font text-black leading-tight italic break-words">
+                <h2 className="text-3xl md:text-6xl lg:text-8xl font-black book-font text-black leading-tight italic break-words px-2">
                   {selectedTheme.questions[currentStep]}
                 </h2>
               </div>
@@ -253,10 +254,10 @@ export function StoryGame() {
                 onChange={(e) => setCurrentAnswer(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleNext()}
                 placeholder="Sua resposta bizarra..."
-                className="h-16 md:h-40 text-xl md:text-5xl lg:text-7xl border-[4px] md:border-[6px] border-black rounded-none book-font bg-yellow-50 text-center focus:ring-primary shadow-inner font-black italic"
+                className="h-16 md:h-32 text-xl md:text-4xl lg:text-6xl border-[4px] md:border-[6px] border-black rounded-none book-font bg-yellow-50 text-center focus:ring-primary shadow-inner font-black italic px-4"
                 autoFocus
               />
-              <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-auto py-3 md:py-4 bg-primary text-white font-black text-xl md:text-4xl uppercase comic-border shadow-[0_4px_0_0_rgba(0,0,0,1)] md:shadow-[0_8px_0_0_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all comic-text">
+              <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-auto py-3 md:py-4 bg-primary text-white font-black text-2xl md:text-4xl uppercase comic-border shadow-[0_4px_0_0_rgba(0,0,0,1)] md:shadow-[0_8px_0_0_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all comic-text">
                 PRÓXIMO <Send className="ml-2 md:ml-4 w-6 h-6 md:w-10 md:h-10" />
               </Button>
               <div className="text-center no-print pt-2 md:pt-6">
@@ -270,7 +271,7 @@ export function StoryGame() {
       </div>
 
       <div className="fixed top-4 right-4 z-[100] no-print">
-        <Button onClick={() => setIsSettingsOpen(true)} variant="ghost" size="icon" className="w-10 h-10 md:w-12 md:h-12 hover:bg-transparent hover:scale-110 transition-transform">
+        <Button onClick={() => setIsSettingsOpen(true)} variant="ghost" size="icon" className="w-10 h-10 md:w-12 md:h-12 hover:bg-transparent hover:scale-110 transition-transform p-0 border-none bg-transparent shadow-none">
           <Settings className="w-6 h-6 md:w-8 md:h-8 text-black/40 hover:text-black transition-colors" />
         </Button>
       </div>
