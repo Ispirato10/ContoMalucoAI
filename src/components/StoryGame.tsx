@@ -517,7 +517,7 @@ export function StoryGame() {
           <DialogFooter>
             <Button 
               onClick={() => { saveApiKey(userApiKey); setIsSettingsOpen(false); }} 
-              className="comic-border bg-secondary hover:bg-secondary/90 w-full font-black uppercase text-white h-auto py-3 md:py-4 text-lg md:text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all"
+              className="comic-border bg-secondary hover:bg-secondary/90 w-full font-black uppercase text-white h-auto py-3 md:py-4 text-lg md:text-2xl shadow-[4px_4px_0_0_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all"
             >
               Salvar Configuração
             </Button>
