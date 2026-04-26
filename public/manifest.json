@@ -1,11 +1,10 @@
-
 {
   "name": "Conto Maluco AI",
   "short_name": "Conto Maluco",
-  "description": "Crie gibis de histórias bizarras com IA!",
+  "description": "Seu gibi bizarro de histórias geradas por IA.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#fffce6",
+  "background_color": "#fff7e6",
   "theme_color": "#f12711",
   "icons": [
     {
