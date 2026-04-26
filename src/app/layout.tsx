@@ -4,13 +4,19 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://conto-maluco-ai.vercel.app'),
   title: 'Conto Maluco AI - Seu Gibi de Histórias Bizarras',
   description: 'Transforme respostas malucas em contos épicos com inteligência artificial!',
   manifest: '/manifest.json',
   icons: {
-    icon: '/logo.png',
+    icon: [
+      { url: '/logo.png' },
+      { url: '/logo.png', sizes: '32x32', type: 'image/png' },
+    ],
     shortcut: '/logo.png',
-    apple: '/logo.png',
+    apple: [
+      { url: '/logo.png', sizes: '180x180', type: 'image/png' },
+    ],
   },
   openGraph: {
     title: 'Conto Maluco AI',

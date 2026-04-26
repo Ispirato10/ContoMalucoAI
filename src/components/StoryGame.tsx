@@ -142,7 +142,12 @@ export function StoryGame() {
 
   return (
     <div className="space-y-4 max-w-full overflow-x-hidden">
-      <audio ref={audioRef} src={audioUrl || undefined} onEnded={() => setIsPlaying(false)} className="hidden" />
+      <audio 
+        ref={audioRef} 
+        src={audioUrl || undefined} 
+        onEnded={() => setIsPlaying(false)} 
+        className="hidden" 
+      />
 
       <div className="min-h-[400px]">
         {isFinalizing ? (
@@ -167,7 +172,7 @@ export function StoryGame() {
             {result.pages.map((page, index) => (
               <Card key={index} className="comic-border bg-white paper-texture comic-page">
                 <CardContent className="p-8 md:p-16 flex flex-col items-center justify-center min-h-[500px]">
-                  <p className="book-font text-4xl md:text-6xl text-center text-black leading-tight italic font-black">
+                  <p className="book-font text-5xl md:text-7xl text-center text-black leading-tight italic font-black">
                     {page.text}
                   </p>
                 </CardContent>
@@ -180,7 +185,7 @@ export function StoryGame() {
               </Button>
               {audioUrl && (
                 <Button onClick={handleDownloadAudio} className="bg-yellow-500 text-black comic-border h-auto py-6 px-10 font-black uppercase text-2xl shadow-xl flex-1">
-                  <Download /> Áudio
+                  <Download /> Baixar Áudio
                 </Button>
               )}
               <Button onClick={() => window.print()} className="bg-secondary text-white comic-border h-auto py-6 px-10 font-black uppercase text-2xl shadow-xl flex-1">

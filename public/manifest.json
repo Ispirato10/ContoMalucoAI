@@ -2,7 +2,11 @@
 {
   "name": "Conto Maluco AI",
   "short_name": "Conto Maluco",
-  "description": "Crie histórias bizarras com o poder da IA!",
+  "description": "Fábrica de gibis bizarros com IA",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f12711",
   "icons": [
     {
       "src": "/logo.png",
@@ -16,9 +20,5 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ],
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#f12711"
+  ]
 }
