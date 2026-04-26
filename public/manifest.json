@@ -1,10 +1,10 @@
 {
   "name": "Conto Maluco AI",
-  "short_name": "ContoMaluco",
-  "description": "Fábrica bizarra de gibis com IA",
+  "short_name": "Conto Maluco",
+  "description": "Fábrica bizarra de gibis com inteligência artificial!",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#fffceb",
+  "background_color": "#fffce6",
   "theme_color": "#f12711",
   "icons": [
     {
@@ -16,7 +16,8 @@
     {
       "src": "/logo.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

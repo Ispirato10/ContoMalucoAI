@@ -1,6 +1,6 @@
-
 import { StoryGame } from '@/components/StoryGame';
 import { InstallPWA } from '@/components/InstallPWA';
+import { ShareApp } from '@/components/ShareApp';
 import { BookOpen, Sparkles } from 'lucide-react';
 
 export default function Home() {
@@ -27,7 +27,9 @@ export default function Home() {
         <StoryGame />
       </div>
 
-      <footer className="mt-16 text-center text-sm font-bold opacity-60 italic no-print pb-24">
+      <ShareApp />
+
+      <footer className="mt-8 text-center text-sm font-bold opacity-60 italic no-print pb-24">
         Responda às perguntas e deixe a inteligência artificial criar a confusão!
       </footer>
 
