@@ -254,14 +254,14 @@ export function StoryGame() {
                 onChange={(e) => setCurrentAnswer(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleNext()}
                 placeholder="Sua resposta bizarra..."
-                className="h-32 text-4xl md:text-7xl border-[6px] border-black rounded-none book-font bg-yellow-50 text-center focus:ring-primary shadow-inner font-black italic"
+                className="h-24 md:h-32 text-3xl md:text-7xl border-[4px] md:border-[6px] border-black rounded-none book-font bg-yellow-50 text-center focus:ring-primary shadow-inner font-black italic"
                 autoFocus
               />
-              <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-auto py-10 bg-primary text-white font-black text-5xl uppercase comic-border shadow-[0_12px_0_0_rgba(0,0,0,1)] active:translate-y-2 active:shadow-none transition-all">
-                PRÓXIMO <Send className="ml-6 w-10 h-10" />
+              <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-auto py-8 md:py-10 bg-primary text-white font-black text-3xl md:text-5xl uppercase comic-border shadow-[0_8px_0_0_rgba(0,0,0,1)] md:shadow-[0_12px_0_0_rgba(0,0,0,1)] active:translate-y-2 active:shadow-none transition-all">
+                PRÓXIMO <Send className="ml-4 md:ml-6 w-8 h-8 md:w-10 md:h-10" />
               </Button>
               <div className="text-center no-print pt-6">
-                 <Button onClick={restart} variant="ghost" className="text-muted-foreground font-black hover:text-black italic text-xl uppercase tracking-widest">
+                 <Button onClick={restart} variant="ghost" className="text-muted-foreground font-black hover:text-black italic text-base md:text-xl uppercase tracking-widest">
                    Escolher outro tema
                  </Button>
               </div>
@@ -277,51 +277,51 @@ export function StoryGame() {
       </div>
 
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-        <DialogContent className="comic-border bg-white p-6 md:p-10 max-w-2xl overflow-hidden flex flex-col h-[90vh]">
-          <DialogHeader>
-            <DialogTitle className="comic-text text-4xl md:text-5xl font-black uppercase text-black italic">Configurações de Elite</DialogTitle>
+        <DialogContent className="comic-border bg-white p-4 md:p-10 w-[95vw] max-w-2xl overflow-hidden flex flex-col h-[90vh]">
+          <DialogHeader className="mb-4">
+            <DialogTitle className="comic-text text-3xl md:text-5xl font-black uppercase text-black italic">Configurações de Elite</DialogTitle>
           </DialogHeader>
           
-          <ScrollArea className="flex-1 pr-4">
-            <div className="space-y-8 py-4">
+          <ScrollArea className="flex-1 pr-2 md:pr-4">
+            <div className="space-y-6 py-4">
               <Collapsible open={isHelpOpen} onOpenChange={setIsHelpOpen}>
                 <CollapsibleTrigger asChild>
-                  <Button variant="outline" className="w-full h-auto py-4 comic-border bg-accent hover:bg-accent/90 text-black font-black uppercase flex items-center justify-between shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all mb-4">
-                    <span className="flex items-center gap-2">
-                      <HelpCircle className="w-6 h-6" /> Como conseguir chave grátis?
+                  <Button variant="outline" className="w-full h-auto py-3 md:py-4 comic-border bg-accent hover:bg-accent/90 text-black font-black uppercase flex items-center justify-between shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all mb-4">
+                    <span className="flex items-center gap-2 text-sm md:text-base">
+                      <HelpCircle className="w-5 h-5 md:w-6 md:h-6" /> Como conseguir chave grátis?
                     </span>
-                    <ChevronDown className={`w-6 h-6 transition-transform duration-300 ${isHelpOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`w-5 h-5 md:w-6 md:h-6 transition-transform duration-300 ${isHelpOpen ? 'rotate-180' : ''}`} />
                   </Button>
                 </CollapsibleTrigger>
                 
                 <CollapsibleContent className="animate-in slide-in-from-top-4 duration-300">
-                  <div className="bg-accent/10 comic-border p-6 space-y-6 relative overflow-hidden mb-6">
+                  <div className="bg-accent/10 comic-border p-4 md:p-6 space-y-4 md:space-y-6 relative overflow-hidden mb-6">
                     <div className="absolute -top-4 -right-4 p-4 opacity-10 rotate-12">
-                      <Info className="w-32 h-32 text-black" />
+                      <Info className="w-24 h-24 md:w-32 md:h-32 text-black" />
                     </div>
                     
-                    <h3 className="font-black uppercase text-xl md:text-2xl text-black flex items-center gap-3">
-                      <Sparkles className="w-6 h-6 text-primary" /> Manual do Super-Herói:
+                    <h3 className="font-black uppercase text-lg md:text-2xl text-black flex items-center gap-3">
+                      <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-primary" /> Manual do Super-Herói:
                     </h3>
                     
-                    <div className="grid gap-4">
+                    <div className="grid gap-3 md:gap-4">
                       {[
                         { step: 1, text: "Acesse o portal oficial:", link: "https://aistudio.google.com/", linkLabel: "Google AI Studio" },
-                        { step: 2, text: "Faça login com sua conta Google (é rápido e seguro!)" },
+                        { step: 2, text: "Faça login com sua conta Google" },
                         { step: 3, text: "No menu lateral esquerdo, clique em 'Get API key'" },
                         { step: 4, text: "Gere seu código único no botão azul." },
                         { step: 5, text: "Copie o código (ele começa com 'AIza...')" },
-                        { step: 6, text: "Cole no campo abaixo e salve para liberar a magia!" }
+                        { step: 6, text: "Cole no campo abaixo e salve!" }
                       ].map((item, i) => (
-                        <div key={i} className="flex gap-4 items-start">
-                          <div className="bg-primary text-white comic-border w-8 h-8 shrink-0 flex items-center justify-center font-black italic -rotate-6">
+                        <div key={i} className="flex gap-3 md:gap-4 items-start">
+                          <div className="bg-primary text-white comic-border w-6 h-6 md:w-8 md:h-8 shrink-0 flex items-center justify-center font-black italic -rotate-6 text-sm md:text-base">
                             {item.step}
                           </div>
-                          <p className="font-bold italic text-base md:text-lg text-black leading-tight">
+                          <p className="font-bold italic text-sm md:text-lg text-black leading-tight">
                             {item.text}
                             {item.link && (
                               <a href={item.link} target="_blank" rel="noopener noreferrer" className="ml-2 text-primary underline inline-flex items-center gap-1 hover:text-black transition-colors">
-                                {item.linkLabel} <ExternalLink className="w-4 h-4" />
+                                {item.linkLabel} <ExternalLink className="w-3 h-3 md:w-4 md:h-4" />
                               </a>
                             )}
                           </p>
@@ -333,27 +333,27 @@ export function StoryGame() {
               </Collapsible>
 
               <div className="space-y-4">
-                <label className="font-black uppercase text-black flex items-center gap-2 text-xl italic">
-                  <Key className="w-6 h-6 text-primary" /> Sua API Key Gemini
+                <label className="font-black uppercase text-black flex items-center gap-2 text-lg md:text-xl italic">
+                  <Key className="w-5 h-5 md:w-6 md:h-6 text-primary" /> Sua API Key Gemini
                 </label>
                 <Input 
                   type="password" 
                   value={userApiKey} 
                   onChange={(e) => setUserApiKey(e.target.value)} 
                   placeholder="AIza..."
-                  className="border-[6px] border-black h-24 text-3xl md:text-4xl rounded-none font-black bg-yellow-50 focus:ring-primary shadow-inner italic" 
+                  className="border-[4px] md:border-[6px] border-black h-16 md:h-24 text-xl md:text-4xl rounded-none font-black bg-yellow-50 focus:ring-primary shadow-inner italic" 
                 />
-                <p className="text-sm md:text-base font-bold text-muted-foreground italic leading-tight">
+                <p className="text-[10px] md:text-base font-bold text-muted-foreground italic leading-tight">
                   Usar sua própria chave evita erros de cota e garante que suas histórias nunca parem de ser geradas!
                 </p>
               </div>
             </div>
           </ScrollArea>
 
-          <DialogFooter className="mt-8">
+          <DialogFooter className="mt-6 md:mt-8">
             <Button 
               onClick={() => { saveApiKey(userApiKey); setIsSettingsOpen(false); }} 
-              className="w-full bg-secondary text-white font-black h-24 text-3xl md:text-4xl uppercase comic-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all"
+              className="w-full bg-secondary text-white font-black h-16 md:h-24 text-xl md:text-4xl uppercase comic-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all"
             >
               SALVAR MINHA CHAVE!
             </Button>
