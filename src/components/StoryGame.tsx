@@ -62,6 +62,128 @@ const THEMES = [
     ] 
   },
   { 
+    id: 'cooking', 
+    name: 'Cozinha Maluca', 
+    icon: Utensils, 
+    description: 'Desastres culinários dignos de um crítico.', 
+    questions: [
+      "Quem é o cozinheiro?", 
+      "Nome do restaurante?", 
+      "Qual o chapéu que ele usa?", 
+      "Qual o prato principal?", 
+      "Qual ingrediente bizarro usou?", 
+      "Qual o tempero secreto?", 
+      "Quem era o crítico famoso?", 
+      "Como o restaurante foi salvo?"
+    ] 
+  },
+  { 
+    id: 'western', 
+    name: 'Velho Oeste', 
+    icon: Shield, 
+    description: 'Duelos, xerifes e muita poeira.', 
+    questions: [
+      "Quem é o xerife medroso?", 
+      "Qual o nome da cidade?", 
+      "O que ele carrega no coldre?", 
+      "Qual o nome do cavalo?", 
+      "Quem é o bandido procurado?", 
+      "O que o bandido roubou?", 
+      "Onde foi o grande duelo?", 
+      "O duelo foi decidido com o quê?", 
+      "O que o pianista tocou?", 
+      "Qual o destino do xerife?"
+    ] 
+  },
+  { 
+    id: 'horror', 
+    name: 'Mansão Assombrada', 
+    icon: Ghost, 
+    description: 'Sustos, mistérios e fantasmas atrapalhados.', 
+    questions: [
+      "Quem entrou na mansão?", 
+      "Qual o nome da mansão?", 
+      "O que a pessoa buscava?", 
+      "Qual era a cor da lanterna?", 
+      "Qual era o cheiro do corredor?", 
+      "Que barulho estranho ouviu?", 
+      "O que tinha no quadro da parede?", 
+      "Quem era o fantasma?", 
+      "O que o fantasma queria?", 
+      "Qual o segredo do porão?", 
+      "Como a pessoa fugiu?", 
+      "O que ela nunca mais esqueceu?"
+    ] 
+  },
+  { 
+    id: 'superhero', 
+    name: 'Super-Heróis', 
+    icon: Zap, 
+    description: 'Heróis com poderes completamente inúteis.', 
+    questions: [
+      "Nome do herói?", 
+      "Qual o disfarce dele?", 
+      "Qual o poder inútil?", 
+      "Qual o som que ele faz ao voar?", 
+      "Qual o nome do ajudante?", 
+      "Qual o ponto fraco?", 
+      "Quem é o arqui-inimigo?", 
+      "Qual o plano maligno do vilão?", 
+      "Onde foi a batalha final?", 
+      "Qual o nome do golpe especial?", 
+      "O que a cidade deu de presente?", 
+      "Qual a frase de efeito?",
+      "Quem apareceu para ajudar no fim?"
+    ] 
+  },
+  { 
+    id: 'scifi', 
+    name: 'Espacial', 
+    icon: Rocket, 
+    description: 'Confusões intergalácticas em planetas distantes.', 
+    questions: [
+      "Nome da nave?", 
+      "Quem é o capitão?", 
+      "Em qual planeta pousaram?", 
+      "O que usam como combustível?", 
+      "Qual o som do motor?", 
+      "Como era o alienígena?", 
+      "O que o alien estava comendo?", 
+      "O que o robô da nave disse?", 
+      "Qual a lei mais estranha desse planeta?", 
+      "Houve uma emergência de quê?", 
+      "Como escaparam do buraco negro?", 
+      "Qual foi a lição intergaláctica?",
+      "Para onde a nave foi agora?",
+      "Quem era o passageiro clandestino?",
+      "Qual a cor do laser de emergência?"
+    ] 
+  },
+  { 
+    id: 'magic', 
+    name: 'Escola de Magia', 
+    icon: Wand2, 
+    description: 'Feitiços que deram muito errado.', 
+    questions: [
+      "Nome da escola?", 
+      "Quem é o diretor?", 
+      "De que é feita a varinha?", 
+      "Qual animal de estimação?", 
+      "Qual feitiço deu errado?", 
+      "O que o feitiço transformou?", 
+      "Qual o nome da poção nojenta?", 
+      "O que tinha dentro do caldeirão?", 
+      "Quem é o rival do herói?", 
+      "Qual a aventura proibida?", 
+      "Como consertaram a magia?", 
+      "Qual foi o banquete final?",
+      "Qual o nome do livro proibido?",
+      "Onde eles se esconderam do monitor?",
+      "Qual o som da vassoura voadora?",
+      "Quem ganhou a taça das casas?"
+    ] 
+  },
+  { 
     id: 'drama', 
     name: 'Novela Mexicana', 
     icon: Heart, 
@@ -86,124 +208,8 @@ const THEMES = [
       "Como foi o beijo apaixonado?",
       "Qual a última frase antes dos créditos?"
     ] 
-  },
-  { 
-    id: 'scifi', 
-    name: 'Espacial', 
-    icon: Rocket, 
-    description: 'Confusões intergalácticas em planetas distantes.', 
-    questions: [
-      "Nome da nave?", 
-      "Quem é o capitão?", 
-      "Em qual planeta pousaram?", 
-      "O que usam como combustível?", 
-      "Qual o som do motor?", 
-      "Como era o alienígena?", 
-      "O que o alien estava comendo?", 
-      "O que o robô da nave disse?", 
-      "Qual a lei mais estranha desse planeta?", 
-      "Houve uma emergência de quê?", 
-      "Como escaparam do buraco negro?", 
-      "Qual foi a lição intergaláctica?"
-    ] 
-  },
-  { 
-    id: 'horror', 
-    name: 'Mansão Assombrada', 
-    icon: Ghost, 
-    description: 'Sustos, mistérios e fantasmas atrapalhados.', 
-    questions: [
-      "Quem entrou na mansão?", 
-      "Qual o nome da mansão?", 
-      "O que a pessoa buscava?", 
-      "Qual era a cor da lanterna?", 
-      "Qual era o cheiro do corredor?", 
-      "Que barulho estranho ouviu?", 
-      "O que tinha no quadro da parede?", 
-      "Quem era o fantasma?", 
-      "O que o fantasma queria?", 
-      "Qual o segredo do porão?", 
-      "Como a pessoa fugiu?", 
-      "O que ela nunca mais esqueceu?"
-    ] 
-  },
-  { 
-    id: 'western', 
-    name: 'Velho Oeste', 
-    icon: Shield, 
-    description: 'Duelos, xerifes e muita poeira.', 
-    questions: [
-      "Quem é o xerife medroso?", 
-      "Qual o nome da cidade?", 
-      "O que ele carrega no coldre?", 
-      "Qual o nome do cavalo?", 
-      "Quem é o bandido procurado?", 
-      "O que o bandido roubou?", 
-      "Onde foi o grande duelo?", 
-      "O duelo foi decidido com o quê?", 
-      "O que o pianista tocou?", 
-      "Qual o destino do xerife?"
-    ] 
-  },
-  { 
-    id: 'superhero', 
-    name: 'Super-Heróis', 
-    icon: Zap, 
-    description: 'Heróis com poderes completamente inúteis.', 
-    questions: [
-      "Nome do herói?", 
-      "Qual o disfarce dele?", 
-      "Qual o poder inútil?", 
-      "Qual o som que ele faz ao voar?", 
-      "Qual o nome do ajudante?", 
-      "Qual o ponto fraco?", 
-      "Quem é o arqui-inimigo?", 
-      "Qual o plano maligno do vilão?", 
-      "Onde foi a batalha final?", 
-      "Qual o nome do golpe especial?", 
-      "O que a cidade deu de presente?", 
-      "Qual a frase de efeito?"
-    ] 
-  },
-  { 
-    id: 'magic', 
-    name: 'Escola de Magia', 
-    icon: Wand2, 
-    description: 'Feitiços que deram muito errado.', 
-    questions: [
-      "Nome da escola?", 
-      "Quem é o diretor?", 
-      "De que é feita a varinha?", 
-      "Qual animal de estimação?", 
-      "Qual feitiço deu errado?", 
-      "O que o feitiço transformou?", 
-      "Qual o nome da poção nojenta?", 
-      "O que tinha dentro do caldeirão?", 
-      "Quem é o rival do herói?", 
-      "Qual a aventura proibida?", 
-      "Como consertaram a magia?", 
-      "Qual foi o banquete final?"
-    ] 
-  },
-  { 
-    id: 'cooking', 
-    name: 'Cozinha Maluca', 
-    icon: Utensils, 
-    description: 'Desastres culinários dignos de um crítico.', 
-    questions: [
-      "Quem é o cozinheiro?", 
-      "Nome do restaurante?", 
-      "Qual o chapéu que ele usa?", 
-      "Qual o prato principal?", 
-      "Qual ingrediente bizarro usou?", 
-      "Qual o tempero secreto?", 
-      "Quem era o crítico famoso?", 
-      "Qual foi a reação do crítico?", 
-      "O que pegou fogo na cozinha?", 
-      "Como o restaurante foi salvo?"
-    ] 
   }
-];
+].sort((a, b) => a.questions.length - b.questions.length);
 
 export function StoryGame() {
   const { toast } = useToast();
@@ -437,7 +443,7 @@ export function StoryGame() {
                 className="h-14 md:h-24 text-xl md:text-3xl lg:text-5xl border-[4px] md:border-[6px] border-black rounded-none book-font bg-yellow-50 text-center focus:ring-primary shadow-inner font-black italic px-4"
                 autoFocus
               />
-              <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-auto py-3 md:py-4 bg-primary text-white font-black text-xl md:text-3xl uppercase comic-border shadow-[0_4px_0_0_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all comic-text">
+              <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-auto py-3 md:py-5 bg-primary text-white font-black text-xl md:text-3xl uppercase comic-border shadow-[0_4px_0_0_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all comic-text">
                 PRÓXIMO <Send className="ml-2 md:ml-4 w-5 h-5 md:w-8 md:h-8" />
               </Button>
               <div className="text-center no-print pt-2 md:pt-4">
