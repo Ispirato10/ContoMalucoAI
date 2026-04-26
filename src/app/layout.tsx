@@ -8,7 +8,10 @@ export const metadata: Metadata = {
   description: 'Transforme respostas malucas em contos épicos com inteligência artificial!',
   manifest: '/manifest.json',
   icons: {
-    icon: '/logo.png',
+    icon: [
+      { url: '/logo.png', sizes: '32x32', type: 'image/png' },
+      { url: '/logo.png', sizes: '16x16', type: 'image/png' },
+    ],
     shortcut: '/logo.png',
     apple: '/logo.png',
   },
@@ -55,7 +58,9 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Alegreya:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
-        <link rel="icon" href="/logo.png" />
+        <link rel="icon" type="image/png" href="/logo.png" />
+        <link rel="shortcut icon" type="image/png" href="/logo.png" />
+        <link rel="apple-touch-icon" href="/logo.png" />
       </head>
       <body className="font-sans antialiased bg-background text-foreground overflow-x-hidden">
         {children}
