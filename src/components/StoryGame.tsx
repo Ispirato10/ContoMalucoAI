@@ -47,14 +47,160 @@ import {
 } from "@/components/ui/collapsible";
 
 const THEMES = [
-  { id: 'classic', name: 'Aventura Clássica', icon: Sword, description: 'O herói contra o vilão em um lugar estranho.', questions: ["Quem é o herói?", "Onde ele vive?", "O que ele faz da vida?", "Quem apareceu de repente?", "O que o vilão gritou?", "Como essa loucura terminou?"] },
-  { id: 'scifi', name: 'Espacial', icon: Rocket, description: 'Confusões intergalácticas em planetas distantes.', questions: ["Nome da nave?", "Em qual planeta pousaram?", "O que usam como combustível?", "Como era o alienígena?", "O que o alien estava comendo?", "O que aconteceu no primeiro contato?"] },
-  { id: 'horror', name: 'Mansão Assombrada', icon: Ghost, description: 'Sustos, mistérios e fantasmas atrapalhados.', questions: ["Quem entrou na mansão?", "Qual o nome da mansão?", "O que a pessoa buscava?", "Qual era o cheiro do corredor?", "Que barulho estranho ouviu?", "Quem era o fantasma?"] },
-  { id: 'drama', name: 'Novela Mexicana', icon: Heart, description: 'Revelações bombásticas e dramas exagerados.', questions: ["Quem é a protagonista?", "Quem é o grande vilão?", "Qual o segredo obscuro?", "O que houve no casamento?", "Qual a frase antes do desmaio?"] },
-  { id: 'western', name: 'Velho Oeste', icon: Shield, description: 'Duelos, xerifes e muita poeira.', questions: ["Quem é o xerife medroso?", "Qual o nome da cidade?", "O que ele carrega no coldre?", "Quem é o bandido procurado?", "O duelo foi decidido com o quê?"] },
-  { id: 'superhero', name: 'Super-Heróis', icon: Zap, description: 'Heróis com poderes completamente inúteis.', questions: ["Nome do herói?", "Qual o disfarce dele?", "Qual o poder inútil?", "Qual o ponto fraco?", "Qual o plano maligno do vilão?"] },
-  { id: 'magic', name: 'Escola de Magia', icon: Wand2, description: 'Feitiços que deram muito errado.', questions: ["Nome da escola?", "De que é feita a varinha?", "Qual feitiço deu errado?", "Qual animal apareceu?", "O que tinha na poção nojenta?"] },
-  { id: 'cooking', name: 'Cozinha Maluca', icon: Utensils, description: 'Desastres culinários dignos de um crítico.', questions: ["Quem é o cozinheiro?", "Nome do restaurante?", "Qual o prato principal?", "Qual ingrediente bizarro usou?", "Qual foi a reação do crítico?"] }
+  { 
+    id: 'classic', 
+    name: 'Aventura Clássica', 
+    icon: Sword, 
+    description: 'O herói contra o vilão em um lugar estranho.', 
+    questions: [
+      "Quem é o herói?", 
+      "Qual o trabalho dele?", 
+      "Onde ele vive?", 
+      "O que ele carrega na mochila?", 
+      "Qual o seu maior medo?", 
+      "Quem apareceu de repente?", 
+      "Qual o nome do vilão?", 
+      "O que o vilão gritou?", 
+      "Qual arma o herói usou?", 
+      "Qual o grito de guerra do herói?", 
+      "O que aconteceu com o vilão?", 
+      "Como essa loucura terminou?"
+    ] 
+  },
+  { 
+    id: 'scifi', 
+    name: 'Espacial', 
+    icon: Rocket, 
+    description: 'Confusões intergalácticas em planetas distantes.', 
+    questions: [
+      "Nome da nave?", 
+      "Quem é o capitão?", 
+      "Em qual planeta pousaram?", 
+      "O que usam como combustível?", 
+      "Qual o som do motor?", 
+      "Como era o alienígena?", 
+      "O que o alien estava comendo?", 
+      "O que o robô da nave disse?", 
+      "Qual a lei mais estranha desse planeta?", 
+      "Houve uma emergência de quê?", 
+      "Como escaparam do buraco negro?", 
+      "Qual foi a lição intergaláctica?"
+    ] 
+  },
+  { 
+    id: 'horror', 
+    name: 'Mansão Assombrada', 
+    icon: Ghost, 
+    description: 'Sustos, mistérios e fantasmas atrapalhados.', 
+    questions: [
+      "Quem entrou na mansão?", 
+      "Qual o nome da mansão?", 
+      "O que a pessoa buscava?", 
+      "Qual era a cor da lanterna?", 
+      "Qual era o cheiro do corredor?", 
+      "Que barulho estranho ouviu?", 
+      "O que tinha no quadro da parede?", 
+      "Quem era o fantasma?", 
+      "O que o fantasma queria?", 
+      "Qual o segredo do porão?", 
+      "Como a pessoa fugiu?", 
+      "O que ela nunca mais esqueceu?"
+    ] 
+  },
+  { 
+    id: 'drama', 
+    name: 'Novela Mexicana', 
+    icon: Heart, 
+    description: 'Revelações bombásticas e dramas exagerados.', 
+    questions: [
+      "Quem é a protagonista?", 
+      "Onde ela trabalha?", 
+      "Quem é o grande vilão?", 
+      "Qual o segredo obscuro do passado?", 
+      "Qual o nome do cachorro?", 
+      "O que houve de errado no casamento?", 
+      "Qual a frase antes do desmaio?", 
+      "Quem é o herdeiro perdido?", 
+      "Qual o tapa dramático?", 
+      "Como foi o final feliz (ou trágico)?"
+    ] 
+  },
+  { 
+    id: 'western', 
+    name: 'Velho Oeste', 
+    icon: Shield, 
+    description: 'Duelos, xerifes e muita poeira.', 
+    questions: [
+      "Quem é o xerife medroso?", 
+      "Qual o nome da cidade?", 
+      "O que ele carrega no coldre?", 
+      "Qual o nome do cavalo?", 
+      "Quem é o bandido procurado?", 
+      "O que o bandido roubou?", 
+      "Onde foi o grande duelo?", 
+      "O duelo foi decidido com o quê?", 
+      "O que o pianista tocou?", 
+      "Qual o destino do xerife?"
+    ] 
+  },
+  { 
+    id: 'superhero', 
+    name: 'Super-Heróis', 
+    icon: Zap, 
+    description: 'Heróis com poderes completamente inúteis.', 
+    questions: [
+      "Nome do herói?", 
+      "Qual o disfarce dele?", 
+      "Qual o poder inútil?", 
+      "Qual o som que ele faz ao voar?", 
+      "Qual o nome do ajudante?", 
+      "Qual o ponto fraco?", 
+      "Quem é o arqui-inimigo?", 
+      "Qual o plano maligno do vilão?", 
+      "Onde foi a batalha final?", 
+      "Qual o nome do golpe especial?", 
+      "O que a cidade deu de presente?", 
+      "Qual a frase de efeito?"
+    ] 
+  },
+  { 
+    id: 'magic', 
+    name: 'Escola de Magia', 
+    icon: Wand2, 
+    description: 'Feitiços que deram muito errado.', 
+    questions: [
+      "Nome da escola?", 
+      "Quem é o diretor?", 
+      "De que é feita a varinha?", 
+      "Qual animal de estimação?", 
+      "Qual feitiço deu errado?", 
+      "O que o feitiço transformou?", 
+      "Qual o nome da poção nojenta?", 
+      "O que tinha dentro do caldeirão?", 
+      "Quem é o rival do herói?", 
+      "Qual a aventura proibida?", 
+      "Como consertaram a magia?", 
+      "Qual foi o banquete final?"
+    ] 
+  },
+  { 
+    id: 'cooking', 
+    name: 'Cozinha Maluca', 
+    icon: Utensils, 
+    description: 'Desastres culinários dignos de um crítico.', 
+    questions: [
+      "Quem é o cozinheiro?", 
+      "Nome do restaurante?", 
+      "Qual o chapéu que ele usa?", 
+      "Qual o prato principal?", 
+      "Qual ingrediente bizarro usou?", 
+      "Qual o tempero secreto?", 
+      "Quem era o crítico famoso?", 
+      "Qual foi a reação do crítico?", 
+      "O que pegou fogo na cozinha?", 
+      "Como o restaurante foi salvo?"
+    ] 
+  }
 ];
 
 export function StoryGame() {
@@ -172,13 +318,12 @@ export function StoryGame() {
           <div className="space-y-8 animate-in zoom-in-95 duration-700">
             {/* Capa do Gibi */}
             <Card className="comic-border bg-primary p-6 md:p-12 text-center shadow-2xl comic-title-page overflow-hidden relative">
-              {/* Elementos de Impressão */}
               <div className="hidden print:flex print:items-center print:justify-between print:w-full print:absolute print:top-8 print:px-12 print:border-b-4 print:border-white print:pb-4">
                 <div className="flex items-center gap-3">
-                  <img src="/logo.png" alt="Logo" className="w-12 h-12" />
+                  <img src="/logo.png?v=1" alt="Logo" className="w-12 h-12" />
                   <span className="comic-text text-2xl text-white">Conto Maluco AI</span>
                 </div>
-                <div className="text-sm text-white/80 italic font-black">EDIÇÃO DE COLECIONADOR</div>
+                <div className="text-sm text-white/80 italic font-black uppercase">Edição Especial</div>
               </div>
               
               <h2 className="text-4xl md:text-8xl lg:text-9xl font-black uppercase comic-text text-white drop-shadow-[4px_4px_0px_rgba(0,0,0,1)] md:drop-shadow-[6px_6px_0px_rgba(0,0,0,1)] leading-tight italic break-words whitespace-normal px-2 overflow-wrap-anywhere">
@@ -187,7 +332,7 @@ export function StoryGame() {
 
               <div className="hidden print:flex print:items-center print:justify-between print:w-full print:absolute print:bottom-8 print:px-12 print:border-t print:border-white/40 print:pt-4 text-white/80">
                 <span className="text-xs">https://conto-maluco-ai.vercel.app</span>
-                <span className="text-xs italic font-bold">Obra-prima gerada por Inteligência Artificial</span>
+                <span className="text-xs italic font-bold">CAPA DO GIBI</span>
               </div>
             </Card>
 
@@ -196,10 +341,10 @@ export function StoryGame() {
               <Card key={index} className="comic-border bg-white paper-texture comic-page relative overflow-hidden">
                 <div className="hidden print:flex print:items-center print:justify-between print:w-full print:absolute print:top-8 print:px-12 print:border-b-4 print:border-black print:pb-4">
                   <div className="flex items-center gap-3">
-                    <img src="/logo.png" alt="Logo" className="w-12 h-12" />
+                    <img src="/logo.png?v=1" alt="Logo" className="w-12 h-12" />
                     <span className="comic-text text-2xl">Conto Maluco AI</span>
                   </div>
-                  <div className="text-sm italic font-black uppercase">Capítulo: {result.title.substring(0, 20)}...</div>
+                  <div className="text-sm italic font-black uppercase">Gibi Bizarro</div>
                 </div>
 
                 <CardContent className="p-8 md:p-16 flex flex-col items-center justify-center min-h-[400px] md:min-h-[500px] w-full">
