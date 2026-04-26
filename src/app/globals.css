@@ -87,9 +87,10 @@
     page-break-after: always;
     height: auto;
     display: block;
-    padding: 2cm !important;
+    padding: 1.5cm !important;
     border: none !important;
     box-shadow: none !important;
+    background: none !important;
   }
   .comic-title-page {
     height: 100vh;
@@ -99,28 +100,36 @@
     justify-content: center;
     text-align: center;
     page-break-after: always;
-    border-bottom: 2px solid black;
+    border: none !important;
+    background: none !important;
   }
   .comic-title-page h2 {
-    font-size: 4rem !important;
+    font-size: 3.5rem !important;
     color: black !important;
     text-transform: uppercase;
+    font-family: 'Alegreya', serif !important;
+    font-weight: 900 !important;
+    border-bottom: 4px solid black;
+    padding-bottom: 0.5cm;
+    margin-bottom: 1cm;
   }
   .comic-caption {
-    font-size: 1.5rem !important;
-    line-height: 1.6 !important;
+    font-size: 1.4rem !important;
+    line-height: 1.8 !important;
     color: black !important;
     text-align: justify !important;
     max-width: 100% !important;
     background: none !important;
     padding: 0 !important;
     border: none !important;
+    font-family: 'Alegreya', serif !important;
   }
   .page-number {
     display: block;
     text-align: center;
-    margin-top: 1cm;
+    margin-top: 2cm;
     font-size: 1rem;
+    font-family: 'Alegreya', serif !important;
     font-style: italic;
   }
 }

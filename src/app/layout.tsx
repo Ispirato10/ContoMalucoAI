@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     siteName: 'Conto Maluco AI',
     images: [
       {
-        url: 'https://picsum.photos/seed/crazybook/1200/630',
+        url: '/logo.png',
         width: 1200,
         height: 630,
         alt: 'Conto Maluco AI - Seu Livro de Histórias',
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Conto Maluco AI - Seu Livro de Histórias',
     description: 'Transforme respostas malucas em contos épicos com inteligência artificial!',
-    images: ['https://picsum.photos/seed/crazybook/1200/630'],
+    images: ['/logo.png'],
   },
   manifest: '/manifest.json',
   appleWebApp: {
@@ -40,8 +40,8 @@ export const metadata: Metadata = {
     telephone: false,
   },
   icons: {
-    icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23facc15' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 19.5A2.5 2.5 0 0 1 6.5 17H20'/%3E%3Cpath d='M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z'/%3E%3Ctext x='12' y='14' font-family='Arial' font-size='6' font-weight='bold' text-anchor='middle' fill='black'%3EAI%3C/text%3E%3C/svg%3E",
-    apple: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23facc15' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 19.5A2.5 2.5 0 0 1 6.5 17H20'/%3E%3Cpath d='M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z'/%3E%3Ctext x='12' y='14' font-family='Arial' font-size='6' font-weight='bold' text-anchor='middle' fill='black'%3EAI%3C/text%3E%3C/svg%3E",
+    icon: "/logo.png",
+    apple: "/logo.png",
   }
 };
 

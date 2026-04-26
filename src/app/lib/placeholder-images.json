@@ -2,15 +2,15 @@
 {
   "placeholderImages": [
     {
-      "id": "crazybooklogo",
-      "description": "Logotipo vibrante do Conto Maluco AI em estilo gibi",
-      "imageUrl": "https://picsum.photos/seed/crazybooklogo/1200/630",
+      "id": "logo",
+      "description": "Logotipo do Conto Maluco AI",
+      "imageUrl": "/logo.png",
       "imageHint": "comic book logo"
     },
     {
       "id": "crazybook",
-      "description": "Uma ilustração vibrante de um livro de histórias malucas aberto com elementos saltando dele",
-      "imageUrl": "https://picsum.photos/seed/crazybook/1200/630",
+      "description": "Uma ilustração vibrante de um livro de histórias malucas",
+      "imageUrl": "/logo.png",
       "imageHint": "storybook magic"
     }
   ]
