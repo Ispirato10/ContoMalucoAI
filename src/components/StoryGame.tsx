@@ -47,14 +47,14 @@ import {
 } from "@/components/ui/collapsible";
 
 const THEMES = [
-  { id: 'classic', name: 'Aventura Clássica', icon: Sword, description: 'O herói contra o vilão em um lugar estranho.', questions: ["Quem é o herói?", "Onde vive?", "O que faz?", "Quem apareceu?", "O que gritou?", "Como terminou?"] },
-  { id: 'scifi', name: 'Espacial', icon: Rocket, description: 'Confusões intergalácticas.', questions: ["Nome da nave?", "Planeta?", "Combustível?", "Alien?", "O que comia?", "O que houve no olá?"] },
-  { id: 'horror', name: 'Mansão', icon: Ghost, description: 'Sustos e mistérios.', questions: ["Quem entrou?", "Nome da mansão?", "O que buscava?", "Cheiro?", "Barulho?", "Nome do fantasma?"] },
-  { id: 'drama', name: 'Novela', icon: Heart, description: 'Revelações bombásticas.', questions: ["Protagonista?", "Vilão?", "Segredo?", "O que houve no casamento?", "Frase de desmaio?"] },
-  { id: 'western', name: 'Oeste', icon: Shield, description: 'Duelos e xerifes.', questions: ["Xerife medroso?", "Cidade?", "O que carrega?", "Bandido?", "Duelo com o quê?"] },
-  { id: 'superhero', name: 'Heróis', icon: Zap, description: 'Poderes inúteis.', questions: ["Nome do herói?", "Disfarce?", "Poder inútil?", "Ponto fraco?", "Plano do vilão?"] },
-  { id: 'magic', name: 'Magia', icon: Wand2, description: 'Feitiços errados.', questions: ["Escola?", "Varinha?", "Feitiço errado?", "Animal?", "Poção nojenta?"] },
-  { id: 'cooking', name: 'Cozinha', icon: Utensils, description: 'Desastres culinários.', questions: ["Cozinheiro?", "Restaurante?", "Prato?", "Ingrediente bizarro?", "Reação do crítico?"] }
+  { id: 'classic', name: 'Aventura Clássica', icon: Sword, description: 'O herói contra o vilão em um lugar estranho.', questions: ["Quem é o herói?", "Onde ele vive?", "O que ele faz da vida?", "Quem apareceu de repente?", "O que o vilão gritou?", "Como essa loucura terminou?"] },
+  { id: 'scifi', name: 'Espacial', icon: Rocket, description: 'Confusões intergalácticas em planetas distantes.', questions: ["Nome da nave?", "Em qual planeta pousaram?", "O que usam como combustível?", "Como era o alienígena?", "O que o alien estava comendo?", "O que aconteceu no primeiro contato?"] },
+  { id: 'horror', name: 'Mansão Assombrada', icon: Ghost, description: 'Sustos, mistérios e fantasmas atrapalhados.', questions: ["Quem entrou na mansão?", "Qual o nome da mansão?", "O que a pessoa buscava?", "Qual era o cheiro do corredor?", "Que barulho estranho ouviu?", "Quem era o fantasma?"] },
+  { id: 'drama', name: 'Novela Mexicana', icon: Heart, description: 'Revelações bombásticas e dramas exagerados.', questions: ["Quem é a protagonista?", "Quem é o grande vilão?", "Qual o segredo obscuro?", "O que houve no casamento?", "Qual a frase antes do desmaio?"] },
+  { id: 'western', name: 'Velho Oeste', icon: Shield, description: 'Duelos, xerifes e muita poeira.', questions: ["Quem é o xerife medroso?", "Qual o nome da cidade?", "O que ele carrega no coldre?", "Quem é o bandido procurado?", "O duelo foi decidido com o quê?"] },
+  { id: 'superhero', name: 'Super-Heróis', icon: Zap, description: 'Heróis com poderes completamente inúteis.', questions: ["Nome do herói?", "Qual o disfarce dele?", "Qual o poder inútil?", "Qual o ponto fraco?", "Qual o plano maligno do vilão?"] },
+  { id: 'magic', name: 'Escola de Magia', icon: Wand2, description: 'Feitiços que deram muito errado.', questions: ["Nome da escola?", "De que é feita a varinha?", "Qual feitiço deu errado?", "Qual animal apareceu?", "O que tinha na poção nojenta?"] },
+  { id: 'cooking', name: 'Cozinha Maluca', icon: Utensils, description: 'Desastres culinários dignos de um crítico.', questions: ["Quem é o cozinheiro?", "Nome do restaurante?", "Qual o prato principal?", "Qual ingrediente bizarro usou?", "Qual foi a reação do crítico?"] }
 ];
 
 export function StoryGame() {
@@ -172,66 +172,65 @@ export function StoryGame() {
           <div className="space-y-8 animate-in zoom-in-95 duration-700">
             {/* Capa do Gibi */}
             <Card className="comic-border bg-primary p-6 md:p-12 text-center shadow-2xl comic-title-page overflow-hidden relative">
-              <div className="hidden print:print-header no-print">
+              {/* Elementos de Impressão */}
+              <div className="hidden print:flex print:items-center print:justify-between print:w-full print:absolute print:top-8 print:px-12 print:border-b-4 print:border-white print:pb-4">
                 <div className="flex items-center gap-3">
                   <img src="/logo.png" alt="Logo" className="w-12 h-12" />
-                  <span className="comic-text text-xl text-white">Conto Maluco AI</span>
+                  <span className="comic-text text-2xl text-white">Conto Maluco AI</span>
                 </div>
-                <div className="text-xs text-white/60 italic">Edição Especial de Luxo</div>
+                <div className="text-sm text-white/80 italic font-black">EDIÇÃO DE COLECIONADOR</div>
               </div>
               
               <h2 className="text-4xl md:text-8xl lg:text-9xl font-black uppercase comic-text text-white drop-shadow-[4px_4px_0px_rgba(0,0,0,1)] md:drop-shadow-[6px_6px_0px_rgba(0,0,0,1)] leading-tight italic break-words whitespace-normal px-2 overflow-wrap-anywhere">
                 {result.title}
               </h2>
 
-              <div className="hidden print:print-footer no-print text-white/80 border-white/20">
-                <span>https://conto-maluco-ai.vercel.app</span>
-                <span>Obra prima gerada por IA</span>
+              <div className="hidden print:flex print:items-center print:justify-between print:w-full print:absolute print:bottom-8 print:px-12 print:border-t print:border-white/40 print:pt-4 text-white/80">
+                <span className="text-xs">https://conto-maluco-ai.vercel.app</span>
+                <span className="text-xs italic font-bold">Obra-prima gerada por Inteligência Artificial</span>
               </div>
             </Card>
 
             {/* Páginas Internas */}
             {result.pages.map((page, index) => (
-              <Card key={index} className="comic-border bg-white paper-texture comic-page relative">
-                {/* Header de Impressão */}
-                <div className="hidden print:print-header">
+              <Card key={index} className="comic-border bg-white paper-texture comic-page relative overflow-hidden">
+                <div className="hidden print:flex print:items-center print:justify-between print:w-full print:absolute print:top-8 print:px-12 print:border-b-4 print:border-black print:pb-4">
                   <div className="flex items-center gap-3">
-                    <img src="/logo.png" alt="Logo" className="w-10 h-10" />
-                    <span className="comic-text text-lg">Conto Maluco AI</span>
+                    <img src="/logo.png" alt="Logo" className="w-12 h-12" />
+                    <span className="comic-text text-2xl">Conto Maluco AI</span>
                   </div>
-                  <div className="text-xs italic font-bold">História: {result.title.substring(0, 30)}...</div>
+                  <div className="text-sm italic font-black uppercase">Capítulo: {result.title.substring(0, 20)}...</div>
                 </div>
 
                 <CardContent className="p-8 md:p-16 flex flex-col items-center justify-center min-h-[400px] md:min-h-[500px] w-full">
                   <p className="book-font text-4xl md:text-7xl lg:text-8xl text-center text-black leading-tight italic font-black break-words w-full overflow-wrap-anywhere">
                     {page.text}
                   </p>
-                  <span className="page-number no-print mt-12 block text-center text-muted-foreground font-bold">
+                  <span className="page-number no-print mt-12 block text-center text-muted-foreground font-black uppercase tracking-widest text-sm md:text-base">
                     Página {index + 1} de {result.pages.length}
                   </span>
                 </CardContent>
 
-                {/* Footer de Impressão */}
-                <div className="hidden print:print-footer">
-                  <span>https://conto-maluco-ai.vercel.app</span>
-                  <span>Página {index + 1} de {result.pages.length}</span>
+                <div className="hidden print:flex print:items-center print:justify-between print:w-full print:absolute print:bottom-8 print:px-12 print:border-t print:border-black/20 print:pt-4 text-black/60">
+                  <span className="text-xs">https://conto-maluco-ai.vercel.app</span>
+                  <span className="text-sm font-black">PÁGINA {index + 1}</span>
                 </div>
               </Card>
             ))}
 
             <div className="flex flex-wrap gap-4 justify-center no-print pb-24 px-2">
-              <Button onClick={handlePlayAudio} disabled={isAudioLoading} className="bg-accent text-black comic-border h-auto py-4 md:py-6 px-6 md:px-10 font-black uppercase text-xl md:text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1 min-w-[140px]">
+              <Button onClick={handlePlayAudio} disabled={isAudioLoading} className="bg-accent text-black comic-border h-auto py-3 md:py-5 px-6 md:px-10 font-black uppercase text-xl md:text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1 min-w-[140px]">
                 {isAudioLoading ? <Loader2 className="animate-spin" /> : isPlaying ? <Pause /> : <Volume2 />} {isPlaying ? 'Pausar' : 'Ouvir'}
               </Button>
               {audioUrl && (
-                <Button onClick={handleDownloadAudio} className="bg-yellow-500 text-black comic-border h-auto py-4 md:py-6 px-6 md:px-10 font-black uppercase text-xl md:text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1 min-w-[140px]">
+                <Button onClick={handleDownloadAudio} className="bg-yellow-500 text-black comic-border h-auto py-3 md:py-5 px-6 md:px-10 font-black uppercase text-xl md:text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1 min-w-[140px]">
                   <Download className="w-5 h-5 md:w-6 md:h-6 mr-2" /> Baixar
                 </Button>
               )}
-              <Button onClick={() => window.print()} className="bg-secondary text-white comic-border h-auto py-4 md:py-6 px-6 md:px-10 font-black uppercase text-xl md:text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1 min-w-[140px]">
+              <Button onClick={() => window.print()} className="bg-secondary text-white comic-border h-auto py-3 md:py-5 px-6 md:px-10 font-black uppercase text-xl md:text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1 min-w-[140px]">
                 <Printer className="w-5 h-5 md:w-6 md:h-6 mr-2" /> PDF
               </Button>
-              <Button onClick={restart} variant="outline" className="bg-white text-black comic-border h-auto py-4 md:py-6 px-6 md:px-10 font-black uppercase text-xl md:text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1 min-w-[140px]">
+              <Button onClick={restart} variant="outline" className="bg-white text-black comic-border h-auto py-3 md:py-5 px-6 md:px-10 font-black uppercase text-xl md:text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1 min-w-[140px]">
                 <RotateCcw className="w-5 h-5 md:w-6 md:h-6 mr-2" /> Novo
               </Button>
             </div>
@@ -259,7 +258,9 @@ export function StoryGame() {
                     </div>
                     <p className="font-bold text-muted-foreground italic book-font text-xl leading-snug">{theme.description}</p>
                     <div className="mt-2 flex items-center gap-2 text-xs font-black uppercase text-primary">
-                      <span className="bg-primary text-white px-3 py-1 comic-border">{theme.questions.length} PERGUNTAS</span>
+                      <span className="bg-primary text-white px-3 py-1 comic-border">
+                        {theme.questions.length} PERGUNTAS
+                      </span>
                       <Sparkles className="w-4 h-4" />
                     </div>
                   </button>
@@ -289,7 +290,7 @@ export function StoryGame() {
                 className="h-14 md:h-24 text-xl md:text-3xl lg:text-5xl border-[4px] md:border-[6px] border-black rounded-none book-font bg-yellow-50 text-center focus:ring-primary shadow-inner font-black italic px-4"
                 autoFocus
               />
-              <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-auto py-2 md:py-4 bg-primary text-white font-black text-xl md:text-3xl uppercase comic-border shadow-[0_4px_0_0_rgba(0,0,0,1)] md:shadow-[0_8px_0_0_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all comic-text">
+              <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-auto py-3 md:py-4 bg-primary text-white font-black text-xl md:text-3xl uppercase comic-border shadow-[0_4px_0_0_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all comic-text">
                 PRÓXIMO <Send className="ml-2 md:ml-4 w-5 h-5 md:w-8 md:h-8" />
               </Button>
               <div className="text-center no-print pt-2 md:pt-4">
