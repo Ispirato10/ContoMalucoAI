@@ -5,7 +5,7 @@ import { BookOpen, Sparkles } from 'lucide-react';
 
 export default function Home() {
   return (
-    <main className="min-h-screen p-4 md:p-8 max-w-5xl mx-auto pt-16 md:pt-8">
+    <main className="min-h-screen p-4 md:p-8 max-w-5xl mx-auto pt-20 md:pt-12">
       <header className="text-center mb-12 space-y-4 no-print">
         <div className="inline-block bg-accent comic-border p-6 -rotate-2 relative">
           <div className="absolute -top-3 -right-3 w-8 h-8 bg-white border-2 border-black rounded-full flex items-center justify-center animate-bounce">

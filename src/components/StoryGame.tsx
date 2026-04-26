@@ -170,16 +170,16 @@ export function StoryGame() {
           </Card>
         ) : result ? (
           <div className="space-y-8 animate-in zoom-in-95 duration-700">
-            <Card className="comic-border bg-primary p-12 text-center shadow-2xl comic-title-page">
-              <h2 className="text-6xl md:text-9xl font-black uppercase comic-text text-white drop-shadow-[6px_6px_0px_rgba(0,0,0,1)] leading-none italic">
+            <Card className="comic-border bg-primary p-6 md:p-12 text-center shadow-2xl comic-title-page overflow-hidden">
+              <h2 className="text-4xl md:text-8xl lg:text-9xl font-black uppercase comic-text text-white drop-shadow-[4px_4px_0px_rgba(0,0,0,1)] md:drop-shadow-[6px_6px_0px_rgba(0,0,0,1)] leading-tight italic break-words whitespace-normal px-2">
                 {result.title}
               </h2>
             </Card>
 
             {result.pages.map((page, index) => (
               <Card key={index} className="comic-border bg-white paper-texture comic-page">
-                <CardContent className="p-8 md:p-16 flex flex-col items-center justify-center min-h-[500px]">
-                  <p className="book-font text-6xl md:text-9xl text-center text-black leading-tight italic font-black">
+                <CardContent className="p-8 md:p-16 flex flex-col items-center justify-center min-h-[400px] md:min-h-[500px]">
+                  <p className="book-font text-5xl md:text-8xl lg:text-9xl text-center text-black leading-tight italic font-black break-words">
                     {page.text}
                   </p>
                 </CardContent>
@@ -187,19 +187,19 @@ export function StoryGame() {
             ))}
 
             <div className="flex flex-wrap gap-4 justify-center no-print pb-24">
-              <Button onClick={handlePlayAudio} disabled={isAudioLoading} className="bg-accent text-black comic-border h-auto py-6 px-10 font-black uppercase text-2xl shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1">
+              <Button onClick={handlePlayAudio} disabled={isAudioLoading} className="bg-accent text-black comic-border h-auto py-4 md:py-6 px-6 md:px-10 font-black uppercase text-xl md:text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1">
                 {isAudioLoading ? <Loader2 className="animate-spin" /> : isPlaying ? <Pause /> : <Volume2 />} {isPlaying ? 'Pausar' : 'Ouvir'}
               </Button>
               {audioUrl && (
-                <Button onClick={handleDownloadAudio} className="bg-yellow-500 text-black comic-border h-auto py-6 px-10 font-black uppercase text-2xl shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1">
-                  <Download className="w-6 h-6 mr-2" /> Baixar Áudio
+                <Button onClick={handleDownloadAudio} className="bg-yellow-500 text-black comic-border h-auto py-4 md:py-6 px-6 md:px-10 font-black uppercase text-xl md:text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1">
+                  <Download className="w-5 h-5 md:w-6 md:h-6 mr-2" /> Baixar
                 </Button>
               )}
-              <Button onClick={() => window.print()} className="bg-secondary text-white comic-border h-auto py-6 px-10 font-black uppercase text-2xl shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1">
-                <Printer className="w-6 h-6 mr-2" /> PDF
+              <Button onClick={() => window.print()} className="bg-secondary text-white comic-border h-auto py-4 md:py-6 px-6 md:px-10 font-black uppercase text-xl md:text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1">
+                <Printer className="w-5 h-5 md:w-6 md:h-6 mr-2" /> PDF
               </Button>
-              <Button onClick={restart} variant="outline" className="bg-white text-black comic-border h-auto py-6 px-10 font-black uppercase text-2xl shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1">
-                <RotateCcw className="w-6 h-6 mr-2" /> Novo
+              <Button onClick={restart} variant="outline" className="bg-white text-black comic-border h-auto py-4 md:py-6 px-6 md:px-10 font-black uppercase text-xl md:text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex-1">
+                <RotateCcw className="w-5 h-5 md:w-6 md:h-6 mr-2" /> Novo
               </Button>
             </div>
           </div>
@@ -236,15 +236,15 @@ export function StoryGame() {
           </div>
         ) : (
           <Card className="comic-border bg-white overflow-hidden shadow-2xl">
-            <CardContent className="p-8 md:p-20 space-y-8 md:space-y-16">
-              <div className="flex justify-center mb-2 md:mb-4">
+            <CardContent className="p-6 md:p-20 space-y-6 md:space-y-16">
+              <div className="flex justify-center mb-2">
                 <div className="bg-accent p-4 md:p-6 comic-border -rotate-3 scale-110">
                   <selectedTheme.icon className="w-12 h-12 md:w-16 md:h-16 text-black" />
                 </div>
               </div>
               <div className="text-center space-y-2 md:space-y-4">
                 <p className="text-[10px] md:text-sm font-black text-primary uppercase tracking-[0.3em]">Pergunta {currentStep + 1} de {selectedTheme.questions.length}</p>
-                <h2 className="text-3xl md:text-6xl lg:text-9xl font-black book-font text-black leading-tight italic">
+                <h2 className="text-3xl md:text-6xl lg:text-9xl font-black book-font text-black leading-tight italic break-words">
                   {selectedTheme.questions[currentStep]}
                 </h2>
               </div>
@@ -253,14 +253,14 @@ export function StoryGame() {
                 onChange={(e) => setCurrentAnswer(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleNext()}
                 placeholder="Sua resposta bizarra..."
-                className="h-20 md:h-40 text-2xl md:text-5xl lg:text-7xl border-[4px] md:border-[6px] border-black rounded-none book-font bg-yellow-50 text-center focus:ring-primary shadow-inner font-black italic"
+                className="h-16 md:h-40 text-xl md:text-5xl lg:text-7xl border-[4px] md:border-[6px] border-black rounded-none book-font bg-yellow-50 text-center focus:ring-primary shadow-inner font-black italic"
                 autoFocus
               />
-              <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-auto py-4 md:py-6 bg-primary text-white font-black text-2xl md:text-4xl uppercase comic-border shadow-[0_4px_0_0_rgba(0,0,0,1)] md:shadow-[0_8px_0_0_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all comic-text">
-                PRÓXIMO <Send className="ml-3 md:ml-4 w-6 h-6 md:w-10 md:h-10" />
+              <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-auto py-3 md:py-4 bg-primary text-white font-black text-xl md:text-4xl uppercase comic-border shadow-[0_4px_0_0_rgba(0,0,0,1)] md:shadow-[0_8px_0_0_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all comic-text">
+                PRÓXIMO <Send className="ml-2 md:ml-4 w-6 h-6 md:w-10 md:h-10" />
               </Button>
               <div className="text-center no-print pt-2 md:pt-6">
-                 <Button onClick={restart} variant="ghost" className="text-muted-foreground font-black hover:text-black italic text-sm md:text-xl uppercase tracking-widest">
+                 <Button onClick={restart} variant="ghost" className="text-muted-foreground font-black hover:text-black italic text-xs md:text-xl uppercase tracking-widest">
                    Escolher outro tema
                  </Button>
               </div>
@@ -278,7 +278,7 @@ export function StoryGame() {
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
         <DialogContent className="comic-border bg-white p-4 md:p-10 w-[95vw] max-w-2xl overflow-hidden flex flex-col h-[90vh] md:h-auto md:max-h-[85vh]">
           <DialogHeader className="mb-4">
-            <DialogTitle className="comic-text text-3xl md:text-5xl font-black uppercase text-black italic">Configurações</DialogTitle>
+            <DialogTitle className="comic-text text-2xl md:text-5xl font-black uppercase text-black italic">Configurações</DialogTitle>
           </DialogHeader>
           
           <ScrollArea className="flex-1 pr-2 md:pr-4">
@@ -286,7 +286,7 @@ export function StoryGame() {
               <Collapsible open={isHelpOpen} onOpenChange={setIsHelpOpen}>
                 <CollapsibleTrigger asChild>
                   <Button variant="outline" className="w-full h-auto py-3 md:py-4 comic-border bg-accent hover:bg-accent/90 text-black font-black uppercase flex items-center justify-between shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all mb-4">
-                    <span className="flex items-center gap-2 text-sm md:text-base">
+                    <span className="flex items-center gap-2 text-xs md:text-base">
                       <HelpCircle className="w-5 h-5 md:w-6 md:h-6" /> Como conseguir chave grátis?
                     </span>
                     <ChevronDown className={`w-5 h-5 md:w-6 md:h-6 transition-transform duration-300 ${isHelpOpen ? 'rotate-180' : ''}`} />
@@ -299,8 +299,8 @@ export function StoryGame() {
                       <Info className="w-24 h-24 md:w-32 md:h-32 text-black" />
                     </div>
                     
-                    <h3 className="font-black uppercase text-lg md:text-2xl text-black flex items-center gap-3">
-                      <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-primary" /> Manual do Super-Herói:
+                    <h3 className="font-black uppercase text-base md:text-2xl text-black flex items-center gap-3">
+                      <Sparkles className="w-4 h-4 md:w-6 md:h-6 text-primary" /> Manual do Super-Herói:
                     </h3>
                     
                     <div className="grid gap-3 md:gap-4">
@@ -313,13 +313,13 @@ export function StoryGame() {
                         { step: 6, text: "Cole no campo abaixo e salve!" }
                       ].map((item, i) => (
                         <div key={i} className="flex gap-3 md:gap-4 items-start">
-                          <div className="bg-primary text-white comic-border w-6 h-6 md:w-8 md:h-8 shrink-0 flex items-center justify-center font-black italic -rotate-6 text-sm md:text-base">
+                          <div className="bg-primary text-white comic-border w-6 h-6 md:w-8 md:h-8 shrink-0 flex items-center justify-center font-black italic -rotate-6 text-xs md:text-base">
                             {item.step}
                           </div>
-                          <p className="font-bold italic text-sm md:text-lg text-black leading-tight">
+                          <p className="font-bold italic text-xs md:text-lg text-black leading-tight">
                             {item.text}
                             {item.link && (
-                              <a href={item.link} target="_blank" rel="noopener noreferrer" className="ml-2 text-primary underline inline-flex items-center gap-1 hover:text-black transition-colors">
+                              <a href={item.link} target="_blank" rel="noopener noreferrer" className="ml-1 text-primary underline inline-flex items-center gap-1 hover:text-black transition-colors">
                                 {item.linkLabel} <ExternalLink className="w-3 h-3 md:w-4 md:h-4" />
                               </a>
                             )}
@@ -332,7 +332,7 @@ export function StoryGame() {
               </Collapsible>
 
               <div className="space-y-4">
-                <label className="font-black uppercase text-black flex items-center gap-2 text-lg md:text-xl italic">
+                <label className="font-black uppercase text-black flex items-center gap-2 text-base md:text-xl italic">
                   <Key className="w-5 h-5 md:w-6 md:h-6 text-primary" /> Sua API Key Gemini
                 </label>
                 <Input 
@@ -340,7 +340,7 @@ export function StoryGame() {
                   value={userApiKey} 
                   onChange={(e) => setUserApiKey(e.target.value)} 
                   placeholder="AIza..."
-                  className="border-[4px] md:border-[6px] border-black h-16 md:h-24 text-xl md:text-4xl rounded-none font-black bg-yellow-50 focus:ring-primary shadow-inner italic" 
+                  className="border-[4px] md:border-[6px] border-black h-12 md:h-24 text-base md:text-4xl rounded-none font-black bg-yellow-50 focus:ring-primary shadow-inner italic" 
                 />
                 <p className="text-[10px] md:text-sm font-bold text-muted-foreground italic leading-tight">
                   Usar sua própria chave evita erros de cota e garante que suas histórias nunca parem de ser geradas!
@@ -352,7 +352,7 @@ export function StoryGame() {
           <DialogFooter className="mt-6 md:mt-8">
             <Button 
               onClick={() => { saveApiKey(userApiKey); setIsSettingsOpen(false); }} 
-              className="w-full bg-secondary text-white font-black h-16 md:h-24 text-xl md:text-4xl uppercase comic-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all"
+              className="w-full bg-secondary text-white font-black h-12 md:h-24 text-base md:text-4xl uppercase comic-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all"
             >
               SALVAR!
             </Button>
