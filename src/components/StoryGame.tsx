@@ -138,7 +138,7 @@ export function StoryGame() {
     if (!audioUrl || !result) return;
     const link = document.createElement('a');
     link.href = audioUrl;
-    link.download = `${result.title}.wav`;
+    link.download = `${result.title.replace(/\s+/g, '-').toLowerCase()}.wav`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -205,25 +205,35 @@ export function StoryGame() {
             </div>
           </div>
         ) : !selectedTheme ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 px-2">
-            {THEMES.map((theme) => {
-              const Icon = theme.icon;
-              return (
-                <button key={theme.id} onClick={() => setSelectedTheme(theme)} className="comic-border bg-white p-8 text-left hover:bg-yellow-50 transition-all group flex flex-col gap-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-4xl font-black comic-text uppercase text-black tracking-tighter">{theme.name}</h3>
-                    <div className="bg-accent p-3 comic-border -rotate-3 group-hover:rotate-6 transition-transform">
-                      <Icon className="w-12 h-12 text-black" />
+          <div className="space-y-12">
+            <div className="text-center space-y-4 animate-in fade-in slide-in-from-top-4 duration-700">
+              <h2 className="text-4xl md:text-6xl font-black comic-text text-black uppercase tracking-tighter drop-shadow-[4px_4px_0px_rgba(255,255,255,1)]">
+                QUAL CONFUSÃO CRIAREMOS HOJE?
+              </h2>
+              <p className="text-xl md:text-2xl font-bold text-primary italic book-font">
+                Escolha o seu gênero literário favorito
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 px-2">
+              {THEMES.map((theme) => {
+                const Icon = theme.icon;
+                return (
+                  <button key={theme.id} onClick={() => setSelectedTheme(theme)} className="comic-border bg-white p-8 text-left hover:bg-yellow-50 transition-all group flex flex-col gap-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-4xl font-black comic-text uppercase text-black tracking-tighter">{theme.name}</h3>
+                      <div className="bg-accent p-3 comic-border -rotate-3 group-hover:rotate-6 transition-transform">
+                        <Icon className="w-12 h-12 text-black" />
+                      </div>
                     </div>
-                  </div>
-                  <p className="font-bold text-muted-foreground italic book-font text-xl leading-snug">{theme.description}</p>
-                  <div className="mt-2 flex items-center gap-2 text-xs font-black uppercase text-primary">
-                    <span className="bg-primary text-white px-3 py-1 comic-border">{theme.questions.length} PERGUNTAS</span>
-                    <Sparkles className="w-4 h-4" />
-                  </div>
-                </button>
-              )
-            })}
+                    <p className="font-bold text-muted-foreground italic book-font text-xl leading-snug">{theme.description}</p>
+                    <div className="mt-2 flex items-center gap-2 text-xs font-black uppercase text-primary">
+                      <span className="bg-primary text-white px-3 py-1 comic-border">{theme.questions.length} PERGUNTAS</span>
+                      <Sparkles className="w-4 h-4" />
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
           </div>
         ) : (
           <Card className="comic-border bg-white overflow-hidden shadow-2xl">
@@ -235,7 +245,7 @@ export function StoryGame() {
               </div>
               <div className="text-center space-y-4">
                 <p className="text-sm font-black text-primary uppercase tracking-[0.3em]">Pergunta {currentStep + 1} de {selectedTheme.questions.length}</p>
-                <h2 className="text-6xl md:text-9xl font-black book-font text-black leading-tight">
+                <h2 className="text-6xl md:text-9xl font-black book-font text-black leading-tight italic">
                   {selectedTheme.questions[currentStep]}
                 </h2>
               </div>
@@ -244,7 +254,7 @@ export function StoryGame() {
                 onChange={(e) => setCurrentAnswer(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleNext()}
                 placeholder="Sua resposta bizarra..."
-                className="h-32 text-4xl md:text-7xl border-[6px] border-black rounded-none book-font bg-yellow-50 text-center focus:ring-primary shadow-inner font-black"
+                className="h-32 text-4xl md:text-7xl border-[6px] border-black rounded-none book-font bg-yellow-50 text-center focus:ring-primary shadow-inner font-black italic"
                 autoFocus
               />
               <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-auto py-10 bg-primary text-white font-black text-5xl uppercase comic-border shadow-[0_12px_0_0_rgba(0,0,0,1)] active:translate-y-2 active:shadow-none transition-all">
@@ -274,7 +284,6 @@ export function StoryGame() {
           
           <ScrollArea className="flex-1 pr-4">
             <div className="space-y-8 py-4">
-              {/* Ajuda Retrátil */}
               <Collapsible open={isHelpOpen} onOpenChange={setIsHelpOpen}>
                 <CollapsibleTrigger asChild>
                   <Button variant="outline" className="w-full h-auto py-4 comic-border bg-accent hover:bg-accent/90 text-black font-black uppercase flex items-center justify-between shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all mb-4">
@@ -323,7 +332,6 @@ export function StoryGame() {
                 </CollapsibleContent>
               </Collapsible>
 
-              {/* Campo de Entrada */}
               <div className="space-y-4">
                 <label className="font-black uppercase text-black flex items-center gap-2 text-xl italic">
                   <Key className="w-6 h-6 text-primary" /> Sua API Key Gemini
@@ -333,7 +341,7 @@ export function StoryGame() {
                   value={userApiKey} 
                   onChange={(e) => setUserApiKey(e.target.value)} 
                   placeholder="AIza..."
-                  className="border-[6px] border-black h-24 text-3xl md:text-4xl rounded-none font-black bg-yellow-50 focus:ring-primary shadow-inner" 
+                  className="border-[6px] border-black h-24 text-3xl md:text-4xl rounded-none font-black bg-yellow-50 focus:ring-primary shadow-inner italic" 
                 />
                 <p className="text-sm md:text-base font-bold text-muted-foreground italic leading-tight">
                   Usar sua própria chave evita erros de cota e garante que suas histórias nunca parem de ser geradas!
