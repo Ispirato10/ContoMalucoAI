@@ -34,11 +34,6 @@ export const metadata: Metadata = {
     description: 'Histórias bizarras e divertidas geradas por IA!',
     images: ['/logo.png'],
   },
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'default',
-    title: 'Conto Maluco',
-  },
 };
 
 export const viewport: Viewport = {
