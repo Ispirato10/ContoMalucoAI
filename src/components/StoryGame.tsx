@@ -26,7 +26,8 @@ import {
   Wand2,
   Utensils,
   Volume2,
-  Pause
+  Pause,
+  Download
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -302,6 +303,17 @@ export function StoryGame() {
     }
   };
 
+  const handleDownloadAudio = () => {
+    if (!audioUrl || !result) return;
+    const link = document.createElement('a');
+    link.href = audioUrl;
+    link.download = `${result.title.replace(/\s+/g, '_')}.wav`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast({ title: "Download Iniciado!", description: "Sua história foi salva como áudio." });
+  };
+
   const restart = () => {
     setSelectedTheme(null);
     setCurrentStep(0);
@@ -338,7 +350,7 @@ export function StoryGame() {
               <Loader2 className="w-16 h-16 md:w-24 md:h-24 animate-spin text-primary mx-auto opacity-20" />
               <Sparkles className="w-8 h-8 md:w-12 md:h-12 text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
             </div>
-            <h2 className="text-xl md:text-3xl font-black comic-text text-black uppercase leading-tight">Gemini 2.5 Flash está escrevendo...</h2>
+            <h2 className="text-xl md:text-3xl font-black comic-text text-black uppercase leading-tight">Gemini 2.5 está escrevendo...</h2>
             <p className="italic text-muted-foreground font-bold text-sm md:text-lg">Transformando suas respostas em um conto épico!</p>
           </Card>
         ) : error ? (
@@ -385,7 +397,7 @@ export function StoryGame() {
                     </div>
                     
                     <div className="w-full max-w-4xl p-8 md:p-16 bg-white border-[6px] border-black relative shadow-[10px_10px_0px_0px_rgba(0,0,0,0.1)] print:border-none print:shadow-none comic-caption">
-                      <p className="book-font text-2xl md:text-5xl text-center text-black leading-tight italic font-bold print:not-italic print:text-3xl print:text-left">
+                      <p className="book-font text-3xl md:text-6xl text-center text-black leading-tight italic font-black print:not-italic print:text-4xl print:text-left">
                         {page.text}
                       </p>
                     </div>
@@ -395,25 +407,36 @@ export function StoryGame() {
               ))}
             </div>
 
-            <div className="flex flex-col md:flex-row flex-wrap gap-6 justify-center no-print pb-24 items-stretch">
+            <div className="flex flex-col md:flex-row flex-wrap gap-4 md:gap-6 justify-center no-print pb-24 items-stretch">
               <Button 
                 onClick={handlePlayAudio} 
                 disabled={isAudioLoading}
-                className="bg-accent hover:bg-accent/90 text-black comic-border h-auto py-5 md:py-8 px-8 md:px-16 font-black uppercase text-xl md:text-3xl shadow-2xl hover:scale-105 transition-all active:scale-95 text-center flex-1 min-w-[240px]"
+                className="bg-accent hover:bg-accent/90 text-black comic-border h-auto py-5 md:py-8 px-6 md:px-10 font-black uppercase text-xl md:text-3xl shadow-2xl hover:scale-105 transition-all active:scale-95 text-center flex-1 min-w-[200px]"
               >
                 {isAudioLoading ? (
                   <Loader2 className="w-8 h-8 animate-spin mr-3" />
                 ) : isPlaying ? (
-                  <><Pause className="w-8 h-8 md:w-12 md:h-12 mr-3 md:mr-6" /> Pausar</>
+                  <><Pause className="w-8 h-8 md:w-10 md:h-10 mr-3" /> Pausar</>
                 ) : (
-                  <><Volume2 className="w-8 h-8 md:w-12 md:h-12 mr-3 md:mr-6" /> Ouvir</>
+                  <><Volume2 className="w-8 h-8 md:w-10 md:h-10 mr-3" /> Ouvir</>
                 )}
               </Button>
-              <Button onClick={() => window.print()} className="bg-secondary hover:bg-secondary/90 text-white comic-border h-auto py-5 md:py-8 px-8 md:px-16 font-black uppercase text-xl md:text-3xl shadow-2xl hover:scale-105 transition-all active:scale-95 text-center flex-1 min-w-[240px]">
-                <Printer className="w-8 h-8 md:w-12 md:h-12 mr-3 md:mr-6" /> Baixar PDF
+
+              {audioUrl && (
+                <Button 
+                  onClick={handleDownloadAudio} 
+                  className="bg-yellow-500 hover:bg-yellow-600 text-black comic-border h-auto py-5 md:py-8 px-6 md:px-10 font-black uppercase text-xl md:text-3xl shadow-2xl hover:scale-105 transition-all active:scale-95 text-center flex-1 min-w-[200px]"
+                >
+                  <Download className="w-8 h-8 md:w-10 md:h-10 mr-3" /> Áudio
+                </Button>
+              )}
+
+              <Button onClick={() => window.print()} className="bg-secondary hover:bg-secondary/90 text-white comic-border h-auto py-5 md:py-8 px-6 md:px-10 font-black uppercase text-xl md:text-3xl shadow-2xl hover:scale-105 transition-all active:scale-95 text-center flex-1 min-w-[200px]">
+                <Printer className="w-8 h-8 md:w-10 md:h-10 mr-3" /> PDF
               </Button>
-              <Button onClick={restart} variant="outline" className="comic-border h-auto py-5 md:py-8 px-8 md:px-16 font-black uppercase text-xl md:text-3xl bg-white hover:bg-gray-50 shadow-2xl hover:scale-105 transition-all active:scale-95 text-center flex-1 min-w-[240px]">
-                <RotateCcw className="w-8 h-8 md:w-12 md:h-12 mr-3 md:mr-6" /> Novo Conto
+              
+              <Button onClick={restart} variant="outline" className="comic-border h-auto py-5 md:py-8 px-6 md:px-10 font-black uppercase text-xl md:text-3xl bg-white hover:bg-gray-50 shadow-2xl hover:scale-105 transition-all active:scale-95 text-center flex-1 min-w-[200px]">
+                <RotateCcw className="w-8 h-8 md:w-10 md:h-10 mr-3" /> Novo
               </Button>
             </div>
           </div>

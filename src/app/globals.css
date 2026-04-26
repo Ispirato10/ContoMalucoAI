@@ -114,8 +114,8 @@
     margin-bottom: 2cm;
   }
   .comic-caption {
-    font-size: 1.8rem !important;
-    line-height: 1.6 !important;
+    font-size: 2.2rem !important;
+    line-height: 1.5 !important;
     color: black !important;
     text-align: justify !important;
     max-width: 100% !important;
@@ -125,8 +125,8 @@
     font-family: 'Alegreya', serif !important;
   }
   .comic-caption p {
-    font-size: 1.8rem !important;
-    font-weight: 700 !important;
+    font-size: 2.5rem !important;
+    font-weight: 900 !important;
   }
   .page-number {
     display: block;
