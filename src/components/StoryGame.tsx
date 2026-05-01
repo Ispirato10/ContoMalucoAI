@@ -390,6 +390,25 @@ export function StoryGame() {
           </div>
         ) : !selectedTheme ? (
           <div className="space-y-12">
+            {!userApiKey && (
+              <div className="mx-2 bg-yellow-100 border-4 border-black p-4 mb-4 flex flex-col md:flex-row items-center justify-between gap-4 -rotate-1 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] animate-in slide-in-from-top-4 duration-500">
+                <div className="flex items-center gap-3">
+                  <div className="bg-primary p-2 comic-border rotate-3 shrink-0">
+                    <Zap className="text-white w-6 h-6" />
+                  </div>
+                  <p className="font-bold text-black italic text-sm md:text-base leading-tight">
+                    🚀 <span className="uppercase font-black">Histórias Infinitas:</span> Crie sua chave API gratuita e salve no app antes de começar para evitar erros!
+                  </p>
+                </div>
+                <Button 
+                  onClick={() => setIsSettingsOpen(true)}
+                  className="comic-border bg-white text-black font-black uppercase text-xs h-auto py-2 px-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all hover:bg-yellow-400"
+                >
+                  <Key className="w-4 h-4 mr-2" /> CONFIGURAR AGORA
+                </Button>
+              </div>
+            )}
+
             <div className="text-center space-y-4 animate-in fade-in slide-in-from-top-4 duration-700 px-2">
               <h2 className="text-4xl md:text-6xl font-black comic-text text-black uppercase tracking-tighter drop-shadow-[4px_4px_0px_rgba(255,255,255,1)]">
                 QUAL CONFUSÃO CRIAREMOS HOJE?
@@ -443,7 +462,7 @@ export function StoryGame() {
                 className="h-14 md:h-24 text-xl md:text-3xl lg:text-5xl border-[4px] md:border-[6px] border-black rounded-none book-font bg-yellow-50 text-center focus:ring-primary shadow-inner font-black italic px-4"
                 autoFocus
               />
-              <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-auto py-3 md:py-5 bg-primary text-white font-black text-xl md:text-3xl uppercase comic-border shadow-[0_4px_0_0_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all comic-text">
+              <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-auto py-3 md:py-4 bg-primary text-white font-black text-xl md:text-2xl uppercase comic-border shadow-[0_4px_0_0_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all comic-text">
                 PRÓXIMO <Send className="ml-2 md:ml-4 w-5 h-5 md:w-8 md:h-8" />
               </Button>
               <div className="text-center no-print pt-2 md:pt-4">
