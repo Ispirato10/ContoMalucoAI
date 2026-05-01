@@ -227,7 +227,6 @@ export function StoryGame() {
 
   const [userApiKey, setUserApiKey] = useState('');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isHelpOpen, setIsHelpOpen] = useState(true);
 
   useEffect(() => {
     const savedKey = localStorage.getItem('conto-maluco-api-key');
@@ -490,29 +489,10 @@ export function StoryGame() {
           
           <ScrollArea className="flex-1 pr-2 md:pr-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 py-4">
-              {/* Coluna de Instruções */}
               <div className="space-y-4">
-                <Collapsible open={isHelpOpen} onOpenChange={setIsHelpOpen} className="md:hidden">
-                  <CollapsibleTrigger asChild>
-                    <Button variant="outline" className="w-full h-auto py-3 comic-border bg-accent hover:bg-accent/90 text-black font-black uppercase flex items-center justify-between shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all">
-                      <span className="flex items-center gap-2 text-xs">
-                        <HelpCircle className="w-4 h-4" /> Como conseguir chave grátis?
-                      </span>
-                      <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isHelpOpen ? 'rotate-180' : ''}`} />
-                    </Button>
-                  </CollapsibleTrigger>
-                  
-                  <CollapsibleContent className="animate-in slide-in-from-top-4 duration-300">
-                    <InstructionManual />
-                  </CollapsibleContent>
-                </Collapsible>
-
-                <div className="hidden md:block">
-                  <InstructionManual />
-                </div>
+                <InstructionManual />
               </div>
 
-              {/* Coluna de Input */}
               <div className="space-y-6 md:space-y-8 flex flex-col justify-center">
                 <div className="space-y-4">
                   <label className="font-black uppercase text-black flex items-center gap-2 text-base md:text-2xl italic">
