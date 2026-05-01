@@ -72,7 +72,6 @@ const THEMES = [
       "Qual o chapéu que ele usa?", 
       "Qual o prato principal?", 
       "Qual ingrediente bizarro usou?", 
-      "Qual o tempero secreto?", 
       "Quem era o crítico famoso?", 
       "Como o restaurante foi salvo?"
     ] 
@@ -228,7 +227,7 @@ export function StoryGame() {
 
   const [userApiKey, setUserApiKey] = useState('');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(true);
 
   useEffect(() => {
     const savedKey = localStorage.getItem('conto-maluco-api-key');
@@ -462,8 +461,8 @@ export function StoryGame() {
                 className="h-14 md:h-24 text-xl md:text-3xl lg:text-5xl border-[4px] md:border-[6px] border-black rounded-none book-font bg-yellow-50 text-center focus:ring-primary shadow-inner font-black italic px-4"
                 autoFocus
               />
-              <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-auto py-3 md:py-4 bg-primary text-white font-black text-xl md:text-2xl uppercase comic-border shadow-[0_4px_0_0_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all comic-text">
-                PRÓXIMO <Send className="ml-2 md:ml-4 w-5 h-5 md:w-8 md:h-8" />
+              <Button onClick={handleNext} disabled={!currentAnswer.trim()} className="w-full h-14 md:h-20 bg-primary text-white font-black text-xl md:text-4xl uppercase comic-border shadow-[0_4px_0_0_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all comic-text">
+                PRÓXIMO <Send className="ml-2 md:ml-4 w-5 h-5 md:w-10 md:h-10" />
               </Button>
               <div className="text-center no-print pt-2 md:pt-4">
                  <Button onClick={restart} variant="ghost" className="text-muted-foreground font-black hover:text-black italic text-xs md:text-lg uppercase tracking-widest">
@@ -482,89 +481,116 @@ export function StoryGame() {
       </div>
 
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-        <DialogContent className="comic-border bg-white p-4 md:p-10 w-[95vw] max-w-2xl overflow-hidden flex flex-col h-[90vh] md:h-auto md:max-h-[85vh]">
-          <DialogHeader className="mb-4">
-            <DialogTitle className="comic-text text-2xl md:text-5xl font-black uppercase text-black italic">Configurações</DialogTitle>
+        <DialogContent className="comic-border bg-white p-4 md:p-8 w-[95vw] max-w-2xl md:max-w-4xl overflow-hidden flex flex-col h-[90vh] md:h-auto md:max-h-[90vh]">
+          <DialogHeader className="mb-2 md:mb-6">
+            <DialogTitle className="comic-text text-2xl md:text-6xl font-black uppercase text-black italic text-center md:text-left">
+              Configurações
+            </DialogTitle>
           </DialogHeader>
           
           <ScrollArea className="flex-1 pr-2 md:pr-4">
-            <div className="space-y-6 py-4">
-              <Collapsible open={isHelpOpen} onOpenChange={setIsHelpOpen}>
-                <CollapsibleTrigger asChild>
-                  <Button variant="outline" className="w-full h-auto py-3 md:py-4 comic-border bg-accent hover:bg-accent/90 text-black font-black uppercase flex items-center justify-between shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all mb-4">
-                    <span className="flex items-center gap-2 text-xs md:text-base">
-                      <HelpCircle className="w-5 h-5 md:w-6 md:h-6" /> Como conseguir chave grátis?
-                    </span>
-                    <ChevronDown className={`w-5 h-5 md:w-6 md:h-6 transition-transform duration-300 ${isHelpOpen ? 'rotate-180' : ''}`} />
-                  </Button>
-                </CollapsibleTrigger>
-                
-                <CollapsibleContent className="animate-in slide-in-from-top-4 duration-300">
-                  <div className="bg-accent/10 comic-border p-4 md:p-6 space-y-4 md:space-y-6 relative overflow-hidden mb-6">
-                    <div className="absolute -top-4 -right-4 p-4 opacity-10 rotate-12">
-                      <Info className="w-24 h-24 md:w-32 md:h-32 text-black" />
-                    </div>
-                    
-                    <h3 className="font-black uppercase text-base md:text-2xl text-black flex items-center gap-3">
-                      <Sparkles className="w-4 h-4 md:w-6 md:h-6 text-primary" /> Manual do Super-Herói:
-                    </h3>
-                    
-                    <div className="grid gap-3 md:gap-4">
-                      {[
-                        { step: 1, text: "Acesse o portal oficial:", link: "https://aistudio.google.com/", linkLabel: "Google AI Studio" },
-                        { step: 2, text: "Faça login com sua conta Google" },
-                        { step: 3, text: "No menu lateral esquerdo, clique em 'Get API key'" },
-                        { step: 4, text: "Gere seu código único no botão azul." },
-                        { step: 5, text: "Copie o código (ele começa com 'AIza...')" },
-                        { step: 6, text: "Cole no campo abaixo e salve!" }
-                      ].map((item, i) => (
-                        <div key={i} className="flex gap-3 md:gap-4 items-start">
-                          <div className="bg-primary text-white comic-border w-6 h-6 md:w-8 md:h-8 shrink-0 flex items-center justify-center font-black italic -rotate-6 text-xs md:text-base">
-                            {item.step}
-                          </div>
-                          <p className="font-bold italic text-xs md:text-lg text-black leading-tight">
-                            {item.text}
-                            {item.link && (
-                              <a href={item.link} target="_blank" rel="noopener noreferrer" className="ml-1 text-primary underline inline-flex items-center gap-1 hover:text-black transition-colors">
-                                {item.linkLabel} <ExternalLink className="w-3 h-3 md:w-4 md:h-4" />
-                              </a>
-                            )}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
-
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 py-4">
+              {/* Coluna de Instruções */}
               <div className="space-y-4">
-                <label className="font-black uppercase text-black flex items-center gap-2 text-base md:text-xl italic">
-                  <Key className="w-5 h-5 md:w-6 md:h-6 text-primary" /> Sua API Key Gemini
-                </label>
-                <Input 
-                  type="password" 
-                  value={userApiKey} 
-                  onChange={(e) => setUserApiKey(e.target.value)} 
-                  placeholder="AIza..."
-                  className="border-[4px] md:border-[6px] border-black h-12 md:h-24 text-base md:text-4xl rounded-none font-black bg-yellow-50 focus:ring-primary shadow-inner italic" 
-                />
-                <p className="text-[10px] md:text-sm font-bold text-muted-foreground italic leading-tight">
-                  Usar sua própria chave evita erros de cota e garante que suas histórias nunca parem de ser geradas!
-                </p>
+                <Collapsible open={isHelpOpen} onOpenChange={setIsHelpOpen} className="md:hidden">
+                  <CollapsibleTrigger asChild>
+                    <Button variant="outline" className="w-full h-auto py-3 comic-border bg-accent hover:bg-accent/90 text-black font-black uppercase flex items-center justify-between shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all">
+                      <span className="flex items-center gap-2 text-xs">
+                        <HelpCircle className="w-4 h-4" /> Como conseguir chave grátis?
+                      </span>
+                      <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isHelpOpen ? 'rotate-180' : ''}`} />
+                    </Button>
+                  </CollapsibleTrigger>
+                  
+                  <CollapsibleContent className="animate-in slide-in-from-top-4 duration-300">
+                    <InstructionManual />
+                  </CollapsibleContent>
+                </Collapsible>
+
+                <div className="hidden md:block">
+                  <InstructionManual />
+                </div>
+              </div>
+
+              {/* Coluna de Input */}
+              <div className="space-y-6 md:space-y-8 flex flex-col justify-center">
+                <div className="space-y-4">
+                  <label className="font-black uppercase text-black flex items-center gap-2 text-base md:text-2xl italic">
+                    <Key className="w-5 h-5 md:w-8 md:h-8 text-primary" /> Sua API Key Gemini
+                  </label>
+                  <Input 
+                    type="password" 
+                    value={userApiKey} 
+                    onChange={(e) => setUserApiKey(e.target.value)} 
+                    placeholder="AIza..."
+                    className="border-[4px] md:border-[6px] border-black h-12 md:h-20 text-base md:text-2xl rounded-none font-black bg-yellow-50 focus:ring-primary shadow-inner italic" 
+                  />
+                  <p className="text-[10px] md:text-sm font-bold text-muted-foreground italic leading-tight">
+                    Usar sua própria chave evita erros de cota e garante que suas histórias nunca parem de ser geradas!
+                  </p>
+                </div>
+
+                <div className="hidden md:block">
+                  <Button 
+                    onClick={() => { saveApiKey(userApiKey); setIsSettingsOpen(false); }} 
+                    className="w-full bg-secondary text-white font-black h-16 md:h-20 text-base md:text-3xl uppercase comic-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all"
+                  >
+                    SALVAR!
+                  </Button>
+                </div>
               </div>
             </div>
           </ScrollArea>
 
-          <DialogFooter className="mt-6 md:mt-8">
+          <DialogFooter className="mt-4 md:hidden">
             <Button 
               onClick={() => { saveApiKey(userApiKey); setIsSettingsOpen(false); }} 
-              className="w-full bg-secondary text-white font-black h-12 md:h-24 text-base md:text-4xl uppercase comic-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all"
+              className="w-full bg-secondary text-white font-black h-12 md:h-20 text-base md:text-2xl uppercase comic-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all"
             >
               SALVAR!
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+    </div>
+  );
+}
+
+function InstructionManual() {
+  return (
+    <div className="bg-accent/10 comic-border p-4 md:p-8 space-y-4 md:space-y-8 relative overflow-hidden">
+      <div className="absolute -top-4 -right-4 p-4 opacity-5 rotate-12">
+        <Info className="w-24 h-24 md:w-48 md:h-48 text-black" />
+      </div>
+      
+      <h3 className="font-black uppercase text-base md:text-3xl text-black flex items-center gap-3">
+        <Sparkles className="w-4 h-4 md:w-8 md:h-8 text-primary" /> Manual:
+      </h3>
+      
+      <div className="grid gap-3 md:gap-6">
+        {[
+          { step: 1, text: "Acesse o portal:", link: "https://aistudio.google.com/", linkLabel: "AI Studio" },
+          { step: 2, text: "Faça login com Google" },
+          { step: 3, text: "Clique em 'Get API key'" },
+          { step: 4, text: "Gere seu código bizarro." },
+          { step: 5, text: "Copie o código 'AIza...'" },
+          { step: 6, text: "Cole e salve aqui!" }
+        ].map((item, i) => (
+          <div key={i} className="flex gap-3 md:gap-4 items-start">
+            <div className="bg-primary text-white comic-border w-6 h-6 md:w-10 md:h-10 shrink-0 flex items-center justify-center font-black italic -rotate-6 text-xs md:text-xl">
+              {item.step}
+            </div>
+            <p className="font-bold italic text-xs md:text-xl text-black leading-tight">
+              {item.text}
+              {item.link && (
+                <a href={item.link} target="_blank" rel="noopener noreferrer" className="ml-1 text-primary underline inline-flex items-center gap-1 hover:text-black transition-colors">
+                   {item.linkLabel} <ExternalLink className="w-3 h-3 md:w-5 md:h-5" />
+                </a>
+              )}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
